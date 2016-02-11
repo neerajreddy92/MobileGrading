@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MobileGrading</string>
+    <string name="beginCameraName">Take Picture</string>
 </resources>
