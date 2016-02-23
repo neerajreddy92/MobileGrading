@@ -2,4 +2,5 @@
     <string name="app_name">MobileGrading</string>
     <string name="beginCameraName">Take Picture</string>
     <string name="RunQrString">Run QR</string>
+    <string name="title_activity_activity_grade">Activity_grade</string>
 </resources>
