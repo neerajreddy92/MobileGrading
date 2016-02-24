@@ -27,11 +27,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new FragmentClass())
-                    .commit();
-        }
         Button btr;
         btr = (Button) findViewById(R.id.main_button);
         btr.setOnClickListener(new View.OnClickListener() {

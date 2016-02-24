@@ -66,8 +66,18 @@ public class FragmentClass extends Fragment {
                 getQRCode();
             }
         });
-
+        Button displayBitmap = (Button) rootView.findViewById(R.id.display_bitmap);
+        displayBitmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayBitmapOnView();
+            }
+        });
         return rootView;
+    }
+
+    private void displayBitmapOnView(){
+
     }
 
     private void dispatchTakePictureIntent() {

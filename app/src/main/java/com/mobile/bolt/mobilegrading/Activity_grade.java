@@ -1,5 +1,6 @@
 package com.mobile.bolt.mobilegrading;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -66,6 +67,8 @@ public class Activity_grade extends AppCompatActivity {
                 }else{
                     Toast.makeText(getBaseContext(), "Already Exists", Toast.LENGTH_LONG).show();
                 }
+                Intent intent = new Intent(Activity_grade.this, Activity_grade_process.class);
+                Activity_grade.this.startActivity(intent);
             }
         });
         // ATTENTION: This was auto-generated to implement the App Indexing API.

@@ -3,4 +3,6 @@
     <string name="beginCameraName">Take Picture</string>
     <string name="RunQrString">Run QR</string>
     <string name="title_activity_activity_grade">Activity_grade</string>
+    <string name="title_activity_activity_grade_process">Activity_grade_process</string>
+    <string name="action_settings">Settings</string>
 </resources>
