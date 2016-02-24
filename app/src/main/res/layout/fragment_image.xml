@@ -1,13 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.mobile.bolt.mobilegrading.ImageFragment">
 
+    <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/imageView"-->
+        <!--android:layout_gravity="center"-->
+    <!--/>-->
+    <com.mobile.bolt.mobilegrading.DrawingView
+        android:id="@+id/drawing"
+        android:layout_width= "match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
+        android:background="#FFFFFFFF" />
 
-    <ImageView
-        android:layout_width="666dp"
-        android:layout_height="852dp"
-        android:id="@+id/imageView"
-        android:layout_gravity="center" />
-</FrameLayout>
+</RelativeLayout>
