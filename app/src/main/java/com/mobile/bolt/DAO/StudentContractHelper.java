@@ -17,11 +17,19 @@ import java.util.List;
 
 public class StudentContractHelper extends SQLiteOpenHelper {
     private static final String TAG="MobileGrading";
+    //Student table
     private static final String TABLE_NAME="student";
     private static final String KEY_ASU_ID = "asuad";
     private static final String KEY_FIRST_NAME = "firstname";
     private static final String KEY_LAST_NAME = "lastname";
     private static final String[] COLUMNS = {KEY_ASU_ID,KEY_FIRST_NAME,KEY_LAST_NAME};
+    //Image Location Table
+    private static final String TABLE_NAME_IMAGE="imageStorage";
+    private static final String KEY_ID="id";
+    private static final String KEY_ASU_ID_IMAGE = "asuad";
+    private static final String KEY_LOCATION = "location";
+    private static final String[] COLUMNS_IMAGE = {KEY_ID,KEY_ASU_ID_IMAGE,KEY_LOCATION};
+    //General Db values.
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "studentDB";
 
@@ -35,13 +43,19 @@ public class StudentContractHelper extends SQLiteOpenHelper {
                 "asuad TEXT PRIMARY KEY, " +
                 "firstname TEXT, "+
                 "lastname TEXT )";
+
+        String CREATE_IMAGE_TABLE = "CREATE TABLE imageStorage ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "asuad TEXT, "+
+                "location TEXT )";
         db.execSQL(CREATE_STUDENT_TABLE);
+        db.execSQL(CREATE_IMAGE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS student");
-
+        db.execSQL("DROP TABLE IF EXISTS imageStorage");
         this.onCreate(db);
     }
 
