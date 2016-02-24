@@ -1,24 +1,55 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mobile.bolt.mobilegrading.ImageFragment">
-
-    <!--<ImageView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:id="@+id/imageView"-->
-        <!--android:layout_gravity="center"-->
-    <!--/>-->
+    android:orientation="vertical"
+    tools:context="com.mobile.bolt.mobilegrading.ImageFragment"
+    android:weightSum="1">
     <com.mobile.bolt.mobilegrading.DrawingView
         android:id="@+id/drawing"
         android:layout_width= "match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="564dp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:layout_weight="1"
-        android:background="#FFFFFFFF" />
+        android:background="#FFFFFFFF"
+        android:layout_weight="0.88" />
 
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/process_done"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="done for now" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:id="@+id/process_next"
+            android:layout_alignTop="@+id/process_done"
+            android:layout_toLeftOf="@+id/process_done"
+            android:layout_toStartOf="@+id/process_done"
+            android:layout_marginRight="122dp"
+            android:layout_marginEnd="122dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="erase"
+            android:id="@+id/process_erase"
+            android:layout_alignTop="@+id/process_done"
+            android:layout_toRightOf="@+id/process_done"
+            android:layout_toEndOf="@+id/process_done"
+            android:layout_marginLeft="135dp"
+            android:layout_marginStart="135dp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 
 public class Activity_grade_process extends AppCompatActivity implements FragmentClass.OnFragmentInteractionListener {
 
@@ -20,6 +21,7 @@ public class Activity_grade_process extends AppCompatActivity implements Fragmen
                     .add(R.id.container, new FragmentClass())
                     .commit();
         }
+
     }
 
     @Override

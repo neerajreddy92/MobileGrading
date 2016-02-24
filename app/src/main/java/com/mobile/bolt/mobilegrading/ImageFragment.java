@@ -4,19 +4,27 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.mobile.bolt.support.ExifUtil;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class ImageFragment extends Fragment {
+
+public class    ImageFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,6 +51,7 @@ public class ImageFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
 
     private String imageLocation;
+    String mCurrentPhotoPath;
     private final String test1="MobileGrading";
     public static ImageFragment newInstance(String param1, String param2) {
         ImageFragment fragment = new ImageFragment();
@@ -68,8 +77,60 @@ public class ImageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_image, container, false);
         drawView = (DrawingView)rootView.findViewById(R.id.drawing);
+        Button save=(Button)rootView.findViewById(R.id.process_next);
         displayBitmap(rootView);
+        drawView.setDrawingCacheEnabled(true);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bMap = drawView.getDrawingCache();
+                dispatchSaveImage(bMap);
+            }
+        });
         return rootView;
+    }
+
+    private void dispatchSaveImage(Bitmap bMap){
+        File file=null;
+        try{
+            file=createImageFile();
+        }catch(IOException e){
+            e.printStackTrace();
+            Log.e(test1, "dispatchSaveImage: file creation threw null");
+        }
+        if(file!=null){
+            FileOutputStream ostream = null;
+            try {
+                ostream = new FileOutputStream(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            bMap.compress(Bitmap.CompressFormat.PNG, 10, ostream);
+            try {
+                ostream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(test1, "dispatchSaveImage: file unwritable ");
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        Log.i(test1, "createImageFile: new image file name created");
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
     }
     private void displayBitmap(View rootView){
         Bitmap bMap = null;
