@@ -1,5 +1,6 @@
 package com.mobile.bolt.mobilegrading;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,6 +45,25 @@ public class FragmentClass extends Fragment {
     final int REQUEST_TAKE_PHOTO = 1;
     public FragmentClass() {
     }
+    private OnFragmentInteractionListener mListener;
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(String str);
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,7 +97,7 @@ public class FragmentClass extends Fragment {
     }
 
     private void displayBitmapOnView(){
-
+        mListener.onFragmentInteraction(anotherPhotoPath);
     }
 
     private void dispatchTakePictureIntent() {
@@ -253,6 +273,7 @@ public class FragmentClass extends Fragment {
             Log.e(test1, "bit map is null");
         }
     }
+
 }
 
 //      public void onActivityResult(int requestCode, int resultCode, Intent data) {
