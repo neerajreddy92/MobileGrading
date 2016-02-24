@@ -13,10 +13,6 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.mobile.bolt.DAO.StudentContract;
-import com.mobile.bolt.DAO.StudentContractHelper;
-import com.mobile.bolt.DAO.StudentDAO;
-import com.mobile.bolt.Model.Student;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -31,12 +27,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final StudentContractHelper studentDAO= new StudentContractHelper(getBaseContext());
-        Student std=new Student();
-        std.setStudentID("123456789");
-        std.setFirstName("NEERAJ ");
-        std.setLastName("Chinthireddy");
-        studentDAO.addStudent(std);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new FragmentClass())
@@ -53,14 +43,7 @@ public class MainActivity extends ActionBarActivity {
         });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-           client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        Button dbView= (Button) findViewById(R.id.check_database);
-        dbView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               Toast.makeText(getBaseContext(),studentDAO.getStudent("123456789").getFirstName(),Toast.LENGTH_LONG).show();
-            }
-        });
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override

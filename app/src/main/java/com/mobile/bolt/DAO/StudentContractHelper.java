@@ -35,7 +35,6 @@ public class StudentContractHelper extends SQLiteOpenHelper {
                 "asuad TEXT PRIMARY KEY, " +
                 "firstname TEXT, "+
                 "lastname TEXT )";
-
         db.execSQL(CREATE_STUDENT_TABLE);
     }
 
@@ -46,20 +45,44 @@ public class StudentContractHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void addStudent(Student student) {
-        Log.d(TAG,"add Student: "+student.toString());
-        SQLiteDatabase db = this.getWritableDatabase();
+    public boolean addStudent(Student student) {
+        Log.d(TAG, "add Student: " + student.toString());
+        if(verifyStudentExists(student.getStudentID()))
+            return false;
+        else {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_ASU_ID, student.getStudentID());
+            values.put(KEY_FIRST_NAME, student.getFirstName());
+            values.put(KEY_LAST_NAME, student.getLastName());
 
-        ContentValues values = new ContentValues();
-        values.put(KEY_ASU_ID,student.getStudentID());
-        values.put(KEY_FIRST_NAME, student.getFirstName());
-        values.put(KEY_LAST_NAME, student.getLastName());
+            db.insert(TABLE_NAME, // table
+                    null, //nullColumnHack
+                    values); // key/value -> keys = column names/ values = column values
+            db.close();
+            return true;
+        }
+    }
 
-        db.insert(TABLE_NAME, // table
-                null, //nullColumnHack
-                values); // key/value -> keys = column names/ values = column values
-
+    public boolean verifyStudentExists(String id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor =
+                db.query(TABLE_NAME, // a. table
+                        COLUMNS, // b. column names
+                        KEY_ASU_ID + " = ?", // c. selections
+                        new String[]{id}, // d. selections args
+                        null, // e. group by
+                        null, // f. having
+                        null, // g. order by
+                        null); // h. limit
+        if (cursor == null || cursor.getCount()<=0) {
+            cursor.close();
+            db.close();
+            return false;
+        }
+        cursor.close();
         db.close();
+        return true;
     }
 
     public Student getStudent(String id){
@@ -76,14 +99,22 @@ public class StudentContractHelper extends SQLiteOpenHelper {
                         null, // g. order by
                         null); // h. limit
 
-        if (cursor != null)
+        if (cursor == null|| cursor.getCount()<=0) {
+            db.close();
+            cursor.close();
+            return null;
+        }
+        else{
             cursor.moveToFirst();
-        Student student=new Student();
-        student.setStudentID(cursor.getString(0));
-        student.setFirstName(cursor.getString(1));
-        student.setLastName(cursor.getString(2));
-        Log.d(TAG, "getStudent "+student.toString());
-        return student;
+            Student student = new Student();
+            student.setStudentID(cursor.getString(0));
+            student.setFirstName(cursor.getString(1));
+            student.setLastName(cursor.getString(2));
+            Log.d(TAG, "getStudent " + student.toString());
+            cursor.close();
+            db.close();
+            return student;
+        }
     }
 
     public List<Student> getAllStudents() {
@@ -102,10 +133,12 @@ public class StudentContractHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         Log.d(TAG,"getAllStudents"+student.toString());
+        cursor.close();
+        db.close();
         return students;
     }
 
-    public int updateBook(Student student) {
+    public int updateStudent(Student student) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_ASU_ID,student.getStudentID());
