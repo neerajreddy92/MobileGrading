@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
         std.setStudentID("123456789");
         std.setFirstName("NEERAJ ");
         std.setLastName("Chinthireddy");
-        studentDAO.insertStudent(std);
+        studentDAO.addStudent(std);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new FragmentClass())
@@ -58,8 +58,7 @@ public class MainActivity extends ActionBarActivity {
         dbView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Student std1=studentDAO.getStudentBasedOnId("123456789");
-                Toast.makeText(getBaseContext(),std1.getStudentID()+" "+std1.getFirstName()+" "+std1.getLastName(),Toast.LENGTH_LONG);
+               Toast.makeText(getBaseContext(),studentDAO.getStudent("123456789").getFirstName(),Toast.LENGTH_LONG).show();
             }
         });
     }

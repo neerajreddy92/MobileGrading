@@ -25,4 +25,8 @@ public class Student {
     public void setStudentID(String studentID) {
         StudentID = studentID;
     }
+    @Override
+    public String toString(){
+        return StudentID+" "+FirstName+" "+ LastName;
+    }
 }
