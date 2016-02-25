@@ -1,6 +1,7 @@
 package com.mobile.bolt.mobilegrading;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -130,9 +131,12 @@ public class    ImageFragment extends Fragment {
             images.remove(0);
             if(!images.isEmpty()){
                 imageLocation=images.get(0).getLocation();
-            }else
-                imageLocation=null;
-            displayBitmap(rootview);
+            }else {
+                imageLocation = null;
+                Toast.makeText(getContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+             displayBitmap(rootview);
         }
     }
 
@@ -163,6 +167,7 @@ public class    ImageFragment extends Fragment {
                 return false;
             }
             Log.d(TAG, "dispatchSaveImage: Retured true");
+            Toast.makeText(getContext(),"Image saved",Toast.LENGTH_SHORT).show();
             return true;
         }
        return false;
@@ -187,6 +192,7 @@ public class    ImageFragment extends Fragment {
         return image;
     }
     private void displayBitmap(View rootView){
+        // TODO: 2/25/2016 see if this task does well on a seperate thread.
         Bitmap bMap = null;
         int count=0;
         //= BitmapFactory.decodeFile(imagePath);
@@ -231,6 +237,11 @@ public class    ImageFragment extends Fragment {
         if (bMap != null) {
             Bitmap orientedBitmap = ExifUtil.rotateBitmap(imageLocation, bMap);
 //            drawView.startNew();
+            if(orientedBitmap.getWidth()>orientedBitmap.getHeight()){
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }else{
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
             drawView.setPicture(orientedBitmap);
 //            ImageView img= (ImageView) rootView.findViewById(R.id.imageView);
 //            img.setImageBitmap(orientedBitmap);
