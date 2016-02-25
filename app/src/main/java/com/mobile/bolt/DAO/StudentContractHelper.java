@@ -40,6 +40,8 @@ public class StudentContractHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    // TODO: 2/25/2016 synchronize database 
+    //// TODO: 2/25/2016 check for sql injection.  
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_STUDENT_TABLE = "CREATE TABLE student ( " +

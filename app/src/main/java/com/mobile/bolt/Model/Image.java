@@ -6,6 +6,7 @@ package com.mobile.bolt.Model;
 
 public class Image {
     // TODO: 2/24/2016 create a system where all the uploaded items will be automatically deleated.
+    // TODO: 2/25/2016 add a coloumn to save retreived qr code and change the dao to reflect that
     private int id;
     private String ASU_ID;
     private int graded;

@@ -21,6 +21,7 @@ public class MainActivity extends ActionBarActivity {
      */
     private GoogleApiClient client;
 
+    // TODO: 2/25/2016 add interface for file upload and json parsing.  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

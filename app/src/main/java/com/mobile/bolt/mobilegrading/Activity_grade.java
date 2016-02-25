@@ -27,6 +27,8 @@ public class Activity_grade extends AppCompatActivity {
      */
     private GoogleApiClient client;
 
+    // TODO: 2/25/2016 validate all input fields. 
+    // TODO: 2/25/2016 make the view scrollable 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

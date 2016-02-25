@@ -37,7 +37,6 @@ public class    ImageFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private FragmentClass.OnFragmentInteractionListener mListener;
 
     public ImageFragment() {
@@ -104,6 +103,21 @@ public class    ImageFragment extends Fragment {
                 }
             }
         });
+
+        Button undo = (Button)rootView.findViewById(R.id.process_erase);
+        undo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                drawView.undo();
+            }
+        });
+        Button done =(Button)rootView.findViewById(R.id.process_done);
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
         return rootView;
     }
 
@@ -123,6 +137,7 @@ public class    ImageFragment extends Fragment {
     }
 
     private boolean dispatchSaveImage(Bitmap bMap){
+        // TODO: 2/25/2016 see if this process would perform well on a seperate thread. 
         File file=null;
         Log.d(TAG, "dispatchSaveImage: SAving the image");
         try{

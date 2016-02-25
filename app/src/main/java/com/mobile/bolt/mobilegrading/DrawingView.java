@@ -15,6 +15,7 @@ import android.view.MotionEvent;
  * Created by Neeraj on 2/24/2016.
  */
 public class DrawingView extends View{
+    
     //drawing path
     private Path drawPath;
     //drawing and canvas paint
@@ -25,6 +26,10 @@ public class DrawingView extends View{
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
+    //Back up Bitmap.
+    private  Bitmap bitmapBackup;
+    //Back up canvas
+    private Canvas bitmapBackupCanvas;
     //Debug tag
     private String TAG="MobileGrading";
     public DrawingView(Context context, AttributeSet attrs){
@@ -48,7 +53,9 @@ public class DrawingView extends View{
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        bitmapBackup = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
+        bitmapBackupCanvas=new Canvas(bitmapBackup);
     }
 
     @Override
@@ -56,6 +63,8 @@ public class DrawingView extends View{
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
     }
+
+
     public void setPicture (Bitmap bitmap) {
         try {
             drawCanvas.drawBitmap(bitmap, 0, 0, canvasPaint);
@@ -71,8 +80,19 @@ public class DrawingView extends View{
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
     }
+    
+    private void touchStarted()
+    {
+        bitmapBackupCanvas.drawBitmap(canvasBitmap, 0, 0, null);
+    }
 
-   @Override
+    private void undo()
+    {
+        // TODO: 2/25/2016 finish undo porcess  
+        drawCanvas.drawBitmap(bitmapBackup, 0, 0, null); // restore from backup
+
+    }
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
        float touchX = event.getX();
        float touchY = event.getY();

@@ -45,6 +45,7 @@ import java.util.Date;
  */
 
 public class FragmentClass extends Fragment {
+    // TODO: 2/25/2016 remove the get QR code button on the view. 
     String mCurrentPhotoPath;
     static String anotherPhotoPath;
     ImageDAO imageDAO =null;
@@ -89,14 +90,6 @@ public class FragmentClass extends Fragment {
 
             }
         });
-//        Button runQrButton =(Button)rootView.findViewById(R.id.runQRButton);
-//        runQrButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getQRCode();
-//            }
-//        });
-//
         Button displayBitmap = (Button) rootView.findViewById(R.id.display_bitmap);
         displayBitmap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,6 +172,7 @@ public class FragmentClass extends Fragment {
 
 
     private String getQRCode() {
+        // TODO: 2/25/2016 make this process a seperate thread
         Bitmap bMap = null;
         int count=0;
         //= BitmapFactory.decodeFile(imagePath);

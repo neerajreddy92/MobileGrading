@@ -13,6 +13,9 @@ public class Activity_grade_process extends AppCompatActivity implements Fragmen
 
     private String stu=null;
 
+    // TODO: 2/25/2016 make the view look better 
+    // TODO: 2/25/2016 add details of the student on the display
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,4 +44,6 @@ public class Activity_grade_process extends AppCompatActivity implements Fragmen
                 .replace(R.id.container, frag)
                 .commit();
     }
+
+
 }
