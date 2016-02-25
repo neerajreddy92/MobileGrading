@@ -65,7 +65,6 @@ public class DrawingView extends View{
             Log.e(TAG, "setPicture: exception");
         }
         setBackgroundDrawable(new BitmapDrawable(bitmap));
-//        startNew();
     }
 
     public void startNew(){
