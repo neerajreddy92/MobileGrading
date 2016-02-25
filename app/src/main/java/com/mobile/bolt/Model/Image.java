@@ -5,8 +5,29 @@ package com.mobile.bolt.Model;
  */
 
 public class Image {
+    // TODO: 2/24/2016 create a system where all the uploaded items will be automatically deleated.
     private int id;
     private String ASU_ID;
+    private int graded;
+    private int uploaded;
+    public Image(){
+    }
+
+    public int getGraded() {
+        return graded;
+    }
+
+    public void setGraded(int graded) {
+        this.graded = graded;
+    }
+
+    public int getUploaded() {
+        return uploaded;
+    }
+
+    public void setUploaded(int uploaded) {
+        this.uploaded = uploaded;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -36,6 +57,6 @@ public class Image {
 
     @Override
     public String toString(){
-        return id+" "+ASU_ID+" "+Location;
+        return id+" "+ASU_ID+" "+Location+" "+graded+" "+uploaded;
     }
 }

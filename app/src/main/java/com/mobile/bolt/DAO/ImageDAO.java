@@ -22,11 +22,14 @@ public class ImageDAO {
     private static final String KEY_ID="id";
     private static final String KEY_ASU_ID_IMAGE = "asuad";
     private static final String KEY_LOCATION = "location";
-    private static final String[] COLUMNS_IMAGE = {KEY_ID,KEY_ASU_ID_IMAGE,KEY_LOCATION};
+    private static final String KEY_GRADED = "graded";
+    private static final String KEY_UPLOADED = "uploaded";
+    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED};
 
-    ImageDAO(Context context){
+    public ImageDAO(Context context){
         sHelper=new StudentContractHelper(context);
     }
+
     public boolean addImageLocation(Image image) {
         //// TODO: 2/24/2016  have to handle duplicates.
         Log.d(TAG, "addImageLocation: " + image.toString());
@@ -34,61 +37,26 @@ public class ImageDAO {
             ContentValues values = new ContentValues();
             values.put(KEY_ASU_ID_IMAGE, image.getASU_ID());
             values.put(KEY_LOCATION, image.getLocation());
+            values.put(KEY_GRADED,0);
+            values.put(KEY_UPLOADED,0);
             db.insert(TABLE_NAME_IMAGE, // table
                     null, //nullColumnHack
                     values); // key/value -> keys = column names/ values = column values
             db.close();
-            return true;
+        return true;
     }
 
-    public Image getSingleImageLocation(Integer id){
-
-        SQLiteDatabase db = sHelper.getReadableDatabase();
-
-        Cursor cursor =
-                db.query(TABLE_NAME_IMAGE, // a. table
-                        COLUMNS_IMAGE, // b. column names
-                        KEY_ID+" = ?", // c. selections
-                        new String[] { String.valueOf(id) }, // d. selections args
-                        null, // e. group by
-                        null, // f. having
-                        null, // g. order by
-                        null); // h. limit
-
-        if (cursor == null|| cursor.getCount()<=0) {
-            db.close();
-            cursor.close();
-            Log.d(TAG, "getSingleImageLocation :No image locations available for" + id);
-
-            return null;
-        }
-        else{
-            cursor.moveToFirst();
-            Image image =  new Image();
-            image.setId(Integer.parseInt(cursor.getString(0)));
-            image.setASU_ID(cursor.getString(1));
-            image.setLocation(cursor.getString(2));
-            Log.d(TAG, "getSingleImageLocation " + image.toString());
-            cursor.close();
-            db.close();
-            return image;
-        }
-    }
 
     public List<Image> getAllImageLocation(String ASU_ID){
-
         SQLiteDatabase db = sHelper.getReadableDatabase();
-
-        Cursor cursor =
-                db.query(TABLE_NAME_IMAGE, // a. table
+        Cursor cursor =db.query(TABLE_NAME_IMAGE, // a. table
                         COLUMNS_IMAGE, // b. column names
-                        KEY_ASU_ID_IMAGE+" = ?", // c. selections
-                        new String[] { ASU_ID }, // d. selections args
+                        "asuad = ?", // c. selections
+                        new String[]{ASU_ID}, // d. selections args
                         null, // e. group by
                         null, // f. having
                         null, // g. order by
                         null); // h. limit
-
         if (cursor == null|| cursor.getCount()<=0) {
             db.close();
             cursor.close();
@@ -104,6 +72,8 @@ public class ImageDAO {
                     image.setId(Integer.parseInt(cursor.getString(0)));
                     image.setASU_ID(cursor.getString(1));
                     image.setLocation(cursor.getString(2));
+                    image.setGraded(Integer.parseInt(cursor.getString(3)));
+                    image.setUploaded(Integer.parseInt(cursor.getString(4)));
                     images.add(image);
                     Log.d(TAG, "getAllImageLocation: Getting image location : "+image.toString());
                 } while (cursor.moveToNext());
@@ -113,4 +83,40 @@ public class ImageDAO {
         }
     }
 
+
+
+    public Image getSingleImageLocation(Integer id){
+
+        SQLiteDatabase db = sHelper.getReadableDatabase();
+
+        Cursor cursor =
+                db.query(TABLE_NAME_IMAGE, // a. table
+                        COLUMNS_IMAGE, // b. column names
+                        KEY_ID+" = ?", // c. selections
+                        new String[] { String.valueOf(id) }, // d. selections args
+                        null, // e. group by
+                        null, // f. having
+                        null, // g. order by
+                        null); // h. limit
+        if (cursor == null|| cursor.getCount()<=0) {
+            db.close();
+            cursor.close();
+            Log.d(TAG, "getSingleImageLocation :No image locations available for" + id);
+
+            return null;
+        }
+        else{
+            cursor.moveToFirst();
+            Image image =  new Image();
+            image.setId(Integer.parseInt(cursor.getString(0)));
+            image.setASU_ID(cursor.getString(1));
+            image.setLocation(cursor.getString(2));
+            image.setGraded(Integer.parseInt(cursor.getString(3)));
+            image.setUploaded(Integer.parseInt(cursor.getString(4)));
+            Log.d(TAG, "getSingleImageLocation " + image.toString());
+            cursor.close();
+            db.close();
+            return image;
+        }
+    }
 }
