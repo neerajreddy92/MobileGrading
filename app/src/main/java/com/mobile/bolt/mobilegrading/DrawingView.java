@@ -1,6 +1,8 @@
 package com.mobile.bolt.mobilegrading;
 
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.View;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -18,12 +20,13 @@ public class DrawingView extends View{
     //drawing and canvas paint
     private Paint drawPaint, canvasPaint;
     //initial color
-    private int paintColor = 0xFF660000;
+    private int paintColor = 0xFFFF0000;
     //canvas
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
-
+    //Debug tag
+    private String TAG="MobileGrading";
     public DrawingView(Context context, AttributeSet attrs){
         super(context, attrs);
         setupDrawing();
@@ -33,7 +36,7 @@ public class DrawingView extends View{
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(20);
+        drawPaint.setStrokeWidth(10);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -54,7 +57,20 @@ public class DrawingView extends View{
         canvas.drawPath(drawPath, drawPaint);
     }
     public void setPicture (Bitmap bitmap) {
+        try {
+            drawCanvas.drawBitmap(bitmap, 0, 0, canvasPaint);
+            invalidate();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "setPicture: exception");
+        }
         setBackgroundDrawable(new BitmapDrawable(bitmap));
+//        startNew();
+    }
+
+    public void startNew(){
+        drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        invalidate();
     }
 
    @Override

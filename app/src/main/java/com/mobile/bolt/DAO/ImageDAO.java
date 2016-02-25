@@ -152,7 +152,8 @@ public class ImageDAO {
                     }
                     Log.d(TAG, "getAllImageLocation: Getting image location : "+image.toString());
                 } while (cursor.moveToNext());
-            }cursor.close();
+            }
+            cursor.close();
             db.close();
             return images;
         }
@@ -172,7 +173,7 @@ public class ImageDAO {
         if (cursor == null|| cursor.getCount()<=0) {
             db.close();
             cursor.close();
-            Log.d(TAG, "getAllImageLocation :No image locations available for" + ASU_ID);
+            Log.d(TAG, "getAllNonUploadedImageLocations :No image locations available for" + ASU_ID);
             return null;
         }
         else{
@@ -201,6 +202,7 @@ public class ImageDAO {
         SQLiteDatabase db = sHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_GRADED, image.getGraded());
+        values.put(KEY_LOCATION, image.getLocation());
         int i = db.update(TABLE_NAME_IMAGE, //table
                 values, // column/value
                 KEY_ID + " = ?", // selections

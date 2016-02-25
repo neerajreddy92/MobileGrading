@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.mobile.bolt.DAO.ImageDAO;
+import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.support.ExifUtil;
 
 import java.io.File;
@@ -21,7 +23,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class    ImageFragment extends Fragment {
@@ -50,7 +54,10 @@ public class    ImageFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
 
-    private String imageLocation;
+    private String imageLocation=null;
+    private String TAG="MobileGrading";
+    private List<Image> images=null;
+    private ImageDAO imageDAO=null;
     String mCurrentPhotoPath;
     private final String test1="MobileGrading";
     public static ImageFragment newInstance(String param1, String param2) {
@@ -65,7 +72,13 @@ public class    ImageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        imageLocation=getArguments().getString("picAddress");
+        String ASUAD=getArguments().getString("ASUAD");
+        Log.d(TAG, "onCreate: entered image fragment " + ASUAD);
+        images=imageDAO.getAllNonGradedImageLocations(ASUAD);
+        if(images!=null && !images.isEmpty())
+            imageLocation=images.get(0).getLocation();
+        else
+            Log.e(TAG, "onCreate: images is empty or null");
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -75,23 +88,43 @@ public class    ImageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_image, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_image, container, false);
         drawView = (DrawingView)rootView.findViewById(R.id.drawing);
         Button save=(Button)rootView.findViewById(R.id.process_next);
-        displayBitmap(rootView);
+        if(imageLocation!=null) displayBitmap(rootView);
         drawView.setDrawingCacheEnabled(true);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap bMap = drawView.getDrawingCache();
-                dispatchSaveImage(bMap);
+                if(imageLocation!=null) {
+                    Bitmap bMap = drawView.getDrawingCache();
+                    if (dispatchSaveImage(bMap)) {
+                        dispatchDisplayNextImage(rootView);
+                    }
+                }
             }
         });
         return rootView;
     }
 
-    private void dispatchSaveImage(Bitmap bMap){
+    private void dispatchDisplayNextImage(View rootview){
+        if(images!=null && !images.isEmpty()){
+            Image image= images.get(0);
+            image.setLocation(mCurrentPhotoPath);
+            image.setGraded(1);
+            imageDAO.updateGradedStatusNow(image);
+            images.remove(0);
+            if(!images.isEmpty()){
+                imageLocation=images.get(0).getLocation();
+            }else
+                imageLocation=null;
+            displayBitmap(rootview);
+        }
+    }
+
+    private boolean dispatchSaveImage(Bitmap bMap){
         File file=null;
+        Log.d(TAG, "dispatchSaveImage: SAving the image");
         try{
             file=createImageFile();
         }catch(IOException e){
@@ -104,6 +137,7 @@ public class    ImageFragment extends Fragment {
                 ostream = new FileOutputStream(file);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+                return false;
             }
             bMap.compress(Bitmap.CompressFormat.PNG, 10, ostream);
             try {
@@ -111,8 +145,12 @@ public class    ImageFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e(test1, "dispatchSaveImage: file unwritable ");
+                return false;
             }
+            Log.d(TAG, "dispatchSaveImage: Retured true");
+            return true;
         }
+       return false;
     }
 
     private File createImageFile() throws IOException {
@@ -129,7 +167,8 @@ public class    ImageFragment extends Fragment {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        mCurrentPhotoPath =image.getAbsolutePath();
+        Log.d(TAG, "createImageFile: mcurrentphotopathupdated"+mCurrentPhotoPath);
         return image;
     }
     private void displayBitmap(View rootView){
@@ -137,12 +176,12 @@ public class    ImageFragment extends Fragment {
         int count=0;
         //= BitmapFactory.decodeFile(imagePath);
         BitmapFactory.Options options = new BitmapFactory.Options();
-        Log.i(test1, "getQRCode: another photo path:" + imageLocation);
-        Log.i(test1, "getQRCode: reached here");
+        Log.i(test1, "displayBitmap: another photo path:" + imageLocation);
+        Log.i(test1, "displayBitmap: reached here");
         options.inSampleSize = count++;
         try {
             bMap = BitmapFactory.decodeFile(imageLocation, options);
-            Log.i(test1, "getQRCode: option=1");
+            Log.i(test1, "displayBitmap: option=1");
         } catch (OutOfMemoryError e) {
             e.printStackTrace();
             bMap = null;
@@ -150,14 +189,14 @@ public class    ImageFragment extends Fragment {
             try {
                 options.inSampleSize = count++;
                 bMap = BitmapFactory.decodeFile(imageLocation, options);
-                Log.i(test1, "getQRCode: option2");
+                Log.i(test1, "displayBitmap: option2");
             } catch (OutOfMemoryError e1) {
                 e1.printStackTrace();
                 bMap = null;
                 try {
                     options.inSampleSize = count++;
                     bMap = BitmapFactory.decodeFile(imageLocation, options);
-                    Log.i(test1, "getQRCode: option3");
+                    Log.i(test1, "displayBitmap: option3");
                 } catch (OutOfMemoryError e2) {
                     e2.printStackTrace();
                     bMap = null;
@@ -176,6 +215,7 @@ public class    ImageFragment extends Fragment {
 
         if (bMap != null) {
             Bitmap orientedBitmap = ExifUtil.rotateBitmap(imageLocation, bMap);
+//            drawView.startNew();
             drawView.setPicture(orientedBitmap);
 //            ImageView img= (ImageView) rootView.findViewById(R.id.imageView);
 //            img.setImageBitmap(orientedBitmap);
@@ -193,6 +233,7 @@ public class    ImageFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        imageDAO=new ImageDAO(context);
         if (context instanceof FragmentClass.OnFragmentInteractionListener) {
             mListener = (FragmentClass.OnFragmentInteractionListener) context;
         } else {
@@ -205,6 +246,7 @@ public class    ImageFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        imageDAO=null;
     }
 
 

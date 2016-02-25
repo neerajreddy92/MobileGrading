@@ -31,6 +31,9 @@ import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Reader;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+import com.mobile.bolt.DAO.ImageDAO;
+import com.mobile.bolt.DAO.StudentContractHelper;
+import com.mobile.bolt.Model.Image;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,8 +47,10 @@ import java.util.Date;
 public class FragmentClass extends Fragment {
     String mCurrentPhotoPath;
     static String anotherPhotoPath;
+    ImageDAO imageDAO =null;
+    String ASUAD=null;
     ArrayAdapter<String> mForecastAdapter;
-    final String test1="testingNeeraj";
+    final String test1="MobileGrading";
     final int REQUEST_TAKE_PHOTO = 1;
     public FragmentClass() {
     }
@@ -56,6 +61,7 @@ public class FragmentClass extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        imageDAO=new ImageDAO(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -67,13 +73,13 @@ public class FragmentClass extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        imageDAO=null;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
+       ASUAD = getArguments().getString("ASUAD");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         Button camereaButton =(Button)rootView.findViewById(R.id.beginCamera);
         camereaButton.setOnClickListener(new View.OnClickListener() {
@@ -83,13 +89,14 @@ public class FragmentClass extends Fragment {
 
             }
         });
-        Button runQrButton =(Button)rootView.findViewById(R.id.runQRButton);
-        runQrButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getQRCode();
-            }
-        });
+//        Button runQrButton =(Button)rootView.findViewById(R.id.runQRButton);
+//        runQrButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getQRCode();
+//            }
+//        });
+//
         Button displayBitmap = (Button) rootView.findViewById(R.id.display_bitmap);
         displayBitmap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,8 +121,8 @@ public class FragmentClass extends Fragment {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
-//                ...
+                Log.e(test1, "dispatchTakePictureIntent: error while creating a file");
+                ex.printStackTrace();
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -124,16 +131,30 @@ public class FragmentClass extends Fragment {
                         Uri.fromFile(photoFile));
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
                 if(photoFile.exists()) {
-                    Log.i(test1, "createImageFile:"+anotherPhotoPath);
+                    Log.i(test1, "createImageFile:" + anotherPhotoPath);
                     Log.i(test1, "dispatchTakePictureIntent: picture file created");
                 }
+
             }
         }else{
             Log.e(test1, "dispatchTakePictureIntent: getActivity() doesent work");
         }
     }
 
-
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String result=getQRCode();
+        if(result!=null){
+            Image image=new Image();
+            image.setASU_ID(ASUAD);
+            image.setLocation(anotherPhotoPath);
+            imageDAO.addImageLocation(image);
+        }else{
+            Image image=new Image();
+            image.setASU_ID(ASUAD);
+            image.setLocation(anotherPhotoPath);
+            imageDAO.addImageLocation(image);
+        }
+    }
 
 
     private File createImageFile() throws IOException {
@@ -157,7 +178,7 @@ public class FragmentClass extends Fragment {
     }
 
 
-    private void getQRCode() {
+    private String getQRCode() {
         Bitmap bMap = null;
         int count=0;
         //= BitmapFactory.decodeFile(imagePath);
@@ -198,11 +219,11 @@ public class FragmentClass extends Fragment {
                 }
             }
         }
-
+        String contents = null;
         if (bMap != null) {
             Log.i(test1, "getQRCode: Entering to qr processor");
             int[] intArray;
-            String contents = null;
+
             Result result = null;
             Reader reader = new MultiFormatReader();
             intArray = new int[bMap.getWidth()*bMap.getHeight()];
@@ -276,6 +297,7 @@ public class FragmentClass extends Fragment {
         } else {
             Log.e(test1, "bit map is null");
         }
+        return contents;
     }
 
 }

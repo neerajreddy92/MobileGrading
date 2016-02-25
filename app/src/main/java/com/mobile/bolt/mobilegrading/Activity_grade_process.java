@@ -11,14 +11,21 @@ import android.widget.Button;
 
 public class Activity_grade_process extends AppCompatActivity implements FragmentClass.OnFragmentInteractionListener {
 
+    private String stu=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grade_process);
+        stu= getIntent().getStringExtra("ASUAD");
+        // TODO: 2/24/2016 handle null exceptions
+        Bundle bundle=new Bundle();
+        bundle.putString("ASUAD", stu);
+        FragmentClass frag= new FragmentClass();
+        frag.setArguments(bundle);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new FragmentClass())
+                    .add(R.id.container,frag)
                     .commit();
         }
 
@@ -27,7 +34,7 @@ public class Activity_grade_process extends AppCompatActivity implements Fragmen
     @Override
     public void onFragmentInteraction(String str) {
         Bundle bundle=new Bundle();
-        bundle.putString("picAddress", str);
+        bundle.putString("ASUAD",stu);
         ImageFragment frag= new ImageFragment();
         frag.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()

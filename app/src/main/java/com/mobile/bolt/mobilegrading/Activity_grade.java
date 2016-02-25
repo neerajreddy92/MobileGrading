@@ -68,6 +68,7 @@ public class Activity_grade extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "Already Exists", Toast.LENGTH_LONG).show();
                 }
                 Intent intent = new Intent(Activity_grade.this, Activity_grade_process.class);
+                intent.putExtra("ASUAD",stu.getStudentID());
                 Activity_grade.this.startActivity(intent);
             }
         });
