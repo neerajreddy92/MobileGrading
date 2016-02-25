@@ -119,4 +119,105 @@ public class ImageDAO {
             return image;
         }
     }
+
+    public List<Image> getAllNonGradedImageLocations(String ASU_ID){
+        SQLiteDatabase db = sHelper.getReadableDatabase();
+        Cursor cursor =db.query(TABLE_NAME_IMAGE, // a. table
+                COLUMNS_IMAGE, // b. column names
+                "asuad = ?", // c. selections
+                new String[]{ASU_ID}, // d. selections args
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+        if (cursor == null|| cursor.getCount()<=0) {
+            db.close();
+            cursor.close();
+            Log.d(TAG, "getAllImageLocation :No image locations available for" + ASU_ID);
+            return null;
+        }
+        else{
+            List<Image> images = new LinkedList<Image>();
+            Image image=null;
+            if (cursor.moveToFirst()) {
+                do {
+                    image = new Image();
+                    image.setId(Integer.parseInt(cursor.getString(0)));
+                    image.setASU_ID(cursor.getString(1));
+                    image.setLocation(cursor.getString(2));
+                    image.setGraded(Integer.parseInt(cursor.getString(3)));
+                    image.setUploaded(Integer.parseInt(cursor.getString(4)));
+                    if(image.getGraded()==0) {
+                        images.add(image);
+                    }
+                    Log.d(TAG, "getAllImageLocation: Getting image location : "+image.toString());
+                } while (cursor.moveToNext());
+            }cursor.close();
+            db.close();
+            return images;
+        }
+
+    }
+
+    public List<Image> getAllNonUploadedImageLocations(String ASU_ID){
+        SQLiteDatabase db = sHelper.getReadableDatabase();
+        Cursor cursor =db.query(TABLE_NAME_IMAGE, // a. table
+                COLUMNS_IMAGE, // b. column names
+                "asuad = ?", // c. selections
+                new String[]{ASU_ID}, // d. selections args
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+        if (cursor == null|| cursor.getCount()<=0) {
+            db.close();
+            cursor.close();
+            Log.d(TAG, "getAllImageLocation :No image locations available for" + ASU_ID);
+            return null;
+        }
+        else{
+            List<Image> images = new LinkedList<Image>();
+            Image image=null;
+            if (cursor.moveToFirst()) {
+                do {
+                    image = new Image();
+                    image.setId(Integer.parseInt(cursor.getString(0)));
+                    image.setASU_ID(cursor.getString(1));
+                    image.setLocation(cursor.getString(2));
+                    image.setGraded(Integer.parseInt(cursor.getString(3)));
+                    image.setUploaded(Integer.parseInt(cursor.getString(4)));
+                    if(image.getGraded()==1 && image.getUploaded()==0) {
+                        images.add(image);
+                    }
+                    Log.d(TAG, "getAllImageLocation: Getting image location : "+image.toString());
+                } while (cursor.moveToNext());
+            }cursor.close();
+            db.close();
+            return images;
+        }
+
+    }
+    public int updateGradedStatusNow(Image image) {
+        SQLiteDatabase db = sHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_GRADED, image.getGraded());
+        int i = db.update(TABLE_NAME_IMAGE, //table
+                values, // column/value
+                KEY_ID + " = ?", // selections
+                new String[]{String.valueOf(image.getId())}); //selection args
+        db.close();
+        return i;
+    }
+
+    public int updateUploadStatusNow(Image image) {
+        SQLiteDatabase db = sHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_UPLOADED, image.getUploaded());
+        int i = db.update(TABLE_NAME_IMAGE, //table
+                values, // column/value
+                KEY_ID + " = ?", // selections
+                new String[]{String.valueOf(image.getId())}); //selection args
+        db.close();
+        return i;
+    }
 }
