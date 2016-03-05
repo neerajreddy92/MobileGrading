@@ -1,5 +1,7 @@
 package com.mobile.bolt.mobilegrading;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -28,7 +30,7 @@ public class Activity_grade_process extends AppCompatActivity implements Fragmen
         frag.setArguments(bundle);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container,frag)
+                    .add(R.id.container, frag).addToBackStack(null)
                     .commit();
         }
 
@@ -44,6 +46,4 @@ public class Activity_grade_process extends AppCompatActivity implements Fragmen
                 .replace(R.id.container, frag)
                 .commit();
     }
-
-
 }

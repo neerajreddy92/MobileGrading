@@ -31,7 +31,13 @@ public class StudentContractHelper extends SQLiteOpenHelper {
     private static final String KEY_LOCATION = "location";
     private static final String KEY_GRADED = "graded";
     private static final String KEY_UPLOADED = "uploaded";
-    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED};
+    private static final String KEY_IMAGE_QRCODESOLUTION="qrcodesolution";
+    //QRcode table
+    private static final String TABLE_NAME_QRCODE = "qrcode";
+    private static final String KEY_QRCODE_ID = "id";
+    private static final String KEY_QUESTION = "question";
+    private static final String KEY_QRCODE_VALUES = "values";
+
     //General Db values.
     private static int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "studentDB";
@@ -54,8 +60,15 @@ public class StudentContractHelper extends SQLiteOpenHelper {
                 "asuad TEXT, " +
                 "location TEXT, " +
                 "graded INTEGER, " +
-                "uploaded INTEGER )";
+                "uploaded INTEGER, " +
+                "qrcodesolution INTEGER, " +
+                "FOREIGN KEY(qrcodesolution) REFERENCES qrcode(id))";
+        String CREATE_QRCODE_TABLE = "CREATE TABLE qrcode ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "question TEXT, " +
+                "values TEXT )";
         db.execSQL(CREATE_STUDENT_TABLE);
+        db.execSQL(CREATE_QRCODE_TABLE);
         db.execSQL(CREATE_IMAGE_TABLE);
     }
 
@@ -63,6 +76,7 @@ public class StudentContractHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS student");
         db.execSQL("DROP TABLE IF EXISTS imageStorage");
+        db.execSQL("DROP TABLE IF EXISTS qrcode");
         this.onCreate(db);
     }
 

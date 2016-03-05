@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,7 +92,11 @@ public class    ImageFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_image, container, false);
         drawView = (DrawingView)rootView.findViewById(R.id.drawing);
         Button save=(Button)rootView.findViewById(R.id.process_next);
-        if(imageLocation!=null) displayBitmap(rootView);
+        if(imageLocation!=null)
+            displayBitmap(rootView);
+        else {
+            Toast.makeText(getContext(),"No images available to grade",Toast.LENGTH_SHORT).show();
+        }
         drawView.setDrawingCacheEnabled(true);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,11 +242,11 @@ public class    ImageFragment extends Fragment {
         if (bMap != null) {
             Bitmap orientedBitmap = ExifUtil.rotateBitmap(imageLocation, bMap);
 //            drawView.startNew();
-            if(orientedBitmap.getWidth()>orientedBitmap.getHeight()){
-                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            }else{
-                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
+//            if(orientedBitmap.getWidth()>orientedBitmap.getHeight()){
+//                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//            }else{
+//                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//            }
             drawView.setPicture(orientedBitmap);
 //            ImageView img= (ImageView) rootView.findViewById(R.id.imageView);
 //            img.setImageBitmap(orientedBitmap);

@@ -24,6 +24,7 @@ public class ImageDAO {
     private static final String KEY_LOCATION = "location";
     private static final String KEY_GRADED = "graded";
     private static final String KEY_UPLOADED = "uploaded";
+    private static final String KEY_IMAGE_QRCODESOLUTION="qrcodesolution";
     private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED};
 
     public ImageDAO(Context context){
@@ -39,6 +40,7 @@ public class ImageDAO {
             values.put(KEY_LOCATION, image.getLocation());
             values.put(KEY_GRADED,0);
             values.put(KEY_UPLOADED,0);
+            values.put(KEY_IMAGE_QRCODESOLUTION,"");
             db.insert(TABLE_NAME_IMAGE, // table
                     null, //nullColumnHack
                     values); // key/value -> keys = column names/ values = column values
@@ -74,6 +76,7 @@ public class ImageDAO {
                     image.setLocation(cursor.getString(2));
                     image.setGraded(Integer.parseInt(cursor.getString(3)));
                     image.setUploaded(Integer.parseInt(cursor.getString(4)));
+                    image.setQrCodeSolution(cursor.getString(5));
                     images.add(image);
                     Log.d(TAG, "getAllImageLocation: Getting image location : "+image.toString());
                 } while (cursor.moveToNext());
@@ -113,6 +116,7 @@ public class ImageDAO {
             image.setLocation(cursor.getString(2));
             image.setGraded(Integer.parseInt(cursor.getString(3)));
             image.setUploaded(Integer.parseInt(cursor.getString(4)));
+            image.setQrCodeSolution(cursor.getString(5));
             Log.d(TAG, "getSingleImageLocation " + image.toString());
             cursor.close();
             db.close();
@@ -187,6 +191,7 @@ public class ImageDAO {
                     image.setLocation(cursor.getString(2));
                     image.setGraded(Integer.parseInt(cursor.getString(3)));
                     image.setUploaded(Integer.parseInt(cursor.getString(4)));
+                    image.setUploaded(Integer.parseInt(cursor.getString(4)));
                     if(image.getGraded()==1 && image.getUploaded()==0) {
                         images.add(image);
                     }
@@ -222,4 +227,7 @@ public class ImageDAO {
         db.close();
         return i;
     }
+
+
+
 }

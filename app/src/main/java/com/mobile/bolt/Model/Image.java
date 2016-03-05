@@ -11,7 +11,16 @@ public class Image {
     private String ASU_ID;
     private int graded;
     private int uploaded;
+    private String QrCodeSolution;
     public Image(){
+    }
+
+    public String getQrCodeSolution() {
+        return QrCodeSolution;
+    }
+
+    public void setQrCodeSolution(String qrCode) {
+        QrCodeSolution = qrCode;
     }
 
     public int getGraded() {
@@ -58,6 +67,6 @@ public class Image {
 
     @Override
     public String toString(){
-        return id+" "+ASU_ID+" "+Location+" "+graded+" "+uploaded;
+        return id+" "+ASU_ID+" "+Location+" "+graded+" "+uploaded+" "+QrCodeSolution;
     }
 }

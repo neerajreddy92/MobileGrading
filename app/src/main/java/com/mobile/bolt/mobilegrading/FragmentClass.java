@@ -141,11 +141,6 @@ public class FragmentClass extends Fragment {
             image.setASU_ID(ASUAD);
             image.setLocation(anotherPhotoPath);
             imageDAO.addImageLocation(image);
-        }else{
-            Image image=new Image();
-            image.setASU_ID(ASUAD);
-            image.setLocation(anotherPhotoPath);
-            imageDAO.addImageLocation(image);
         }
     }
 
