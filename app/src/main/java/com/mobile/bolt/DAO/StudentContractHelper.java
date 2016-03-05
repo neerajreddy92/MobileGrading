@@ -36,7 +36,7 @@ public class StudentContractHelper extends SQLiteOpenHelper {
     private static final String TABLE_NAME_QRCODE = "qrcode";
     private static final String KEY_QRCODE_ID = "id";
     private static final String KEY_QUESTION = "question";
-    private static final String KEY_QRCODE_VALUES = "values";
+    private static final String KEY_QRCODE_VALUES = "val";
 
     //General Db values.
     private static int DATABASE_VERSION = 1;
@@ -66,7 +66,7 @@ public class StudentContractHelper extends SQLiteOpenHelper {
         String CREATE_QRCODE_TABLE = "CREATE TABLE qrcode ( " +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "question TEXT, " +
-                "values TEXT )";
+                "val TEXT )";
         db.execSQL(CREATE_STUDENT_TABLE);
         db.execSQL(CREATE_QRCODE_TABLE);
         db.execSQL(CREATE_IMAGE_TABLE);

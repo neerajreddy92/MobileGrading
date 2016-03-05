@@ -179,7 +179,7 @@ public class MainActivity extends ActionBarActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         mChosenFile = mFileList[which];
                         //you can do stuff with the file here too
-                        String filePath=mPath.getAbsolutePath()+"//"+mChosenFile;
+                        String filePath=mPath.getAbsolutePath()+"/"+mChosenFile;
                         Toast.makeText(getBaseContext(),mChosenFile,Toast.LENGTH_LONG).show();
                         parseQrcode(filePath);
                     }

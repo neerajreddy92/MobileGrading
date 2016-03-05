@@ -39,7 +39,6 @@ public class ParsingQRcode extends AsyncTask<String,Integer,Boolean>{
                 int time= 75/qrCodes.size();
                 for(QrCode qrCode: qrCodes){
                     qrCodeDAO.addQRCODELocation(qrCode);
-                    Log.d(TAG, "doInBackground: adding qr code value" + qrCode);
                     publishProgress(25+time);
                 }
                 publishProgress(100);
