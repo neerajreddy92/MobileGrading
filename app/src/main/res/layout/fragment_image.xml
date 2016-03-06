@@ -1,55 +1,83 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.mobile.bolt.mobilegrading.ImageFragment"
-    android:weightSum="1">
+    android:weightSum="1"
+    tools:context="com.mobile.bolt.mobilegrading.ImageFragment">
+
     <com.mobile.bolt.mobilegrading.DrawingView
         android:id="@+id/drawing"
-        android:layout_width= "match_parent"
-        android:layout_height="564dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:background="#FFFFFFFF"
-        android:layout_weight="0.88" />
+        android:layout_weight="0.88"
+        android:background="#FFFFFFFF" />
 
-    <RelativeLayout
+
+    <ImageButton
+        android:id="@+id/process_show_labels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@mipmap/edit_button"
+        android:layout_marginRight="76dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginBottom="76dp"
+        android:layout_alignBottom="@+id/drawing"
+        android:layout_alignRight="@+id/drawing"
+        android:layout_alignEnd="@+id/drawing" />
+
+    <ImageButton
+        android:id="@+id/process_erase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@mipmap/undo_button"
+        android:layout_marginTop="63dp"
+        android:layout_below="@+id/process_next"
+        android:layout_alignLeft="@+id/process_next"
+        android:layout_alignStart="@+id/process_next" />
+
+    <ImageButton
+        android:id="@+id/process_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@mipmap/cancel_button"
+        android:layout_below="@+id/process_erase"
+        android:layout_alignLeft="@+id/process_erase"
+        android:layout_alignStart="@+id/process_erase"
+        android:layout_marginTop="79dp" />
+
+    <ImageButton
+        android:id="@+id/process_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@mipmap/save_buttons"
+        android:layout_alignTop="@+id/drawing"
+        android:layout_alignLeft="@+id/drawing"
+        android:layout_alignStart="@+id/drawing"
+        android:layout_marginLeft="63dp"
+        android:layout_marginStart="63dp"
+        android:layout_marginTop="63dp" />
+
+    <LinearLayout
+        android:id="@+id/label_box"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/drawing"
+        android:layout_alignLeft="@+id/drawing"
+        android:layout_alignStart="@+id/drawing"
+        android:layout_toLeftOf="@+id/process_show_labels"
+        android:layout_toStartOf="@+id/process_show_labels"
+        android:layout_below="@+id/process_done"
+        android:layout_marginTop="100dp"></LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/process_done"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:text="done for now" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Next"
-            android:id="@+id/process_next"
-            android:layout_alignTop="@+id/process_done"
-            android:layout_toLeftOf="@+id/process_done"
-            android:layout_toStartOf="@+id/process_done"
-            android:layout_marginRight="122dp"
-            android:layout_marginEnd="122dp" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="erase"
-            android:id="@+id/process_erase"
-            android:layout_alignTop="@+id/process_done"
-            android:layout_toRightOf="@+id/process_done"
-            android:layout_toEndOf="@+id/process_done"
-            android:layout_marginLeft="135dp"
-            android:layout_marginStart="135dp" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>

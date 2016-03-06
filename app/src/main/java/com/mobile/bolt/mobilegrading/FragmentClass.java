@@ -140,6 +140,7 @@ public class FragmentClass extends Fragment {
             Image image=new Image();
             image.setASU_ID(ASUAD);
             image.setLocation(anotherPhotoPath);
+            image.setQrCodeSolution(result);
             imageDAO.addImageLocation(image);
         }
     }

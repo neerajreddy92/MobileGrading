@@ -25,7 +25,7 @@ public class ImageDAO {
     private static final String KEY_GRADED = "graded";
     private static final String KEY_UPLOADED = "uploaded";
     private static final String KEY_IMAGE_QRCODESOLUTION="qrcodesolution";
-    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED};
+    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED,KEY_IMAGE_QRCODESOLUTION};
 
     public ImageDAO(Context context){
         sHelper=new StudentContractHelper(context);
@@ -40,10 +40,10 @@ public class ImageDAO {
             values.put(KEY_LOCATION, image.getLocation());
             values.put(KEY_GRADED,0);
             values.put(KEY_UPLOADED,0);
-            values.put(KEY_IMAGE_QRCODESOLUTION,"");
-            db.insert(TABLE_NAME_IMAGE, // table
-                    null, //nullColumnHack
-                    values); // key/value -> keys = column names/ values = column values
+            values.put(KEY_IMAGE_QRCODESOLUTION,image.getQrCodeSolution());
+        db.insert(TABLE_NAME_IMAGE, // table
+                null, //nullColumnHack
+                values); // key/value -> keys = column names/ values = column values
             db.close();
         return true;
     }
@@ -151,6 +151,7 @@ public class ImageDAO {
                     image.setLocation(cursor.getString(2));
                     image.setGraded(Integer.parseInt(cursor.getString(3)));
                     image.setUploaded(Integer.parseInt(cursor.getString(4)));
+                    image.setQrCodeSolution(cursor.getString(5));
                     if(image.getGraded()==0) {
                         images.add(image);
                     }

@@ -1,6 +1,5 @@
 package com.mobile.bolt.mobilegrading;
 
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.View;
@@ -11,10 +10,14 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.view.MotionEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Neeraj on 2/24/2016.
  */
-public class DrawingView extends View{
+public class DrawingView extends View {
     
     //drawing path
     private Path drawPath;
@@ -26,14 +29,19 @@ public class DrawingView extends View{
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
-    //Back up Bitmap.
-    private  Bitmap bitmapBackup;
-    //Back up canvas
-    private Canvas bitmapBackupCanvas;
     //Debug tag
     private String TAG="MobileGrading";
+
+    private boolean isErasing = false;
+    private List<Path> moveList = null;
+    private List<Path> undoList = null;
+    private List<Path> currentMoveList = null;
+
     public DrawingView(Context context, AttributeSet attrs){
         super(context, attrs);
+        moveList = new ArrayList<Path>();
+        undoList = new ArrayList<Path>();
+        currentMoveList =  new ArrayList<Path>();
         setupDrawing();
     }
     private void setupDrawing(){
@@ -53,14 +61,18 @@ public class DrawingView extends View{
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        bitmapBackup = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
-        bitmapBackupCanvas=new Canvas(bitmapBackup);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+//        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+        for (Path path : currentMoveList) {
+            canvas.drawPath(path, drawPaint);
+        }
+        for (Path path : moveList) {
+            canvas.drawPath(path, drawPaint);
+        }
         canvas.drawPath(drawPath, drawPaint);
     }
 
@@ -69,29 +81,20 @@ public class DrawingView extends View{
         try {
             drawCanvas.drawBitmap(bitmap, 0, 0, canvasPaint);
             invalidate();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, "setPicture: exception");
         }
         setBackgroundDrawable(new BitmapDrawable(bitmap));
     }
 
-    public void startNew(){
-        drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-        invalidate();
-    }
-    
-    private void touchStarted()
-    {
-        bitmapBackupCanvas.drawBitmap(canvasBitmap, 0, 0, null);
+    public void undo() {
+        if (moveList.size() > 0) {
+            undoList.add(moveList.remove(moveList.size() - 1));
+            invalidate();
+        }
     }
 
-    private void undo()
-    {
-        // TODO: 2/25/2016 finish undo porcess  
-        drawCanvas.drawBitmap(bitmapBackup, 0, 0, null); // restore from backup
-
-    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
        float touchX = event.getX();
@@ -102,9 +105,14 @@ public class DrawingView extends View{
                 break;
             case MotionEvent.ACTION_MOVE:
                 drawPath.lineTo(touchX, touchY);
+                currentMoveList.add(drawPath);
                 break;
             case MotionEvent.ACTION_UP:
+                drawPath.lineTo(touchX, touchY);
                 drawCanvas.drawPath(drawPath, drawPaint);
+                moveList.add(drawPath);
+                drawPath = new Path();
+                currentMoveList.clear();
                 drawPath.reset();
                 break;
             default:

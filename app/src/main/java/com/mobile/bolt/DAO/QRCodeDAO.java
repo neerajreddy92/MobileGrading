@@ -15,7 +15,7 @@ import com.mobile.bolt.Model.QrCode;
  */
 public class QRCodeDAO {
     private StudentContractHelper sHelper;
-    private String TAG="MobileGrading";
+    private String TAG = "MobileGrading";
 
     private static final String TABLE_NAME_QRCODE = "qrcode";
     private static final String KEY_QRCODE_ID = "id";
@@ -23,11 +23,13 @@ public class QRCodeDAO {
     private static final String KEY_QRCODE_VALUES = "val";
     private static final String[] COLUMNS_QRCODE = {KEY_QRCODE_ID, KEY_QUESTION, KEY_QRCODE_VALUES};
 
-    public QRCodeDAO(Context context){sHelper=new StudentContractHelper(context);}
+    public QRCodeDAO(Context context) {
+        sHelper = new StudentContractHelper(context);
+    }
 
     public boolean addQRCODELocation(QrCode qrCode) {
         //// TODO: 2/24/2016  have to handle duplicates.
-        if(verifyQuestionExists(qrCode.getQUESTION())){
+        if (verifyQuestionExists(qrCode.getQUESTION())) {
             return false;
         }
         SQLiteDatabase db = sHelper.getWritableDatabase();
@@ -42,27 +44,26 @@ public class QRCodeDAO {
         return true;
     }
 
-    public QrCode getSingleQrcodeLocation(Integer id){
+    public QrCode getSingleQrcodeLocation(Integer id) {
 
         SQLiteDatabase db = sHelper.getReadableDatabase();
 
         Cursor cursor =
                 db.query(TABLE_NAME_QRCODE, // a. table
                         COLUMNS_QRCODE, // b. column names
-                        KEY_QRCODE_ID+" = ?", // c. selections
-                        new String[] { String.valueOf(id) }, // d. selections args
+                        KEY_QRCODE_ID + " = ?", // c. selections
+                        new String[]{String.valueOf(id)}, // d. selections args
                         null, // e. group by
                         null, // f. having
                         null, // g. order by
                         null); // h. limit
-        if (cursor == null|| cursor.getCount()<=0) {
+        if (cursor == null || cursor.getCount() <= 0) {
             db.close();
             cursor.close();
             Log.d(TAG, "getSingleQrcodeLocation :No image locations available for" + id);
 
             return null;
-        }
-        else{
+        } else {
             cursor.moveToFirst();
             QrCode qrCode = new QrCode();
             qrCode.setID(Integer.parseInt(cursor.getString(0)));
@@ -89,12 +90,40 @@ public class QRCodeDAO {
         if (cursor == null || cursor.getCount() <= 0) {
             cursor.close();
             db.close();
-            Log.d(TAG, "verifyQuestionExists: "+question+" doesent exists");
+            Log.d(TAG, "verifyQuestionExists: " + question + " doesent exists");
             return false;
         }
         cursor.close();
         db.close();
         Log.d(TAG, "verifyQuestionExists: " + question + " exists");
         return true;
+    }
+
+    public QrCode getSingleQRcodeLocationOnQuestion(String question) {
+        SQLiteDatabase db = sHelper.getReadableDatabase();
+        Cursor cursor =
+                db.query(TABLE_NAME_QRCODE, // a. table
+                        COLUMNS_QRCODE, // b. column names
+                        KEY_QUESTION + " = ?", // c. selections
+                        new String[]{question}, // d. selections args
+                        null, // e. group by
+                        null, // f. having
+                        null, // g. order by
+                        null); // h. limit
+        if (cursor == null || cursor.getCount() <= 0) {
+            cursor.close();
+            db.close();
+            Log.d(TAG, "getSingleQRcodeLocationOnQuestion: " + question + " doesent exists");
+            return null;
+        }
+        cursor.moveToFirst();
+        QrCode qrCode = new QrCode();
+        qrCode.setID(Integer.parseInt(cursor.getString(0)));
+        qrCode.setQUESTION(cursor.getString(1));
+        qrCode.setVALUES(cursor.getString(2));
+        cursor.close();
+        db.close();
+        Log.d(TAG, "getSingleQRcodeLocationOnQuestion: " + qrCode.toString());
+        return qrCode;
     }
 }
