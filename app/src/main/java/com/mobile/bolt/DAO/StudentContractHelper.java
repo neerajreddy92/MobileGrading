@@ -62,6 +62,7 @@ public class StudentContractHelper extends SQLiteOpenHelper {
                 "graded INTEGER, " +
                 "uploaded INTEGER, " +
                 "qrcodesolution INTEGER, " +
+                "qrcodevalues TEXT, " +
                 "FOREIGN KEY(qrcodesolution) REFERENCES qrcode(id))";
         String CREATE_QRCODE_TABLE = "CREATE TABLE qrcode ( " +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +

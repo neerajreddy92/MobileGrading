@@ -13,9 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.mobile.bolt.DAO.ImageDAO;
+import com.mobile.bolt.DAO.QRCodeDAO;
 import com.mobile.bolt.Model.Image;
+import com.mobile.bolt.Model.QrCode;
 import com.mobile.bolt.mobilegrading.R;
 import com.mobile.bolt.mobilegrading.saveActivity;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,13 +54,14 @@ public class PopulatingOutputActivity extends AsyncTask<String,Integer, Map<Stri
     @Override
     protected   Map<String,List<Image>> doInBackground(String... params) {
         ImageDAO imageDAO = new ImageDAO(context);
+        QRCodeDAO qrCodeDAO = new QRCodeDAO(context);
         List<Image> images= imageDAO.getAllNonUploadedImages();
         Map<String,List<Image>> map=new HashMap<String,List<Image>>();
         if(images==null ||  images.isEmpty()) return map;
         for(Image image :images){
             if(map.containsKey(image.getASU_ID())){
                 map.get(image.getASU_ID()).add(image);
-                continue;
+               continue;
             }else{
                 LinkedList<Image> list = new LinkedList<Image>();
                 list.add(image);

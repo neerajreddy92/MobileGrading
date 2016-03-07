@@ -12,6 +12,18 @@ public class Image {
     private int graded;
     private int uploaded;
     private String QrCodeSolution;
+    private String QrCodeValues; //shameless hack
+
+    // TODO: 3/7/2016 update qr code values
+
+    public String getQrCodeValues() {
+        return QrCodeValues;
+    }
+
+    public void setQrCodeValues(String qrCodeValues) {
+        QrCodeValues = qrCodeValues;
+    }
+
     public Image(){
     }
 
@@ -67,6 +79,6 @@ public class Image {
 
     @Override
     public String toString(){
-        return id+" "+ASU_ID+" "+Location+" "+graded+" "+uploaded+" "+QrCodeSolution;
+        return id+" "+ASU_ID+" "+Location+" "+graded+" "+uploaded+" "+QrCodeSolution+" "+QrCodeValues;
     }
 }

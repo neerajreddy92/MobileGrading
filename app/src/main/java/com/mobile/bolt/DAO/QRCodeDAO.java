@@ -30,6 +30,7 @@ public class QRCodeDAO {
     public Integer addQRCODELocation(QrCode qrCode) {
         //// TODO: 2/24/2016  have to handle duplicates.
         if (verifyQuestionExists(qrCode.getQUESTION())) {
+            Log.d(TAG, "addQRCODELocation: question exists");
             return 0;
         }
         SQLiteDatabase db = sHelper.getWritableDatabase();

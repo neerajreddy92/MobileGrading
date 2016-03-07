@@ -27,7 +27,8 @@ public class ImageDAO {
     private static final String KEY_GRADED = "graded";
     private static final String KEY_UPLOADED = "uploaded";
     private static final String KEY_IMAGE_QRCODESOLUTION="qrcodesolution";
-    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED,KEY_IMAGE_QRCODESOLUTION};
+    private static final String KEY_IMAGE_QRCODE_VALUES="qrcodevalues";
+    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED,KEY_IMAGE_QRCODESOLUTION,KEY_IMAGE_QRCODE_VALUES};
 
     public ImageDAO(Context context){
         sHelper=new StudentContractHelper(context);
@@ -50,7 +51,20 @@ public class ImageDAO {
             db.close();
         return true;
     }
-
+    public int updateGradedStatusNow(Image image) {
+        SQLiteDatabase db = sHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_GRADED, image.getGraded());
+        values.put(KEY_LOCATION, image.getLocation());
+        values.put(KEY_IMAGE_QRCODE_VALUES,image.getQrCodeValues());
+        int i = db.update(TABLE_NAME_IMAGE, //table
+                values, // column/value
+                KEY_ID + " = ?", // selections
+                new String[]{String.valueOf(image.getId())}); //selection args
+        Log.d(TAG, "updateGradedStatusNow: uptaded graded status of "+image.toString());
+        db.close();
+        return i;
+    }
 
     public List<Image> getAllImageLocation(String ASU_ID){
         SQLiteDatabase db = sHelper.getReadableDatabase();
@@ -234,7 +248,8 @@ public class ImageDAO {
                 image.setLocation(cursor.getString(2));
                 image.setGraded(Integer.parseInt(cursor.getString(3)));
                 image.setUploaded(Integer.parseInt(cursor.getString(4)));
-                image.setUploaded(Integer.parseInt(cursor.getString(4)));
+                image.setQrCodeSolution(cursor.getString(5));
+                image.setQrCodeValues(cursor.getString(6));
                 images.add(image);
                 Log.d(TAG, "getAllNonUploadedImageLocations: Getting image location : "+image.toString());
             } while (cursor.moveToNext());
@@ -244,19 +259,7 @@ public class ImageDAO {
 
     }
 
-    public int updateGradedStatusNow(Image image) {
-        SQLiteDatabase db = sHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(KEY_GRADED, image.getGraded());
-        values.put(KEY_LOCATION, image.getLocation());
-        values.put(KEY_IMAGE_QRCODESOLUTION,image.getQrCodeSolution());
-        int i = db.update(TABLE_NAME_IMAGE, //table
-                values, // column/value
-                KEY_ID + " = ?", // selections
-                new String[]{String.valueOf(image.getId())}); //selection args
-        db.close();
-        return i;
-    }
+
 
     public int updateUploadStatusNow(Image image) {
         SQLiteDatabase db = sHelper.getWritableDatabase();

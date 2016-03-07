@@ -294,6 +294,7 @@ public class ImageFragment extends Fragment {
         if (images != null && !images.isEmpty()) {
             String val="";
             //// TODO: 3/6/2016 add cover if label doesent exist.  
+            if(label!=null){
             for(int  i=0;i<label.size();i++){
                 val=val+label.get(i)+":";
                 val=val+Weights.get(i)+";";
@@ -301,17 +302,12 @@ public class ImageFragment extends Fragment {
             if(LABEL_VIEW_TRUE){
                 toggleLableView(rootview);
             }
-            QRcodeRetreive();
-            createLabelButtons(rootview);
+            }
             Image image = images.get(0);
-            QrCode qrCode = new QrCode();
-            qrCode.setVALUES(val);
-            qrCode.setQUESTION("start:" + image.getQrCodeSolution());
-            qrCodeDAO.addQRCODELocation(qrCode);
             // TODO: 3/6/2016 make sure all the duplicates are deleted.
             image.setLocation(mCurrentPhotoPath);
             image.setGraded(1);
-            image.setQrCodeSolution(qrCode.getQUESTION());
+            image.setQrCodeValues(val);
             imageDAO.updateGradedStatusNow(image);
             images.remove(0);
             if (!images.isEmpty()) {
@@ -321,6 +317,8 @@ public class ImageFragment extends Fragment {
                 Toast.makeText(getContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }
+            QRcodeRetreive();
+            createLabelButtons(rootview);
             displayBitmap(rootview);
         }
     }

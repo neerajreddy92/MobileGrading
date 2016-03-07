@@ -8,8 +8,10 @@ import android.util.Log;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.mobile.bolt.Model.Image;
+import com.mobile.bolt.Model.QrCode;
 import com.mobile.bolt.support.LoadImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,11 +23,12 @@ import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Neeraj on 3/6/2016.
  */
-public class WriteOutput extends AsyncTask<List<Image>, Integer, Boolean> {
+public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
     private String TAG= "MobileGrading";
     Context context =null;
     public WriteOutput(Context context){
@@ -38,8 +41,8 @@ public class WriteOutput extends AsyncTask<List<Image>, Integer, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(List<Image>... params) {
-        List<Image> images=params[0];
+    protected Boolean doInBackground(Object... params) {
+        List<Image> images=(List<Image>)params[0];
         if(images==null || images.isEmpty()) return false;
         try {
             File file = createNewPdfFile(images.get(0).getASU_ID());
@@ -48,6 +51,7 @@ public class WriteOutput extends AsyncTask<List<Image>, Integer, Boolean> {
                 Document document = new Document(PageSize.LETTER);
                 PdfWriter.getInstance(document, new FileOutputStream(file));
                 document.open();
+                int i=0;
                 for (Image image : images) {
                     img =   com.itextpdf.text.Image.getInstance(image.getLocation());
                     document.setPageSize(PageSize.LETTER);
@@ -55,8 +59,9 @@ public class WriteOutput extends AsyncTask<List<Image>, Integer, Boolean> {
                     float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
                             - document.rightMargin() - indentation) / img.getWidth()) * 100;
                     img.scalePercent(scaler);
-//                    img.setAbsolutePosition(0, 0);
                     document.add(img);
+                    document.add(new Paragraph(""+image.getQrCodeSolution()+" "+image.getQrCodeValues()));
+                    i++;
                 }
                 document.close();
         } catch (FileNotFoundException e) {
