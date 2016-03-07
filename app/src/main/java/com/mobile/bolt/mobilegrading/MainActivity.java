@@ -12,10 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -24,13 +21,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.mobile.bolt.AsyncTasks.ParsingQRcode;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements FragmentClass.OnFragmentInteractionListener {
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -64,6 +58,14 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v){
                 loadFileList();
                 onCreateDialog(1000);
+            }
+        });
+        Button writeOutput= (Button) findViewById(R.id.write_output);
+        writeOutput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, saveActivity.class);
+                MainActivity.this.startActivity(intent);
             }
         });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -188,5 +190,10 @@ public class MainActivity extends ActionBarActivity {
         }
         dialog = builder.show();
         return dialog;
+    }
+
+    @Override
+    public void onFragmentInteraction(String str) {
+
     }
 }

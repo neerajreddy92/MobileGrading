@@ -27,21 +27,21 @@ public class QRCodeDAO {
         sHelper = new StudentContractHelper(context);
     }
 
-    public boolean addQRCODELocation(QrCode qrCode) {
+    public Integer addQRCODELocation(QrCode qrCode) {
         //// TODO: 2/24/2016  have to handle duplicates.
         if (verifyQuestionExists(qrCode.getQUESTION())) {
-            return false;
+            return 0;
         }
         SQLiteDatabase db = sHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_QUESTION, qrCode.getQUESTION());
         values.put(KEY_QRCODE_VALUES, qrCode.getVALUES());
-        db.insert(TABLE_NAME_QRCODE, // table
+        Long val= db.insert(TABLE_NAME_QRCODE, // table
                 null, //nullColumnHack
                 values); // key/value -> keys = column names/ values = column values
         db.close();
         Log.d(TAG, "addQRCODELocation: " + qrCode.toString());
-        return true;
+        return val != null ? val.intValue() : null;
     }
 
     public QrCode getSingleQrcodeLocation(Integer id) {
@@ -126,4 +126,5 @@ public class QRCodeDAO {
         Log.d(TAG, "getSingleQRcodeLocationOnQuestion: " + qrCode.toString());
         return qrCode;
     }
+
 }

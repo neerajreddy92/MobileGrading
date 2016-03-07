@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.mobile.bolt.Model.Image;
+import com.mobile.bolt.Model.QrCode;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,9 +17,9 @@ import java.util.List;
  * Created by Neeraj on 2/24/2016.
  */
 public class ImageDAO {
+
     private StudentContractHelper sHelper;
     private String TAG="MobileGrading";
-
     private static final String TABLE_NAME_IMAGE="imageStorage";
     private static final String KEY_ID="id";
     private static final String KEY_ASU_ID_IMAGE = "asuad";
@@ -35,6 +37,7 @@ public class ImageDAO {
         //// TODO: 2/24/2016  have to handle duplicates.
         Log.d(TAG, "addImageLocation: " + image.toString());
             SQLiteDatabase db = sHelper.getWritableDatabase();
+
             ContentValues values = new ContentValues();
             values.put(KEY_ASU_ID_IMAGE, image.getASU_ID());
             values.put(KEY_LOCATION, image.getLocation());
@@ -204,11 +207,49 @@ public class ImageDAO {
         }
 
     }
+
+    public List<Image> getAllNonUploadedImages(){
+        SQLiteDatabase db = sHelper.getReadableDatabase();
+        Cursor cursor =db.query(TABLE_NAME_IMAGE, // a. table
+                COLUMNS_IMAGE, // b. column names
+                "graded = ? AND uploaded = ?", // c. selections
+                new String[]{String.valueOf(1),String.valueOf(0)}, // d. selections args
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+        if (cursor == null|| cursor.getCount()<=0) {
+            db.close();
+            cursor.close();
+            Log.d(TAG, "getAllNonUploadedImageLocations :No image locations available that are not uploaded");
+            return null;
+        }
+        List<Image> images = new ArrayList<Image>() ;
+        Image image=null;
+        if (cursor.moveToFirst()) {
+            do {
+                image = new Image();
+                image.setId(Integer.parseInt(cursor.getString(0)));
+                image.setASU_ID(cursor.getString(1));
+                image.setLocation(cursor.getString(2));
+                image.setGraded(Integer.parseInt(cursor.getString(3)));
+                image.setUploaded(Integer.parseInt(cursor.getString(4)));
+                image.setUploaded(Integer.parseInt(cursor.getString(4)));
+                images.add(image);
+                Log.d(TAG, "getAllNonUploadedImageLocations: Getting image location : "+image.toString());
+            } while (cursor.moveToNext());
+        }cursor.close();
+        db.close();
+        return images;
+
+    }
+
     public int updateGradedStatusNow(Image image) {
         SQLiteDatabase db = sHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_GRADED, image.getGraded());
         values.put(KEY_LOCATION, image.getLocation());
+        values.put(KEY_IMAGE_QRCODESOLUTION,image.getQrCodeSolution());
         int i = db.update(TABLE_NAME_IMAGE, //table
                 values, // column/value
                 KEY_ID + " = ?", // selections
@@ -225,6 +266,7 @@ public class ImageDAO {
                 values, // column/value
                 KEY_ID + " = ?", // selections
                 new String[]{String.valueOf(image.getId())}); //selection args
+        Log.d(TAG, "updateUploadStatusNow: updating image as "+image.toString());
         db.close();
         return i;
     }

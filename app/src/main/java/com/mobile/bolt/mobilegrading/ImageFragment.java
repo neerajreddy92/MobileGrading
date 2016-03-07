@@ -68,6 +68,7 @@ public class ImageFragment extends Fragment {
     private String TAG = "MobileGrading";
     private List<Image> images = null;
     private ImageDAO imageDAO = null;
+    QRCodeDAO qrCodeDAO=null;
     String mCurrentPhotoPath;
     private final String test1 = "MobileGrading";
     Boolean LABEL_VIEW_TRUE = false;
@@ -102,35 +103,6 @@ public class ImageFragment extends Fragment {
         }
     }
 
-    private Boolean QRcodeRetreive(){
-        if(QR_CODE_QUESTION==null) return false;
-        QRCodeDAO qrCodeDAO = new QRCodeDAO(getContext());
-        QrCode qrCode = qrCodeDAO.getSingleQRcodeLocationOnQuestion(QR_CODE_QUESTION);
-        if(qrCode==null){
-            return false;
-        }
-        String val = qrCode.getVALUES();
-        label = new ArrayList<String>();
-        Weights = new ArrayList<Integer>();
-        String current="";
-        for(int i=0;i<val.length();i++){
-            char curr= val.charAt(i);
-            if(curr==':'){
-                label.add(current);
-                current="";
-                continue;
-            }
-            if(curr==';'){
-                Weights.add(Integer.parseInt(current));
-                current="";
-                continue;
-            }
-            current=current+curr;
-        }
-        Log.d(TAG, "QRcodeRetreive: qr code labels" + label.toString());
-        Log.d(TAG, "QRcodeRetreive: qr code weights" + Weights.toString());
-        return true;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -217,13 +189,43 @@ public class ImageFragment extends Fragment {
 
 
 
+    private Boolean QRcodeRetreive(){
+        if(QR_CODE_QUESTION==null) return false;
+        qrCodeDAO = new QRCodeDAO(getContext());
+        QrCode qrCode = qrCodeDAO.getSingleQRcodeLocationOnQuestion(QR_CODE_QUESTION);
+        if(qrCode==null){
+            return false;
+        }
+        String val = qrCode.getVALUES();
+        label = new ArrayList<String>();
+        Weights = new ArrayList<Integer>();
+        String current="";
+        for(int i=0;i<val.length();i++){
+            char curr= val.charAt(i);
+            if(curr==':'){
+                label.add(current);
+                current="";
+                continue;
+            }
+            if(curr==';'){
+                Weights.add(Integer.parseInt(current));
+                current="";
+                continue;
+            }
+            current=current+curr;
+        }
+        Log.d(TAG, "QRcodeRetreive: qr code labels" + label.toString());
+        Log.d(TAG, "QRcodeRetreive: qr code weights" + Weights.toString());
+        return true;
+    }
+
     private void createLabelButtons(View rootView) {
         if (label == null || Weights == null) {
             return;
         }
-        labelButton = new Button[label.size()];
-        weightView = new Button[label.size()];
-        removeButton = new Button[label.size()];
+            labelButton = new Button[label.size()];
+            weightView = new Button[label.size()];
+            removeButton = new Button[label.size()];
         LinearLayout labelBox = (LinearLayout) rootView.findViewById(R.id.label_box);
         for (int i = 0; i < label.size(); i++) {
             labelButton[i] = new Button(getContext());
@@ -292,9 +294,25 @@ public class ImageFragment extends Fragment {
 
     private void dispatchDisplayNextImage(View rootview) {
         if (images != null && !images.isEmpty()) {
+            String val="";
+            for(int  i=0;i<label.size();i++){
+                val=val+label.get(i)+":";
+                val=val+Weights.get(i)+";";
+            }
+            if(LABEL_VIEW_TRUE){
+                toggleLableView(rootview);
+            }
+            QRcodeRetreive();
+            createLabelButtons(rootview);
             Image image = images.get(0);
+            QrCode qrCode = new QrCode();
+            qrCode.setVALUES(val);
+            qrCode.setQUESTION("start:" + image.getQrCodeSolution());
+            qrCodeDAO.addQRCODELocation(qrCode);
+            // TODO: 3/6/2016 make sure all the duplicates are deleted.
             image.setLocation(mCurrentPhotoPath);
             image.setGraded(1);
+            image.setQrCodeSolution(qrCode.getQUESTION());
             imageDAO.updateGradedStatusNow(image);
             images.remove(0);
             if (!images.isEmpty()) {

@@ -9,9 +9,10 @@
         android:text="Strat Grading"
         android:id="@+id/main_button"
         android:layout_gravity="center_horizontal|top"
-        android:layout_marginBottom="191dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="146dp"
+        android:layout_below="@+id/write_output"
+        android:layout_alignLeft="@+id/write_output"
+        android:layout_alignStart="@+id/write_output" />
 
     <Button
         android:layout_width="wrap_content"
@@ -22,7 +23,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="231dp" />
 
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Write output"
+        android:id="@+id/write_output"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

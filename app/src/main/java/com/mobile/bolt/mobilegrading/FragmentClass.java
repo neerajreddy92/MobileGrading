@@ -103,7 +103,6 @@ public class FragmentClass extends Fragment {
     private void displayBitmapOnView(){
         mListener.onFragmentInteraction(anotherPhotoPath);
     }
-
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
