@@ -50,7 +50,7 @@ public class WriteOutput extends AsyncTask<List<Image>, Integer, Boolean> {
                 document.open();
                 for (Image image : images) {
                     img =   com.itextpdf.text.Image.getInstance(image.getLocation());
-                    document.setPageSize(img);
+                    document.setPageSize(PageSize.LETTER);
                     document.newPage();
                     float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
                             - document.rightMargin() - indentation) / img.getWidth()) * 100;

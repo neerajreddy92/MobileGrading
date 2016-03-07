@@ -1,5 +1,6 @@
 package com.mobile.bolt.mobilegrading;
 
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.View;
@@ -79,8 +80,10 @@ public class DrawingView extends View {
 
     public void setPicture (Bitmap bitmap) {
         try {
-            drawCanvas.drawBitmap(bitmap, 0, 0, canvasPaint);
-            invalidate();
+//            drawCanvas.drawBitmap(bitmap, 0, 0, canvasPaint);
+//            invalidate();
+            while (moveList.size() > 0)
+                undo();
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, "setPicture: exception");
