@@ -18,16 +18,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.zxing.qrcode.encoder.QRCode;
 import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.DAO.QRCodeDAO;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.QrCode;
 import com.mobile.bolt.support.ExifUtil;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -128,7 +124,9 @@ public class ImageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (imageLocation != null) {
-                    Bitmap bMap = drawView.getDrawingCache();
+                    drawView.setDrawingCacheEnabled(true);
+                    Bitmap bMap = drawView.getDrawingCache(true).copy(Bitmap.Config.RGB_565, false);
+                    drawView.destroyDrawingCache();
                     if (dispatchSaveImage(bMap)) {
                         dispatchDisplayNextImage(rootView);
                     }
@@ -295,6 +293,7 @@ public class ImageFragment extends Fragment {
     private void dispatchDisplayNextImage(View rootview) {
         if (images != null && !images.isEmpty()) {
             String val="";
+            //// TODO: 3/6/2016 add cover if label doesent exist.  
             for(int  i=0;i<label.size();i++){
                 val=val+label.get(i)+":";
                 val=val+Weights.get(i)+";";

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -55,6 +56,13 @@ public class Activity_grade extends AppCompatActivity {
                    }else{
                     Toast.makeText(getBaseContext(), "Dosent Exist in the database", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+        ImageButton cancel_grade= (ImageButton)findViewById(R.id.cancel_grade);
+        cancel_grade.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
         btr1.setOnClickListener(new View.OnClickListener() {

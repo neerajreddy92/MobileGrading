@@ -55,7 +55,7 @@ public class WriteOutput extends AsyncTask<List<Image>, Integer, Boolean> {
                     float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
                             - document.rightMargin() - indentation) / img.getWidth()) * 100;
                     img.scalePercent(scaler);
-                    img.setAbsolutePosition(0, 0);
+//                    img.setAbsolutePosition(0, 0);
                     document.add(img);
                 }
                 document.close();

@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,6 +33,13 @@ public class saveActivity extends AppCompatActivity implements PopulatingOutputA
         setContentView(R.layout.activity_save);
         ImageDAO imageDAO = new ImageDAO(getBaseContext());
         new PopulatingOutputActivity(getBaseContext(),findViewById(android.R.id.content)).execute("something irrelavant");
+        ImageButton cancel_now = (ImageButton) findViewById(R.id.cancel_now);
+         cancel_now.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                finish();
+             }
+         });
     }
 
     @Override
