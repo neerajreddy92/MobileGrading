@@ -72,7 +72,7 @@ public class ImageFragment extends Fragment {
     Button[] labelButton = null;
     Button[] weightView = null;
     Button[] removeButton = null;
-
+    LinearLayout horizontalLayout = null;
     public static ImageFragment newInstance(String param1, String param2) {
         ImageFragment fragment = new ImageFragment();
         Bundle args = new Bundle();
@@ -129,6 +129,12 @@ public class ImageFragment extends Fragment {
                 }
             }
         });
+        rootView.findViewById(R.id.process_refresh_labels).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generateQuestionWeights(rootView);
+            }
+        });
         ImageButton undo = (ImageButton) rootView.findViewById(R.id.process_erase);
         undo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,8 +175,11 @@ public class ImageFragment extends Fragment {
                 removeButton[i].setEnabled(false);
                 removeButton[i].setVisibility(drawView.GONE);
             }
+            rootView.findViewById(R.id.process_refresh_labels).setEnabled(false);
+            rootView.findViewById(R.id.process_refresh_labels).setVisibility(drawView.GONE);
             Log.d(TAG, "toggleLableView: disabling label view");
             LABEL_VIEW_TRUE = false;
+            Log.d(TAG, "dispatchDisplayNextImage: chanigng label view to "+false);
         } else {
             for (int i = 0; i < label.size(); i++) {
                 if (Weights.get(i) == 0) {
@@ -184,7 +193,10 @@ public class ImageFragment extends Fragment {
                 removeButton[i].setVisibility(View.VISIBLE);
                 Log.d(TAG, "toggleLableView: showing label view");
             }
+            rootView.findViewById(R.id.process_refresh_labels).setEnabled(true);
+            rootView.findViewById(R.id.process_refresh_labels).setVisibility(View.VISIBLE);
             LABEL_VIEW_TRUE = true;
+            Log.d(TAG, "dispatchDisplayNextImage: chanigng label view to "+true);
         }
     }
 
@@ -224,10 +236,19 @@ public class ImageFragment extends Fragment {
         if (label == null || Weights == null) {
             return;
         }
+        LinearLayout labelBox = (LinearLayout) rootView.findViewById(R.id.label_box);
+        if(labelButton!=null){
+            for(int i=0;i<labelButton.length;i++){
+                labelButton[i].setVisibility(View.GONE);
+                weightView[i].setVisibility(View.GONE);
+                removeButton[i].setVisibility(View.GONE);
+            }
+            horizontalLayout.setVisibility(drawView.GONE);
+        }
             labelButton = new Button[label.size()];
             weightView = new Button[label.size()];
             removeButton = new Button[label.size()];
-        LinearLayout labelBox = (LinearLayout) rootView.findViewById(R.id.label_box);
+
         for (int i = 0; i < label.size(); i++) {
             labelButton[i] = new Button(getContext());
             labelButton[i].setText(label.get(i));
@@ -245,15 +266,18 @@ public class ImageFragment extends Fragment {
             removeButton[i].setText("X");
             removeButton[i].setLayoutParams(lp);
             labelButton[i].setBackgroundColor(Color.TRANSPARENT);
-            weightView[i].setEnabled(false);
-            weightView[i].setVisibility(drawView.GONE);
             weightView[i].setBackgroundColor(Color.TRANSPARENT);
-            labelButton[i].setEnabled(false);
-            labelButton[i].setVisibility(drawView.GONE);
-            removeButton[i].setEnabled(false);
-            removeButton[i].setVisibility(drawView.GONE);
+            if(!LABEL_VIEW_TRUE){
+                removeButton[i].setVisibility(drawView.GONE);
+                labelButton[i].setVisibility(drawView.GONE);
+                weightView[i].setVisibility(drawView.GONE);
+                labelButton[i].setEnabled(false);
+                removeButton[i].setEnabled(false);
+                weightView[i].setEnabled(false);
+            }
             removeButton[i].setBackgroundColor(Color.TRANSPARENT);
             LinearLayout layout = new LinearLayout(getContext());
+            horizontalLayout=layout;
             layout.setOrientation(LinearLayout.HORIZONTAL);
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params1.setMargins(0,30,0,0);
@@ -263,39 +287,36 @@ public class ImageFragment extends Fragment {
             layout.addView(weightView[i]);
             layout.addView(removeButton[i]);
             labelBox.addView(layout);
-            labelButton[i].setOnClickListener(handleOnClickforLabel(labelButton[i], weightView[i], removeButton[i], i));
-            removeButton[i].setOnClickListener(handleOnClickforRemove(removeButton[i], weightView[i], labelButton[i], i));
+            labelButton[i].setOnClickListener(handleOnClickforLabel(labelButton[i], weightView[i], removeButton[i], i,layout));
+            removeButton[i].setOnClickListener(handleOnClickforRemove(removeButton[i], weightView[i], labelButton[i], i,layout));
         }
     }
 
-    View.OnClickListener handleOnClickforLabel(final Button labelButton, final Button weightButton, final Button removeButton, final int i) {
+    View.OnClickListener handleOnClickforLabel(final Button labelButton, final Button weightButton, final Button removeButton, final int i,final LinearLayout layout) {
         return new View.OnClickListener() {
             public void onClick(View v) {
                 Weights.set(i, Weights.get(i) - 1);
                 if (Weights.get(i) == 0) {
                     weightButton.setEnabled(false);
-                    weightButton.setVisibility(drawView.GONE);
                     labelButton.setEnabled(false);
-                    labelButton.setVisibility(drawView.GONE);
                     removeButton.setEnabled(false);
-                    removeButton.setVisibility(drawView.GONE);
+                    layout.setBackgroundColor(Color.GRAY);
                 } else {
                     weightButton.setText(String.valueOf(Weights.get(i)));
+                    layout.setBackgroundColor(Color.RED);
                 }
             }
         };
     }
 
-    View.OnClickListener handleOnClickforRemove(final Button removeButton, final Button weightButton, final Button labelButton, final int i) {
+    View.OnClickListener handleOnClickforRemove(final Button removeButton, final Button weightButton, final Button labelButton, final int i,final LinearLayout layout) {
         return new View.OnClickListener() {
             public void onClick(View v) {
                 Weights.set(i, 0);
                 weightButton.setEnabled(false);
-                weightButton.setVisibility(drawView.GONE);
                 labelButton.setEnabled(false);
-                labelButton.setVisibility(drawView.GONE);
                 removeButton.setEnabled(false);
-                removeButton.setVisibility(drawView.GONE);
+                layout.setBackgroundColor(Color.GRAY);
             }
         };
     }
@@ -323,6 +344,8 @@ public class ImageFragment extends Fragment {
             if (!images.isEmpty()) {
                 imageLocation = images.get(0).getLocation();
                 QR_CODE_QUESTION= images.get(0).getQrCodeSolution();
+                LABEL_VIEW_TRUE=false;
+                Log.d(TAG, "dispatchDisplayNextImage: chanigng label view to "+false);
                 generateQuestionWeights(rootview);
                 displayBitmap(rootview);
             } else {

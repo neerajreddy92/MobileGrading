@@ -13,12 +13,16 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.QrCode;
 import com.mobile.bolt.support.LoadImage;
+
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +50,9 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
         if(images==null || images.isEmpty()) return false;
         try {
             File file = createNewPdfFile(images.get(0).getASU_ID());
-                int indentation = 1;
+            File textFile = createNewTextFile(images.get(0).getASU_ID());
+            BufferedWriter bw = new BufferedWriter(new FileWriter(textFile));
+            int indentation = 1;
                 com.itextpdf.text.Image img;
                 Document document = new Document(PageSize.LETTER);
                 PdfWriter.getInstance(document, new FileOutputStream(file));
@@ -61,8 +67,11 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
                     img.scalePercent(scaler);
                     document.add(img);
                     document.add(new Paragraph(""+image.getQrCodeSolution()+" "+image.getQrCodeValues()));
+                    bw.write("" + i + ": " + image.getQrCodeSolution() + " " + image.getQrCodeValues());
+                    bw.newLine();
                     i++;
                 }
+            bw.close();
                 document.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -92,6 +101,12 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
         Date date = new Date() ;
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(date);
         File myFile = new File(Environment.getExternalStorageDirectory() + "//Documents//pdfoutput//"+name+"_"+timeStamp + ".pdf");
+        return myFile;
+    }
+    public File createNewTextFile(String name){
+        Date date = new Date() ;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(date);
+        File myFile = new File(Environment.getExternalStorageDirectory() + "//Documents//textoutput//"+name+"_"+timeStamp + ".txt");
         return myFile;
     }
 }

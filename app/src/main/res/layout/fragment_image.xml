@@ -65,6 +65,17 @@
         android:layout_marginStart="63dp"
         android:layout_marginTop="63dp" />
 
+    <ImageButton
+        android:id="@+id/process_refresh_labels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@mipmap/refresh_button"
+        android:visibility="gone"
+        android:layout_alignTop="@+id/process_show_labels"
+        android:layout_toLeftOf="@+id/label_box"
+        android:layout_toStartOf="@+id/label_box" />
+
     <LinearLayout
         android:id="@+id/label_box"
         android:orientation="vertical"

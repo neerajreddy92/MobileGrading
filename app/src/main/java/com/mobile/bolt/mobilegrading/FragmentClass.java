@@ -97,6 +97,12 @@ public class FragmentClass extends Fragment {
                 displayBitmapOnView();
             }
         });
+        rootView.findViewById(R.id.process_done_fragment_main).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
         return rootView;
     }
 
