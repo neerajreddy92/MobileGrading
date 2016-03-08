@@ -10,12 +10,11 @@
         android:id="@+id/drawing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
         android:layout_weight="0.88"
-        android:background="#FFFFFFFF" />
+        android:background="#FFFFFFFF"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 
     <ImageButton
@@ -36,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:src="@mipmap/undo_button"
+        android:src="@mipmap/undo_button_new"
         android:layout_marginTop="63dp"
         android:layout_below="@+id/process_next"
         android:layout_alignLeft="@+id/process_next"
@@ -68,16 +67,22 @@
 
     <LinearLayout
         android:id="@+id/label_box"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignBottom="@+id/drawing"
-        android:layout_alignLeft="@+id/drawing"
-        android:layout_alignStart="@+id/drawing"
-        android:layout_toLeftOf="@+id/process_show_labels"
-        android:layout_toStartOf="@+id/process_show_labels"
-        android:layout_below="@+id/process_done"
-        android:layout_marginTop="100dp"></LinearLayout>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/textView5"
+        android:layout_toEndOf="@+id/textView5"
+        android:layout_below="@+id/process_next"></LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView5"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

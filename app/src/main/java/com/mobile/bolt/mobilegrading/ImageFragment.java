@@ -93,7 +93,7 @@ public class ImageFragment extends Fragment {
             QR_CODE_QUESTION=images.get(0).getQrCodeSolution();
         }else
             Log.e(TAG, "onCreate: images is empty or null");
-        if (getArguments() != null) {
+            if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
@@ -110,11 +110,7 @@ public class ImageFragment extends Fragment {
         if (imageLocation != null) {
             displayBitmap(rootView);
             showLabels.setEnabled(true);
-            if(!QRcodeRetreive()){
-                Log.d(TAG, "onCreateView: seeing show labels as false");
-                showLabels.setEnabled(false);
-            }
-            createLabelButtons(rootView);
+            generateQuestionWeights(rootView);
         } else {
             showLabels.setEnabled(false);
             Toast.makeText(getContext(), "No images available to grade", Toast.LENGTH_SHORT).show();
@@ -154,6 +150,13 @@ public class ImageFragment extends Fragment {
             }
         });
         return rootView;
+    }
+    private void generateQuestionWeights(View rootView){
+        if(!QRcodeRetreive()){
+            Log.d(TAG, "onCreateView: seeing show labels as false");
+            rootView.findViewById(R.id.process_show_labels).setEnabled(false);
+        }
+        createLabelButtons(rootView);
     }
 
     private void toggleLableView(View rootView) {
@@ -232,27 +235,34 @@ public class ImageFragment extends Fragment {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            labelButton[i].setBackgroundColor(Color.RED);
             params.setMargins(30, 0, 0, 0);
             labelButton[i].setLayoutParams(params);
             weightView[i] = new Button(getContext());
-            weightView[i].setBackgroundColor(Color.RED);
             weightView[i].setText(String.valueOf(Weights.get(i)));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(70, LinearLayout.LayoutParams.WRAP_CONTENT);
             weightView[i].setLayoutParams(lp);
             removeButton[i] = new Button(getContext());
             removeButton[i].setText("X");
-            removeButton[i].setBackgroundColor(Color.RED);
             removeButton[i].setLayoutParams(lp);
+            labelButton[i].setBackgroundColor(Color.TRANSPARENT);
             weightView[i].setEnabled(false);
             weightView[i].setVisibility(drawView.GONE);
+            weightView[i].setBackgroundColor(Color.TRANSPARENT);
             labelButton[i].setEnabled(false);
             labelButton[i].setVisibility(drawView.GONE);
             removeButton[i].setEnabled(false);
             removeButton[i].setVisibility(drawView.GONE);
-            labelBox.addView(labelButton[i]);
-            labelBox.addView(weightView[i]);
-            labelBox.addView(removeButton[i]);
+            removeButton[i].setBackgroundColor(Color.TRANSPARENT);
+            LinearLayout layout = new LinearLayout(getContext());
+            layout.setOrientation(LinearLayout.HORIZONTAL);
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params1.setMargins(0,30,0,0);
+            layout.setLayoutParams(params1);
+            layout.setBackgroundColor(0xFFd88827);
+            layout.addView(labelButton[i]);
+            layout.addView(weightView[i]);
+            layout.addView(removeButton[i]);
+            labelBox.addView(layout);
             labelButton[i].setOnClickListener(handleOnClickforLabel(labelButton[i], weightView[i], removeButton[i], i));
             removeButton[i].setOnClickListener(handleOnClickforRemove(removeButton[i], weightView[i], labelButton[i], i));
         }
@@ -312,14 +322,14 @@ public class ImageFragment extends Fragment {
             images.remove(0);
             if (!images.isEmpty()) {
                 imageLocation = images.get(0).getLocation();
+                QR_CODE_QUESTION= images.get(0).getQrCodeSolution();
+                generateQuestionWeights(rootview);
+                displayBitmap(rootview);
             } else {
                 imageLocation = null;
                 Toast.makeText(getContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }
-            QRcodeRetreive();
-            createLabelButtons(rootview);
-            displayBitmap(rootview);
         }
     }
 

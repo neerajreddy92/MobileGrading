@@ -19,7 +19,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/beginCameraName"
+            android:text="Scan Picture"
             android:id="@+id/beginCamera"
             android:layout_gravity="left|center"
             android:layout_centerVertical="true"

@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/first_name"
         android:editable="true"
-        android:text="First Name"
         android:visibility="visible"
         android:minWidth="300dp"
         android:layout_centerVertical="true"
@@ -28,15 +27,13 @@
         android:editable="true"
         android:enabled="true"
         android:minWidth="300dp"
-        android:nestedScrollingEnabled="true"
-        android:text="Student id " />
+        android:nestedScrollingEnabled="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/last_name"
         android:layout_marginTop="96dp"
-        android:text="last_name"
         android:visibility="visible"
         android:minWidth="300dp"
         android:layout_below="@+id/first_name"
@@ -70,4 +67,35 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Student id "
+        android:id="@+id/textView2"
+        android:layout_above="@+id/student_id"
+        android:layout_alignLeft="@+id/student_id"
+        android:layout_alignStart="@+id/student_id"
+        android:textSize="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="First Name"
+        android:id="@+id/textView3"
+        android:textSize="30dp"
+        android:layout_above="@+id/first_name"
+        android:layout_alignLeft="@+id/first_name"
+        android:layout_alignStart="@+id/first_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="last_name"
+        android:id="@+id/textView4"
+        android:textSize="30dp"
+        android:layout_alignBottom="@+id/last_name"
+        android:layout_alignLeft="@+id/last_name"
+        android:layout_alignStart="@+id/last_name"
+        android:layout_marginBottom="49dp" />
 </RelativeLayout>
