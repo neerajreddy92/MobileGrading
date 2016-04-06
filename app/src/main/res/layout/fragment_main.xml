@@ -14,16 +14,20 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|top">
+        android:layout_gravity="center_horizontal|top"
+        android:minHeight="300dp">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scan Picture"
+            android:text="Scan Question"
             android:id="@+id/beginCamera"
             android:layout_gravity="left|center"
             android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:minWidth="300dp"
+            android:minHeight="100dp"
+            android:textSize="30dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,11 +39,14 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Grading"
+            android:text="Start Grading"
             android:id="@+id/display_bitmap"
-            android:layout_marginTop="143dp"
+            android:layout_marginTop="112dp"
+            android:minWidth="300dp"
+            android:minHeight="100dp"
             android:layout_below="@+id/beginCamera"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:textSize="30dp" />
 
         <ImageButton
             android:id="@+id/process_done_fragment_main"

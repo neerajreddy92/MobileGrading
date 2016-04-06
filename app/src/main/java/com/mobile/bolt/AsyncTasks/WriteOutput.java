@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
@@ -67,7 +69,7 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
                     img.scalePercent(scaler);
                     document.add(img);
                     document.add(new Paragraph(""+image.getQrCodeSolution()+" "+image.getQrCodeValues()));
-                    bw.write("" + i + ": " + image.getQrCodeSolution() + " " + image.getQrCodeValues());
+                    bw.write("" + i+1 + ": " + image.getQrCodeSolution() + " " + image.getQrCodeValues());
                     bw.newLine();
                     i++;
                 }
@@ -95,7 +97,7 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
     }
     @Override
     protected void onPostExecute( Boolean result){
-
+        Toast.makeText(context,"Finished writing",Toast.LENGTH_SHORT).show();
     }
     public File createNewPdfFile(String name){
         Date date = new Date() ;
