@@ -19,6 +19,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.mobile.bolt.AsyncTasks.ShowNewGradableImage;
 import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.DAO.QRCodeDAO;
 import com.mobile.bolt.Model.Image;
@@ -41,22 +43,11 @@ public class ImageFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private DrawingView drawView;
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private FragmentClass.OnFragmentInteractionListener mListener;
 
     public ImageFragment() {
         // Required empty public constructor
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ImageFragment.
-     */
     // TODO: Rename and change types and number of parameters
     List<String> label;
     List<Integer> Weights;
@@ -73,15 +64,6 @@ public class ImageFragment extends Fragment {
     Button[] weightView = null;
     Button[] removeButton = null;
     LinearLayout horizontalLayout = null;
-    public static ImageFragment newInstance(String param1, String param2) {
-        ImageFragment fragment = new ImageFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,22 +75,21 @@ public class ImageFragment extends Fragment {
             QR_CODE_QUESTION=images.get(0).getQrCodeSolution();
         }else
             Log.e(TAG, "onCreate: images is empty or null");
-            if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (!(images != null && !images.isEmpty())) {
+            getActivity().finish();
+        }
         final View rootView = inflater.inflate(R.layout.fragment_image, container, false);
         drawView = (DrawingView) rootView.findViewById(R.id.drawing);
         ImageButton save = (ImageButton) rootView.findViewById(R.id.process_next);
         ImageButton showLabels = (ImageButton) rootView.findViewById(R.id.process_show_labels);
         if (imageLocation != null) {
-            displayBitmap(rootView);
+            new ShowNewGradableImage(getContext(),drawView).execute(imageLocation);
             showLabels.setEnabled(true);
             generateQuestionWeights(rootView);
         } else {
@@ -347,7 +328,7 @@ public class ImageFragment extends Fragment {
                 LABEL_VIEW_TRUE=false;
                 Log.d(TAG, "dispatchDisplayNextImage: chanigng label view to "+false);
                 generateQuestionWeights(rootview);
-                displayBitmap(rootview);
+                new ShowNewGradableImage(getContext(),drawView).execute(imageLocation);
             } else {
                 imageLocation = null;
                 Toast.makeText(getContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
@@ -406,71 +387,6 @@ public class ImageFragment extends Fragment {
         mCurrentPhotoPath = image.getAbsolutePath();
         Log.d(TAG, "createImageFile: mcurrentphotopathupdated" + mCurrentPhotoPath);
         return image;
-    }
-
-    private void displayBitmap(View rootView) {
-        // TODO: 2/25/2016 see if this task does well on a seperate thread.
-        Bitmap bMap = null;
-        int count = 0;
-        //= BitmapFactory.decodeFile(imagePath);
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        Log.i(test1, "displayBitmap: another photo path:" + imageLocation);
-        Log.i(test1, "displayBitmap: reached here");
-        options.inSampleSize = count++;
-        try {
-            bMap = BitmapFactory.decodeFile(imageLocation, options);
-            Log.i(test1, "displayBitmap: option=1");
-        } catch (OutOfMemoryError e) {
-            e.printStackTrace();
-            bMap = null;
-            Toast.makeText(getContext(), "out mem 1", Toast.LENGTH_SHORT).show();
-            try {
-                options.inSampleSize = count++;
-                bMap = BitmapFactory.decodeFile(imageLocation, options);
-                Log.i(test1, "displayBitmap: option2");
-            } catch (OutOfMemoryError e1) {
-                e1.printStackTrace();
-                bMap = null;
-                try {
-                    options.inSampleSize = count++;
-                    bMap = BitmapFactory.decodeFile(imageLocation, options);
-                    Log.i(test1, "displayBitmap: option3");
-                } catch (OutOfMemoryError e2) {
-                    e2.printStackTrace();
-                    bMap = null;
-
-                    try {
-                        options.inSampleSize = count++;
-                        bMap = BitmapFactory.decodeFile(imageLocation, options);
-                        Log.i(test1, "option 4");
-                    } catch (OutOfMemoryError e3) {
-                        e3.printStackTrace();
-                        bMap = null;
-                    }
-                }
-            }
-        }
-
-        if (bMap != null) {
-            Bitmap orientedBitmap = ExifUtil.rotateBitmap(imageLocation, bMap);
-//            drawView.startNew();
-//            if(orientedBitmap.getWidth()>orientedBitmap.getHeight()){
-//                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//            }else{
-//                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//            }
-            drawView.setPicture(orientedBitmap);
-//            ImageView img= (ImageView) rootView.findViewById(R.id.imageView);
-//            img.setImageBitmap(orientedBitmap);
-        }
-    }
-
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(String string) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(string);
-        }
     }
 
     @Override
