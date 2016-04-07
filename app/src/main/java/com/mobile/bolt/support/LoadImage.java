@@ -10,11 +10,9 @@ import android.widget.Toast;
  */
 public class LoadImage {
     private static String TAG= "MobileGrading";
-
     public static Bitmap load(String imageLocation){
         Bitmap bMap = null;
         int count = 0;
-        //= BitmapFactory.decodeFile(imagePath);
         BitmapFactory.Options options = new BitmapFactory.Options();
         Log.i(TAG, "LoadImage: Loading Image from path: ... " + imageLocation);
         options.inSampleSize = count++;
@@ -38,7 +36,6 @@ public class LoadImage {
                 } catch (OutOfMemoryError e2) {
                     e2.printStackTrace();
                     bMap = null;
-
                     try {
                         options.inSampleSize = count++;
                         bMap = BitmapFactory.decodeFile(imageLocation, options);

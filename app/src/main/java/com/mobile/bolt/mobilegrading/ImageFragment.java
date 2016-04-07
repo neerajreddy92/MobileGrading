@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.mobile.bolt.AsyncTasks.SaveGradedImage;
 import com.mobile.bolt.AsyncTasks.ShowNewGradableImage;
 import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.DAO.QRCodeDAO;
@@ -73,17 +74,16 @@ public class ImageFragment extends Fragment {
         if (images != null && !images.isEmpty()) {
             imageLocation = images.get(0).getLocation();
             QR_CODE_QUESTION=images.get(0).getQrCodeSolution();
-        }else
+        }else {
             Log.e(TAG, "onCreate: images is empty or null");
+            getActivity().finish();
+        }
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (!(images != null && !images.isEmpty())) {
-            getActivity().finish();
-        }
         final View rootView = inflater.inflate(R.layout.fragment_image, container, false);
         drawView = (DrawingView) rootView.findViewById(R.id.drawing);
         ImageButton save = (ImageButton) rootView.findViewById(R.id.process_next);
@@ -101,12 +101,7 @@ public class ImageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (imageLocation != null) {
-                    drawView.setDrawingCacheEnabled(true);
-                    Bitmap bMap = drawView.getDrawingCache(true).copy(Bitmap.Config.RGB_565, false);
-                    drawView.destroyDrawingCache();
-                    if (dispatchSaveImage(bMap)) {
-                        dispatchDisplayNextImage(rootView);
-                    }
+                    dispatchDisplayNextImage(rootView);
                 }
             }
         });
@@ -316,11 +311,10 @@ public class ImageFragment extends Fragment {
             }
             }
             Image image = images.get(0);
-            // TODO: 3/6/2016 make sure all the duplicates are deleted.
-            image.setLocation(mCurrentPhotoPath);
-            image.setGraded(1);
-            image.setQrCodeValues(val);
-            imageDAO.updateGradedStatusNow(image);
+            drawView.setDrawingCacheEnabled(true);
+            Bitmap bMap = drawView.getDrawingCache(true).copy(Bitmap.Config.RGB_565, false);
+            drawView.destroyDrawingCache();
+            new SaveGradedImage(getContext()).execute(image,val,bMap);
             images.remove(0);
             if (!images.isEmpty()) {
                 imageLocation = images.get(0).getLocation();
@@ -335,58 +329,6 @@ public class ImageFragment extends Fragment {
                 getActivity().finish();
             }
         }
-    }
-
-    private boolean dispatchSaveImage(Bitmap bMap) {
-        // TODO: 2/25/2016 see if this process would perform well on a seperate thread. 
-        File file = null;
-        Log.d(TAG, "dispatchSaveImage: SAving the image");
-        try {
-            file = createImageFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(test1, "dispatchSaveImage: file creation threw null");
-        }
-        if (file != null) {
-            FileOutputStream ostream = null;
-            try {
-                ostream = new FileOutputStream(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return false;
-            }
-            bMap.compress(Bitmap.CompressFormat.PNG, 10, ostream);
-            try {
-                ostream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(test1, "dispatchSaveImage: file unwritable ");
-                return false;
-            }
-            Log.d(TAG, "dispatchSaveImage: Retured true");
-            Toast.makeText(getContext(), "Image saved", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        return false;
-    }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        Log.i(test1, "createImageFile: new image file name created");
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        Log.d(TAG, "createImageFile: mcurrentphotopathupdated" + mCurrentPhotoPath);
-        return image;
     }
 
     @Override
