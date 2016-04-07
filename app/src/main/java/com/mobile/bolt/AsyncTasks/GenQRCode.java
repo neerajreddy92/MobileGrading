@@ -18,6 +18,7 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.Model.Image;
+import com.mobile.bolt.support.LoadImage;
 
 import static android.widget.Toast.LENGTH_LONG;
 
@@ -27,6 +28,7 @@ import static android.widget.Toast.LENGTH_LONG;
 public class GenQRCode extends AsyncTask <String,Integer,Image>{
     Context context;
     String TAG = "MobileGrading";
+    // TODO: 4/6/2016 check to see if the application needs to be stopped while this occurs.
     @Override
     protected Image doInBackground(String... params) {
         Image image=null;
@@ -34,41 +36,7 @@ public class GenQRCode extends AsyncTask <String,Integer,Image>{
         Bitmap bMap = null;
         int count=0;
         BitmapFactory.Options options = new BitmapFactory.Options();
-        Log.i(TAG, "getQRCode: another photo path:" + photoPath);
-        Log.i(TAG, "getQRCode: reached here");
-        options.inSampleSize = count++;
-        try {
-            bMap = BitmapFactory.decodeFile(photoPath, options);
-            Log.i(TAG, "getQRCode: option=1");
-        } catch (OutOfMemoryError e) {
-            e.printStackTrace();
-            bMap = null;
-            try {
-                options.inSampleSize = count++;
-                bMap = BitmapFactory.decodeFile(photoPath, options);
-                Log.i(TAG, "getQRCode: option2");
-            } catch (OutOfMemoryError e1) {
-                e1.printStackTrace();
-                bMap = null;
-                try {
-                    options.inSampleSize = count++;
-                    bMap = BitmapFactory.decodeFile(photoPath, options);
-                    Log.i(TAG, "getQRCode: option3");
-                } catch (OutOfMemoryError e2) {
-                    e2.printStackTrace();
-                    bMap = null;
-
-                    try {
-                        options.inSampleSize = count++;
-                        bMap = BitmapFactory.decodeFile(photoPath, options);
-                        Log.i(TAG, "option 4");
-                    } catch (OutOfMemoryError e3) {
-                        e3.printStackTrace();
-                        bMap = null;
-                    }
-                }
-            }
-        }
+        bMap = LoadImage.load(photoPath);
         String contents = null;
         if (bMap != null) {
             Log.i(TAG, "getQRCode: Entering to qr processor");
