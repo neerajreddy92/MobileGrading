@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.mobile.bolt.DAO.QRCodeDAO;
 import com.mobile.bolt.Model.QrCode;
+import com.mobile.bolt.Parser.JsonParserRead;
 import com.mobile.bolt.Parser.XMLParser;
 
 import java.io.File;
@@ -32,9 +33,11 @@ public class ParsingQRcode extends AsyncTask<String,Integer,Boolean>{
         File newFile= new File(params[0]);
         Log.d(TAG, "doInBackground: "+params[0]);
         if(newFile.exists()){
-            XMLParser xmlParser = new XMLParser();
+//            XMLParser xmlParser = new XMLParser();
+            JsonParserRead jsonParserRead = new JsonParserRead();
             try {
-                List<QrCode> qrCodes= xmlParser.read(newFile);
+//                List<QrCode> qrCodes= xmlParser.read(newFile);
+                List<QrCode> qrCodes= jsonParserRead.readQRCode(newFile);
                 publishProgress(25);
                 int time= 75/qrCodes.size();
                 for(QrCode qrCode: qrCodes){

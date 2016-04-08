@@ -1,7 +1,6 @@
 package com.mobile.bolt.AsyncTasks;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
@@ -12,24 +11,21 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.mobile.bolt.DAO.StudentContractHelper;
 import com.mobile.bolt.Model.Image;
-import com.mobile.bolt.Model.QrCode;
-import com.mobile.bolt.support.LoadImage;
+import com.mobile.bolt.Model.Student;
+import com.mobile.bolt.Parser.JsonParserWrite;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Neeraj on 3/6/2016.
@@ -40,7 +36,6 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
     public WriteOutput(Context context){
         this.context = context;
     }
-
     @Override
     protected void onPreExecute() {
 
@@ -53,7 +48,8 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
         try {
             File file = createNewPdfFile(images.get(0).getASU_ID());
             File textFile = createNewTextFile(images.get(0).getASU_ID());
-            BufferedWriter bw = new BufferedWriter(new FileWriter(textFile));
+            StudentContractHelper studentContractHelper = new StudentContractHelper(context);
+            Student student = studentContractHelper.getStudent(images.get(0).getASU_ID());
             int indentation = 1;
                 com.itextpdf.text.Image img;
                 Document document = new Document(PageSize.LETTER);
@@ -68,13 +64,13 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
                             - document.rightMargin() - indentation) / img.getWidth()) * 100;
                     img.scalePercent(scaler);
                     document.add(img);
-                    document.add(new Paragraph(""+image.getQrCodeSolution()+" "+image.getQrCodeValues()));
-                    bw.write("" + i+1 + ": " + image.getQrCodeSolution() + " " + image.getQrCodeValues());
-                    bw.newLine();
+                    document.add(new Paragraph("" + image.getQrCodeSolution() + " " + image.getQrCodeValues()));
                     i++;
                 }
-            bw.close();
-                document.close();
+            document.close();
+            if(!(JsonParserWrite.writeStudentReport(textFile,images,student)))
+                return false;
+            return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             Log.d(TAG, "doInBackground:Writing to pdf file not found exception");
@@ -88,7 +84,7 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
             e.printStackTrace();
             Log.d(TAG, "doInBackground:Writing to pdf IO Exception exception");
         }
-        return null;
+        return false;
     }
 
     @Override
@@ -97,7 +93,10 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
     }
     @Override
     protected void onPostExecute( Boolean result){
-        Toast.makeText(context,"Finished writing",Toast.LENGTH_SHORT).show();
+        if(result)
+            Toast.makeText(context,"Output generated",Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(context,"unable to generate output",Toast.LENGTH_SHORT).show();
     }
     public File createNewPdfFile(String name){
         Date date = new Date() ;
@@ -108,7 +107,7 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
     public File createNewTextFile(String name){
         Date date = new Date() ;
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(date);
-        File myFile = new File(Environment.getExternalStorageDirectory() + "//Documents//textoutput//"+name+"_"+timeStamp + ".txt");
+        File myFile = new File(Environment.getExternalStorageDirectory() + "//Documents//textoutput//"+name+"_"+timeStamp + ".json");
         return myFile;
     }
 }

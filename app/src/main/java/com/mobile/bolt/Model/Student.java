@@ -7,6 +7,11 @@ public class Student {
     private String StudentID;
     private String FirstName;
     private String LastName;
+    public Student(){
+        StudentID ="";
+        FirstName ="";
+        LastName = "";
+    }
     public String getFirstName() {
         return FirstName;
     }

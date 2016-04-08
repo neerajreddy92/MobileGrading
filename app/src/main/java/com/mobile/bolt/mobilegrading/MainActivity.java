@@ -14,12 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.mobile.bolt.AsyncTasks.ParsingQRcode;
-
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -35,7 +33,7 @@ public class MainActivity extends ActionBarActivity implements FragmentClass.OnF
     private String[] mFileList;
     private File mPath = new File(Environment.getExternalStorageDirectory() + "//Documents//QrcodesData//");
     private String mChosenFile;
-    private static final String FTYPE = ".xml";
+    private static final String FTYPE = ".JSON";
     private static final int DIALOG_LOAD_FILE = 1000;
 
     // TODO: 2/25/2016 add interface for file upload and json parsing.  
