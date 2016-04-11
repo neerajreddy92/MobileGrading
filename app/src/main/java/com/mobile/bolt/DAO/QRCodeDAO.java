@@ -20,8 +20,10 @@ public class QRCodeDAO {
     private static final String TABLE_NAME_QRCODE = "qrcode";
     private static final String KEY_QRCODE_ID = "id";
     private static final String KEY_QUESTION = "question";
+    private static final String KEY_QUESTION_SOLUTION = "questionsolution";
     private static final String KEY_QRCODE_VALUES = "val";
-    private static final String[] COLUMNS_QRCODE = {KEY_QRCODE_ID, KEY_QUESTION, KEY_QRCODE_VALUES};
+    private static final String KEY_QRCODE_GRADE="Grade";
+    private static final String[] COLUMNS_QRCODE = {KEY_QRCODE_ID, KEY_QUESTION, KEY_QRCODE_VALUES,KEY_QUESTION_SOLUTION,KEY_QRCODE_GRADE};
 
     public QRCodeDAO(Context context) {
         sHelper = new StudentContractHelper(context);
@@ -37,6 +39,8 @@ public class QRCodeDAO {
         ContentValues values = new ContentValues();
         values.put(KEY_QUESTION, qrCode.getQUESTION());
         values.put(KEY_QRCODE_VALUES, qrCode.getVALUES());
+        values.put(KEY_QUESTION_SOLUTION, qrCode.getQuestionSolution());
+        values.put(KEY_QRCODE_GRADE, qrCode.getMaxGrade());
         Long val= db.insert(TABLE_NAME_QRCODE, // table
                 null, //nullColumnHack
                 values); // key/value -> keys = column names/ values = column values
@@ -70,6 +74,7 @@ public class QRCodeDAO {
             qrCode.setID(Integer.parseInt(cursor.getString(0)));
             qrCode.setQUESTION(cursor.getString(1));
             qrCode.setVALUES(cursor.getString(2));
+            qrCode.setQuestionSolution(cursor.getString(3));
             Log.d(TAG, "getSingleImageLocation " + qrCode.toString());
             cursor.close();
             db.close();
@@ -122,6 +127,8 @@ public class QRCodeDAO {
         qrCode.setID(Integer.parseInt(cursor.getString(0)));
         qrCode.setQUESTION(cursor.getString(1));
         qrCode.setVALUES(cursor.getString(2));
+        qrCode.setQuestionSolution(cursor.getString(3));
+        qrCode.setMaxGrade(Float.parseFloat(cursor.getString(4)));
         cursor.close();
         db.close();
         Log.d(TAG, "getSingleQRcodeLocationOnQuestion: " + qrCode.toString());

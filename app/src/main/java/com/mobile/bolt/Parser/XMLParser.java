@@ -37,6 +37,8 @@ public class XMLParser {
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
                     qrCode.setQUESTION(eElement.getElementsByTagName("QuestionName").item(0).getTextContent());
+                    qrCode.setQuestionSolution(eElement.getElementsByTagName("QuestionSolution").item(0).getTextContent());
+                    qrCode.setMaxGrade(Float.parseFloat(eElement.getElementsByTagName("MaxGrade").item(0).getTextContent()));
                     qrCode.setVALUES(getValues(eElement));
                     qrCodes.add(qrCode);
                 }

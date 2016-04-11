@@ -16,8 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mobile.bolt.AsyncTasks.SaveGradedImage;
@@ -61,9 +63,13 @@ public class ImageFragment extends Fragment {
     private final String test1 = "MobileGrading";
     Boolean LABEL_VIEW_TRUE = false;
     String QR_CODE_QUESTION=null;
+    private String Question_Solution=null;
+    private float GRADE;
     Button[] labelButton = null;
     Button[] weightView = null;
     Button[] removeButton = null;
+    EditText commentsEnter = null;
+    TextView qSolution = null;
     LinearLayout horizontalLayout = null;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,6 +157,10 @@ public class ImageFragment extends Fragment {
                 removeButton[i].setEnabled(false);
                 removeButton[i].setVisibility(drawView.GONE);
             }
+            qSolution.setEnabled(false);
+            qSolution.setVisibility(drawView.GONE);
+            commentsEnter.setEnabled(false);
+            commentsEnter.setVisibility(drawView.GONE);
             rootView.findViewById(R.id.process_refresh_labels).setEnabled(false);
             rootView.findViewById(R.id.process_refresh_labels).setVisibility(drawView.GONE);
             Log.d(TAG, "toggleLableView: disabling label view");
@@ -159,6 +169,12 @@ public class ImageFragment extends Fragment {
         } else {
             for (int i = 0; i < label.size(); i++) {
                 if (Weights.get(i) == 0) {
+                    weightView[i].setEnabled(false);
+                    weightView[i].setVisibility(View.VISIBLE);
+                    labelButton[i].setEnabled(false);
+                    labelButton[i].setVisibility(View.VISIBLE);
+                    removeButton[i].setEnabled(false);
+                    removeButton[i].setVisibility(View.VISIBLE);
                     continue;
                 }
                 weightView[i].setEnabled(true);
@@ -169,6 +185,10 @@ public class ImageFragment extends Fragment {
                 removeButton[i].setVisibility(View.VISIBLE);
                 Log.d(TAG, "toggleLableView: showing label view");
             }
+            qSolution.setEnabled(true);
+            qSolution.setVisibility(View.VISIBLE);
+            commentsEnter.setEnabled(true);
+            commentsEnter.setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.process_refresh_labels).setEnabled(true);
             rootView.findViewById(R.id.process_refresh_labels).setVisibility(View.VISIBLE);
             LABEL_VIEW_TRUE = true;
@@ -203,6 +223,8 @@ public class ImageFragment extends Fragment {
             }
             current=current+curr;
         }
+        Question_Solution=qrCode.getQuestionSolution();
+        GRADE =qrCode.getMaxGrade();
         Log.d(TAG, "QRcodeRetreive: qr code labels" + label.toString());
         Log.d(TAG, "QRcodeRetreive: qr code weights" + Weights.toString());
         return true;
@@ -224,7 +246,9 @@ public class ImageFragment extends Fragment {
             labelButton = new Button[label.size()];
             weightView = new Button[label.size()];
             removeButton = new Button[label.size()];
-
+            qSolution = (TextView)rootView.findViewById(R.id.QuestionSolution);
+            qSolution.setText(Question_Solution+" MAX GRADE : "+GRADE);
+            commentsEnter= (EditText) rootView.findViewById(R.id.commentText);
         for (int i = 0; i < label.size(); i++) {
             labelButton[i] = new Button(getContext());
             labelButton[i].setText(label.get(i));
@@ -299,22 +323,16 @@ public class ImageFragment extends Fragment {
 
     private void dispatchDisplayNextImage(View rootview) {
         if (images != null && !images.isEmpty()) {
-            String val="";
-            //// TODO: 3/6/2016 add cover if label doesent exist.  
-            if(label!=null){
-            for(int  i=0;i<label.size();i++){
-                val=val+label.get(i)+":";
-                val=val+Weights.get(i)+";";
-            }
+            Image image = images.get(0);
             if(LABEL_VIEW_TRUE){
                 toggleLableView(rootview);
             }
-            }
-            Image image = images.get(0);
             drawView.setDrawingCacheEnabled(true);
             Bitmap bMap = drawView.getDrawingCache(true).copy(Bitmap.Config.RGB_565, false);
             drawView.destroyDrawingCache();
-            new SaveGradedImage(getContext()).execute(image,val,bMap);
+            image.setQuestionComments(commentsEnter.getText().toString());
+            image.setGrade(GRADE);
+            new SaveGradedImage(getContext()).execute(image,bMap,label,Weights);
             images.remove(0);
             if (!images.isEmpty()) {
                 imageLocation = images.get(0).getLocation();

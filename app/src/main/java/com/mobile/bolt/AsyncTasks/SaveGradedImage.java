@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Neeraj on 4/6/2016.
@@ -36,12 +37,22 @@ public class SaveGradedImage extends AsyncTask {
     protected Object doInBackground(Object[] params) {
         Image image = (Image) params[0];
         image.setGraded(1);
-        image.setQrCodeValues((String)params[1]);
+        String val="";
+        List<String> label= (List<String>) params[2];
+        List<Integer> Weights= (List<Integer>) params[3];
+        if(label!=null){
+            for(int  i=0;i<label.size();i++){
+                val=val+label.get(i)+":";
+                val=val+Weights.get(i)+";";
+            }
+        }
+        image.setGrade(genGrades(image.getGrade(),label,Weights));
+        image.setQrCodeValues(val);
         File file = null;
         try {
             file = createImageFile();
             image.setLocation(file.getAbsolutePath());
-            if(dispatchSaveImage((Bitmap)params[2], file)){
+            if(dispatchSaveImage((Bitmap)params[1], file)){
                 Log.d(TAG, "doInBackground: image saved sucessfully");
                 ImageDAO imageDao = new ImageDAO(context);
                 imageDao.updateGradedStatusNow(image);
@@ -53,6 +64,12 @@ public class SaveGradedImage extends AsyncTask {
         }
         return null;
     }
+
+    private float genGrades(float Max_grade,List<String> label, List<Integer> Weights){
+        // TODO: 4/11/2016 add formula to generate grades.
+        return Max_grade;
+    }
+
 
     @Override
     protected void onPostExecute(Object o) {

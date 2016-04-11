@@ -32,14 +32,16 @@ public class JsonParserRead {
                 QrCode qrCode = new QrCode();
                 JSONObject current = (JSONObject)Questions.get(i);
                 qrCode.setQUESTION((String) current.get("QuestionName"));
-                // TODO: 4/7/2016 add question solution to qrcode
+                qrCode.setQuestionSolution((String) current.get("QuestionSolution"));
+                qrCode.setMaxGrade( Float.parseFloat(String.valueOf(current.get("MaxGrade"))));
                 JSONArray tags = (JSONArray)current.get("tags");
                 String str="";
                 for(int j=0 ;j<tags.size();j++){
                     str= str + ((JSONObject)tags.get(j)).get("TagName")+":";
                     str= str + ((JSONObject)tags.get(j)).get("TagWeight")+";";
                 }
-                Log.d(TAG, "readQRCode: "+qrCode.toString());
+                qrCode.setVALUES(str);
+                Log.d(TAG, "read json : "+qrCode.toString());
                 qrCodes.add(qrCode);
             }
             return qrCodes;

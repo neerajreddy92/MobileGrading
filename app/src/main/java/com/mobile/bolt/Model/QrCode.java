@@ -6,7 +6,25 @@ package com.mobile.bolt.Model;
 public class QrCode {
     private int ID;
     private String QUESTION;
+    private String QuestionSolution;
     private String VALUES;
+    private float MaxGrade;
+
+    public float getMaxGrade() {
+        return MaxGrade;
+    }
+
+    public void setMaxGrade(float maxGrade) {
+        MaxGrade = maxGrade;
+    }
+
+    public String getQuestionSolution() {
+        return QuestionSolution;
+    }
+
+    public void setQuestionSolution(String questionSolution) {
+        QuestionSolution = questionSolution;
+    }
 
     public String getQUESTION() {
         return QUESTION;
@@ -34,6 +52,6 @@ public class QrCode {
 
     @Override
     public String toString(){
-        return ID+" "+QUESTION+" "+VALUES;
+        return ID+" "+QUESTION+" "+QuestionSolution+" "+VALUES+" "+String.valueOf(MaxGrade);
     }
 }

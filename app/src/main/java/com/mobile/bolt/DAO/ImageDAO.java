@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Created by Neeraj on 2/24/2016.
  */
+
 public class ImageDAO {
 
     private StudentContractHelper sHelper;
@@ -28,7 +29,9 @@ public class ImageDAO {
     private static final String KEY_UPLOADED = "uploaded";
     private static final String KEY_IMAGE_QRCODESOLUTION="qrcodesolution";
     private static final String KEY_IMAGE_QRCODE_VALUES="qrcodevalues";
-    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED,KEY_IMAGE_QRCODESOLUTION,KEY_IMAGE_QRCODE_VALUES};
+    private static final String KEY_IMAGE_Comments="comments";
+    private static final String KEY_IMAGE_GRADE="Grade";
+    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED,KEY_IMAGE_QRCODESOLUTION,KEY_IMAGE_QRCODE_VALUES,KEY_IMAGE_Comments,KEY_IMAGE_GRADE};
 
     public ImageDAO(Context context){
         sHelper=new StudentContractHelper(context);
@@ -57,6 +60,8 @@ public class ImageDAO {
         values.put(KEY_GRADED, image.getGraded());
         values.put(KEY_LOCATION, image.getLocation());
         values.put(KEY_IMAGE_QRCODE_VALUES,image.getQrCodeValues());
+        values.put(KEY_IMAGE_Comments,image.getQuestionComments());
+        values.put(KEY_IMAGE_GRADE,image.getGrade());
         int i = db.update(TABLE_NAME_IMAGE, //table
                 values, // column/value
                 KEY_ID + " = ?", // selections
@@ -250,6 +255,8 @@ public class ImageDAO {
                 image.setUploaded(Integer.parseInt(cursor.getString(4)));
                 image.setQrCodeSolution(cursor.getString(5));
                 image.setQrCodeValues(cursor.getString(6));
+                image.setQuestionComments(cursor.getString(7));
+                image.setGrade(Float.parseFloat(cursor.getString(8)));
                 images.add(image);
                 Log.d(TAG, "getAllNonUploadedImageLocations: Getting image location : "+image.toString());
             } while (cursor.moveToNext());
@@ -258,8 +265,6 @@ public class ImageDAO {
         return images;
 
     }
-
-
 
     public int updateUploadStatusNow(Image image) {
         SQLiteDatabase db = sHelper.getWritableDatabase();

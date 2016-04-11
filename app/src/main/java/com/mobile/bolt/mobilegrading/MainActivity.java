@@ -15,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,14 +34,11 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.mobile.bolt.AsyncTasks.ParseNewClasses;
 import com.mobile.bolt.AsyncTasks.ParsingQRcode;
-import com.mobile.bolt.DAO.StudentDAO;
 import com.mobile.bolt.support.StudentFeeder;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -103,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         rv.setLayoutManager(llm);
-        RVAdapter adapter = new RVAdapter(new StudentDAO(getBaseContext()).getAllStudents("SomeTable"));
+        RVAdapter adapter = new RVAdapter(new StudentDAO(getBaseContext()).getAllStudents("newTable"));
         rv.setAdapter(adapter);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }

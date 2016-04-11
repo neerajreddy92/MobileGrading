@@ -12,6 +12,25 @@ public class Image {
     private int graded;
     private int uploaded;
     private String QrCodeSolution;
+    private String QuestionComments;
+    private float Grade;
+
+    public float getGrade() {
+        return Grade;
+    }
+
+    public void setGrade(float grade) {
+        Grade = grade;
+    }
+
+    public String getQuestionComments() {
+        return QuestionComments;
+    }
+
+    public void setQuestionComments(String questionComments) {
+        QuestionComments = questionComments;
+    }
+
     private String QrCodeValues; //shameless hack
 
     // TODO: 3/7/2016 update qr code values
@@ -79,6 +98,6 @@ public class Image {
 
     @Override
     public String toString(){
-        return id+" "+ASU_ID+" "+Location+" "+graded+" "+uploaded+" "+QrCodeSolution+" "+QrCodeValues;
+        return id+" "+ASU_ID+" "+Location+" "+graded+" "+uploaded+" "+QrCodeSolution+" "+QrCodeValues+" "+QuestionComments+" "+String.valueOf(Grade);
     }
 }
