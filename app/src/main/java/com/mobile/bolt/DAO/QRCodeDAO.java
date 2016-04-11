@@ -8,6 +8,7 @@ import android.util.Log;
 
 
 import com.mobile.bolt.Model.QrCode;
+import com.mobile.bolt.Model.Student;
 
 
 /**
@@ -30,10 +31,11 @@ public class QRCodeDAO {
     }
 
     public Integer addQRCODELocation(QrCode qrCode) {
-        //// TODO: 2/24/2016  have to handle duplicates.
         if (verifyQuestionExists(qrCode.getQUESTION())) {
             Log.d(TAG, "addQRCODELocation: question exists");
-            return 0;
+            updateStudent(qrCode);
+            Log.d(TAG, "addQRCODELocation: question updated");
+            return -1;
         }
         SQLiteDatabase db = sHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -104,7 +106,21 @@ public class QRCodeDAO {
         Log.d(TAG, "verifyQuestionExists: " + question + " exists");
         return true;
     }
+    public int updateStudent(QrCode qrCode) {
+        SQLiteDatabase db = sHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_QUESTION, qrCode.getQUESTION());
+        values.put(KEY_QRCODE_VALUES, qrCode.getVALUES());
+        values.put(KEY_QUESTION_SOLUTION, qrCode.getQuestionSolution());
+        values.put(KEY_QRCODE_GRADE, qrCode.getMaxGrade());
+        int i = db.update(TABLE_NAME_QRCODE, //table
+                values, // column/value
+                KEY_QUESTION + " = ?", // selections
+                new String[]{qrCode.getQUESTION()}); //selection args
+        db.close();
+        return i;
 
+    }
     public QrCode getSingleQRcodeLocationOnQuestion(String question) {
         SQLiteDatabase db = sHelper.getReadableDatabase();
         Cursor cursor =

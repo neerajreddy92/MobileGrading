@@ -70,6 +70,7 @@ public class ImageFragment extends Fragment {
     Button[] removeButton = null;
     EditText commentsEnter = null;
     TextView qSolution = null;
+    List<LinearLayout> layout_horizontal=null;
     LinearLayout horizontalLayout = null;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,10 @@ public class ImageFragment extends Fragment {
         rootView.findViewById(R.id.process_refresh_labels).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(layout_horizontal!=null){
+                    for(LinearLayout layout : layout_horizontal)
+                        layout.setVisibility(View.GONE);
+                }
                 generateQuestionWeights(rootView);
             }
         });
@@ -249,6 +254,7 @@ public class ImageFragment extends Fragment {
             qSolution = (TextView)rootView.findViewById(R.id.QuestionSolution);
             qSolution.setText(Question_Solution+" MAX GRADE : "+GRADE);
             commentsEnter= (EditText) rootView.findViewById(R.id.commentText);
+        layout_horizontal=new ArrayList<>();
         for (int i = 0; i < label.size(); i++) {
             labelButton[i] = new Button(getContext());
             labelButton[i].setText(label.get(i));
@@ -277,6 +283,7 @@ public class ImageFragment extends Fragment {
             }
             removeButton[i].setBackgroundColor(Color.TRANSPARENT);
             LinearLayout layout = new LinearLayout(getContext());
+            layout_horizontal.add(layout);
             horizontalLayout=layout;
             layout.setOrientation(LinearLayout.HORIZONTAL);
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);

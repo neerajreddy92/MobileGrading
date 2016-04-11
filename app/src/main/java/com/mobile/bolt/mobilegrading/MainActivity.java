@@ -34,6 +34,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.mobile.bolt.AsyncTasks.ParseNewClasses;
 import com.mobile.bolt.AsyncTasks.ParsingQRcode;
+import com.mobile.bolt.DAO.StudentDAO;
 import com.mobile.bolt.support.StudentFeeder;
 
 import java.io.File;

@@ -7,15 +7,27 @@ public class Student {
     private String StudentID;
     private String FirstName;
     private String LastName;
+    private Integer Status;
+
+    public Integer getStatus() {
+        return Status;
+    }
+
+    public void setStatus(Integer status) {
+        Status = status;
+    }
+
     public Student(){
         StudentID ="";
         FirstName ="";
         LastName = "";
+        Status=0;
     }
-    public Student(String id,String firstName,String lastName){
-        StudentID =id;
-        FirstName =firstName;
-        LastName = lastName;
+    public Student(String id,String firstName,String lastName,Integer Status){
+        this.StudentID =id;
+        this.FirstName =firstName;
+        this.LastName = lastName;
+        this.Status = Status;
     }
     public String getFirstName() {
         return FirstName;
@@ -37,6 +49,6 @@ public class Student {
     }
     @Override
     public String toString(){
-        return StudentID+" "+FirstName+" "+ LastName;
+        return StudentID+" "+FirstName+" "+ LastName+" status "+Status;
     }
 }

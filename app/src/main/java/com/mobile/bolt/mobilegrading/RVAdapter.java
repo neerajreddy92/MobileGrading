@@ -1,5 +1,6 @@
 package com.mobile.bolt.mobilegrading;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,6 +28,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         ImageButton TakePicture;
         Button StartGrading;
         Button GenOutput;
+        ImageView emptyStar;
+        ImageView halfStar;
+        ImageView fullStar;
 
         PersonViewHolder(View itemView) {
             super(itemView);
@@ -37,6 +41,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             TakePicture = (ImageButton) itemView.findViewById(R.id.take_picture);
             StartGrading = (Button) itemView.findViewById(R.id.Grade);
             GenOutput = (Button) itemView.findViewById(R.id.output);
+            emptyStar = (ImageView) itemView.findViewById(R.id.empty_star);
+            halfStar = (ImageView) itemView.findViewById(R.id.half_star);
+            fullStar = (ImageView) itemView.findViewById(R.id.full_star);
         }
     }
     private List<Student> students ;
@@ -58,6 +65,21 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         personViewHolder.ASUID.setText(students.get(i).getStudentID());
         personViewHolder.FirstName.setText(students.get(i).getFirstName());
         personViewHolder.LastName.setText(students.get(i).getLastName());
+        String uri = "@drawable/myresource";  // where myresource (without the extension) is the file
+        switch (students.get(i).getStatus()){
+            case 0:
+                personViewHolder.emptyStar.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                personViewHolder.halfStar.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                personViewHolder.fullStar.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                personViewHolder.fullStar.setVisibility(View.VISIBLE);
+                break;
+        }
         personViewHolder.TakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
