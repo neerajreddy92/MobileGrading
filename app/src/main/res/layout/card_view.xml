@@ -19,20 +19,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/ASU_id"
-                android:layout_alignParentTop="true"
                 android:textSize="20sp"
                 android:layout_marginRight="16dp"
                 android:layout_alignParentLeft="true"
-                />
+                android:maxWidth="100dp"
+                android:minWidth="100dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/First_name"
                 android:layout_toRightOf="@+id/ASU_id"
-                android:layout_alignParentTop="true"
                 android:textSize="20sp"
                 android:layout_marginRight="16dp"
+                android:maxWidth="100dp"
+                android:minWidth="100dp"
                 />
 
             <TextView
@@ -40,9 +41,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/last_name"
                 android:layout_toRightOf="@+id/First_name"
-                android:layout_alignParentTop="true"
                 android:textSize="20sp"
                 android:layout_marginRight="16dp"
+                android:maxWidth="100dp"
+                android:minWidth="100dp"
                 />
 
             <Button
