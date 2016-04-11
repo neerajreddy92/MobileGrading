@@ -12,6 +12,11 @@ public class Student {
         FirstName ="";
         LastName = "";
     }
+    public Student(String id,String firstName,String lastName){
+        StudentID =id;
+        FirstName =firstName;
+        LastName = lastName;
+    }
     public String getFirstName() {
         return FirstName;
     }

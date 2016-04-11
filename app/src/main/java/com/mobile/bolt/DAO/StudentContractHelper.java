@@ -40,7 +40,7 @@ public class StudentContractHelper extends SQLiteOpenHelper {
 
     //General Db values.
     private static int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "studentDB";
+    private static final String DATABASE_NAME = "MobileGradingMain";
 
     public StudentContractHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
