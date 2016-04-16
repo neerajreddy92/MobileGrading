@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -115,9 +117,59 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             }
         });
     }
+
+    public void  updateList(List<Student> data){
+        students = data;
+        notifyDataSetChanged();
+    }
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
+    public Student removeItem(int position) {
+        final Student model = students.remove(position);
+        notifyItemRemoved(position);
+        return model;
+    }
 
+    public void addItem(int position, Student model) {
+        students.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final Student model = students.remove(fromPosition);
+        students.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+    public void animateTo(List<Student> students) {
+        applyAndAnimateRemovals(students);
+        applyAndAnimateAdditions(students);
+        applyAndAnimateMovedItems(students);
+    }
+    private void applyAndAnimateRemovals(List<Student> newStudents) {
+        for (int i = students.size() - 1; i >= 0; i--) {
+            final Student model = students.get(i);
+            if (!newStudents.contains(model)) {
+                removeItem(i);
+            }
+        }
+    }
+    private void applyAndAnimateAdditions(List<Student> newStudents) {
+        for (int i = 0, count = students.size(); i < count; i++) {
+            final Student model = newStudents.get(i);
+            if (!students.contains(model)) {
+                addItem(i, model);
+            }
+        }
+    }
+    private void applyAndAnimateMovedItems(List<Student> newStudents) {
+        for (int toPosition = newStudents.size() - 1; toPosition >= 0; toPosition--) {
+            final Student model = newStudents.get(toPosition);
+            final int fromPosition = students.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
+    }
 }
