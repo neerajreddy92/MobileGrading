@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.widget.Toast;
 
-import com.mobile.bolt.DAO.StudentDAO;
+import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Parser.JsonParserRead;
 import java.io.File;
 
@@ -46,9 +46,9 @@ public class ParseNewClasses extends AsyncTask<String,Integer,Boolean>{
         if(!filePath.matches("")){
             JsonParserRead jsonParserRead = new JsonParserRead();
             File file = new File(filePath);
-            return new StudentDAO(context).createTable(className,jsonParserRead.readStudents(file));
+            return new StudentDao(context).createTable(className,jsonParserRead.readStudents(file));
         }else{
-            return new StudentDAO(context).createJustTable(className);
+            return new StudentDao(context).createJustTable(className);
         }
     }
 }

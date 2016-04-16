@@ -35,7 +35,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.mobile.bolt.AsyncTasks.GenQRCode;
 import com.mobile.bolt.AsyncTasks.ParseNewClasses;
 import com.mobile.bolt.AsyncTasks.ParsingQRcode;
-import com.mobile.bolt.DAO.StudentDAO;
+import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.support.PictureValues;
 import com.mobile.bolt.support.StudentFeeder;
 
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         rv.setLayoutManager(llm);
-        RVAdapter adapter = new RVAdapter(new StudentDAO(getBaseContext()).getAllStudents("newTable"),getBaseContext(),this);
+        RVAdapter adapter = new RVAdapter(new StudentDao(getBaseContext()).getAllStudents("newTable"),getBaseContext(),this);
         rv.setAdapter(adapter);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
         MenuItem item = menu.findItem(R.id.spinner);
         Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-        List<String> items = new StudentDAO(getBaseContext()).getTabels();
+        List<String> items = new StudentDao(getBaseContext()).getTabels();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,
                 android.R.layout.simple_spinner_dropdown_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         rv.removeAllViews();
         Log.d(TAG, "onItemSelected: new class item selected" + (String) parent.getItemAtPosition(position));
-        rv.setAdapter(new RVAdapter(new StudentDAO(getBaseContext()).getAllStudents((String) parent.getItemAtPosition(position)),getBaseContext(),this));
+        rv.setAdapter(new RVAdapter(new StudentDao(getBaseContext()).getAllStudents((String) parent.getItemAtPosition(position)),getBaseContext(),this));
     }
 
     @Override
