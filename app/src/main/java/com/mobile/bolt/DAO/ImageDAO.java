@@ -214,7 +214,10 @@ public class ImageDAO {
                     image.setLocation(cursor.getString(2));
                     image.setGraded(Integer.parseInt(cursor.getString(3)));
                     image.setUploaded(Integer.parseInt(cursor.getString(4)));
-                    image.setUploaded(Integer.parseInt(cursor.getString(4)));
+                    image.setQrCodeSolution(cursor.getString(5));
+                    image.setQrCodeValues(cursor.getString(6));
+                    image.setQuestionComments(cursor.getString(7));
+                    image.setGrade(Float.parseFloat(cursor.getString(8)));
                     if(image.getGraded()==1 && image.getUploaded()==0) {
                         images.add(image);
                     }

@@ -70,7 +70,29 @@
                 android:id="@+id/output"
                 android:layout_toRightOf="@+id/take_picture"
                 android:layout_marginRight="16dp"
-                android:text="Write Output" />
+                android:text="Write Output"
+                />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/empty_star"
+                android:src="@mipmap/star_empty"
+                android:layout_toRightOf="@+id/output"
+                android:visibility="gone"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/half_star"
+                android:src="@mipmap/star_half_full"
+                android:layout_toRightOf="@+id/output"
+                android:visibility="gone"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/full_star"
+                android:src="@mipmap/star_full"
+                android:layout_toRightOf="@+id/output"
+                android:visibility="gone"/>
 
         </RelativeLayout>
 

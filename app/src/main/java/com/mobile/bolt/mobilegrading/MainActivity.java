@@ -32,9 +32,11 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.mobile.bolt.AsyncTasks.GenQRCode;
 import com.mobile.bolt.AsyncTasks.ParseNewClasses;
 import com.mobile.bolt.AsyncTasks.ParsingQRcode;
 import com.mobile.bolt.DAO.StudentDAO;
+import com.mobile.bolt.support.PictureValues;
 import com.mobile.bolt.support.StudentFeeder;
 
 import java.io.File;
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         rv.setLayoutManager(llm);
-        RVAdapter adapter = new RVAdapter(new StudentDAO(getBaseContext()).getAllStudents("newTable"));
+        RVAdapter adapter = new RVAdapter(new StudentDAO(getBaseContext()).getAllStudents("newTable"),getBaseContext(),this);
         rv.setAdapter(adapter);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
@@ -306,12 +308,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         dialog = builder.show();
         return dialog;
     }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        new GenQRCode(getBaseContext()).execute(PictureValues.getInstance().getPhotoPath(), PictureValues.getInstance().getASUAD()); //starting async task to genrate qr code.
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         rv.removeAllViews();
         Log.d(TAG, "onItemSelected: new class item selected" + (String) parent.getItemAtPosition(position));
-        rv.setAdapter(new RVAdapter(new StudentDAO(getBaseContext()).getAllStudents((String) parent.getItemAtPosition(position))));
+        rv.setAdapter(new RVAdapter(new StudentDAO(getBaseContext()).getAllStudents((String) parent.getItemAtPosition(position)),getBaseContext(),this));
     }
 
     @Override

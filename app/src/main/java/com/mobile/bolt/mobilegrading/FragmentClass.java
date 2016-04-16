@@ -43,9 +43,9 @@ import java.util.Date;
 
 public class FragmentClass extends Fragment {
     // TODO: 2/25/2016 remove the get QR code button on the view. 
-    String mCurrentPhotoPath;
+    private String mCurrentPhotoPath;
     static String anotherPhotoPath;
-    ImageDAO imageDAO = null;
+    private ImageDAO imageDAO = null;
     String ASUAD = null;
     ArrayAdapter<String> mForecastAdapter;
     final String test1 = "MobileGrading";

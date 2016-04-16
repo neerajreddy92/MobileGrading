@@ -6,15 +6,18 @@
         app:showAsAction="always"
         app:actionViewClass="android.widget.Spinner"
         android:title="select" />
-    <!-- "Mark Favorite", should appear as action button if possible -->
     <item
         android:id="@+id/add_class"
         android:icon="@mipmap/add_icon"
         android:title="@string/action_favorite"
         app:showAsAction="ifRoom"/>
-    <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+    <item android:id="@+id/Add_Questions"
+        android:title="Add Questions"
         app:showAsAction="never"/>
-
+    <item android:id="@+id/refresh_db"
+        android:title="Refresh Database"
+        app:showAsAction="never"/>
+    <item android:id="@+id/action_settings"
+    android:title="@string/action_settings"
+    app:showAsAction="never"/>
 </menu>

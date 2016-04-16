@@ -28,7 +28,7 @@ public class ShowNewGradableImage extends AsyncTask<Object, Integer, Bitmap> {
     protected void onPreExecute() {
         super.onPreExecute();
         mProgressDialog = new ProgressDialog(context);
-        mProgressDialog.setMessage("A message");
+        mProgressDialog.setMessage("Loading Image ...");
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setCancelable(true);

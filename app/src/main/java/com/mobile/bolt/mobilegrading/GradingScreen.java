@@ -1,18 +1,14 @@
 package com.mobile.bolt.mobilegrading;
 
-import android.app.ActionBar;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,30 +24,15 @@ import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.DAO.QRCodeDAO;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.QrCode;
-import com.mobile.bolt.support.ExifUtil;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-
-public class ImageFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private FragmentClass.OnFragmentInteractionListener mListener;
-
-    public ImageFragment() {
-        // Required empty public constructor
-    }
+public class GradingScreen extends AppCompatActivity {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private DrawingView drawView;
     // TODO: Rename and change types of parameters
-
     // TODO: Rename and change types and number of parameters
     List<String> label;
     List<Integer> Weights;
@@ -74,35 +55,34 @@ public class ImageFragment extends Fragment {
     List<LinearLayout> layout_horizontal=null;
     LinearLayout horizontalLayout = null;
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String ASUAD = getArguments().getString("ASUAD");
+        setContentView(R.layout.activity_grading_screen);
+        Bundle extras = getIntent().getExtras();
+        String ASUAD = extras.getString("ASUAD");
         Log.d(TAG, "onCreate: entered image fragment " + ASUAD);
+        imageDAO = new ImageDAO(getBaseContext());
         images = imageDAO.getAllNonGradedImageLocations(ASUAD);
         if (images != null && !images.isEmpty()) {
             imageLocation = images.get(0).getLocation();
             QR_CODE_QUESTION=images.get(0).getQrCodeSolution();
         }else {
             Log.e(TAG, "onCreate: images is empty or null");
-            getActivity().finish();
+            Toast.makeText(getBaseContext(), "No images available to grade", Toast.LENGTH_SHORT).show();
+            finish();
         }
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_image, container, false);
+        final View rootView = findViewById(android.R.id.content);
         drawView = (DrawingView) rootView.findViewById(R.id.drawing);
         ImageButton save = (ImageButton) rootView.findViewById(R.id.process_next);
         ImageButton showLabels = (ImageButton) rootView.findViewById(R.id.process_show_labels);
         if (imageLocation != null) {
-            new ShowNewGradableImage(getContext(),drawView).execute(imageLocation);
+            new ShowNewGradableImage(this,drawView).execute(imageLocation);
             showLabels.setEnabled(true);
             generateQuestionWeights(rootView);
         } else {
             showLabels.setEnabled(false);
-            Toast.makeText(getContext(), "No images available to grade", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), "No images available to grade", Toast.LENGTH_SHORT).show();
+            finish();
         }
         drawView.setDrawingCacheEnabled(true);
         save.setOnClickListener(new View.OnClickListener() {
@@ -140,11 +120,13 @@ public class ImageFragment extends Fragment {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                finish();
             }
         });
-        return rootView;
+
     }
+
+
     private void generateQuestionWeights(View rootView){
         if(!QRcodeRetreive()){
             Log.d(TAG, "onCreateView: seeing show labels as false");
@@ -206,7 +188,7 @@ public class ImageFragment extends Fragment {
 
     private Boolean QRcodeRetreive(){
         if(QR_CODE_QUESTION==null) return false;
-        qrCodeDAO = new QRCodeDAO(getContext());
+        qrCodeDAO = new QRCodeDAO(getBaseContext());
         QrCode qrCode = qrCodeDAO.getSingleQRcodeLocationOnQuestion(QR_CODE_QUESTION);
         if(qrCode==null){
             return false;
@@ -249,15 +231,15 @@ public class ImageFragment extends Fragment {
             }
             horizontalLayout.setVisibility(drawView.GONE);
         }
-            labelButton = new Button[label.size()];
-            weightView = new Button[label.size()];
-            removeButton = new Button[label.size()];
-            qSolution = (TextView)rootView.findViewById(R.id.QuestionSolution);
-            qSolution.setText(Question_Solution+" MAX GRADE : "+GRADE);
-            commentsEnter= (EditText) rootView.findViewById(R.id.commentText);
+        labelButton = new Button[label.size()];
+        weightView = new Button[label.size()];
+        removeButton = new Button[label.size()];
+        qSolution = (TextView)rootView.findViewById(R.id.QuestionSolution);
+        qSolution.setText(Question_Solution+" MAX GRADE : "+GRADE);
+        commentsEnter= (EditText) rootView.findViewById(R.id.commentText);
         layout_horizontal=new ArrayList<>();
         for (int i = 0; i < label.size(); i++) {
-            labelButton[i] = new Button(getContext());
+            labelButton[i] = new Button(getBaseContext());
             labelButton[i].setText(label.get(i));
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -265,11 +247,11 @@ public class ImageFragment extends Fragment {
             );
             params.setMargins(30, 0, 0, 0);
             labelButton[i].setLayoutParams(params);
-            weightView[i] = new Button(getContext());
+            weightView[i] = new Button(getBaseContext());
             weightView[i].setText(String.valueOf(Weights.get(i)));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(70, LinearLayout.LayoutParams.WRAP_CONTENT);
             weightView[i].setLayoutParams(lp);
-            removeButton[i] = new Button(getContext());
+            removeButton[i] = new Button(getBaseContext());
             removeButton[i].setText("X");
             removeButton[i].setLayoutParams(lp);
             labelButton[i].setBackgroundColor(Color.TRANSPARENT);
@@ -283,7 +265,7 @@ public class ImageFragment extends Fragment {
                 weightView[i].setEnabled(false);
             }
             removeButton[i].setBackgroundColor(Color.TRANSPARENT);
-            LinearLayout layout = new LinearLayout(getContext());
+            LinearLayout layout = new LinearLayout(getBaseContext());
             layout_horizontal.add(layout);
             horizontalLayout=layout;
             layout.setOrientation(LinearLayout.HORIZONTAL);
@@ -340,41 +322,20 @@ public class ImageFragment extends Fragment {
             drawView.destroyDrawingCache();
             image.setQuestionComments(commentsEnter.getText().toString());
             image.setGrade(GRADE);
-            new SaveGradedImage(getContext()).execute(image,bMap,label,Weights);
+            new SaveGradedImage(getBaseContext()).execute(image,bMap,label,Weights);
             images.remove(0);
             if (!images.isEmpty()) {
                 imageLocation = images.get(0).getLocation();
                 QR_CODE_QUESTION= images.get(0).getQrCodeSolution();
                 LABEL_VIEW_TRUE=false;
-                Log.d(TAG, "dispatchDisplayNextImage: chanigng label view to "+false);
+                Log.d(TAG, "dispatchDisplayNextImage: changing label view to "+false);
                 generateQuestionWeights(rootview);
-                new ShowNewGradableImage(getContext(),drawView).execute(imageLocation);
+                new ShowNewGradableImage(this,drawView).execute(imageLocation);
             } else {
                 imageLocation = null;
-                Toast.makeText(getContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
-                getActivity().finish();
+                Toast.makeText(getBaseContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
+                this.finish();
             }
         }
     }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        imageDAO = new ImageDAO(context);
-        if (context instanceof FragmentClass.OnFragmentInteractionListener) {
-            mListener = (FragmentClass.OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-        imageDAO = null;
-    }
-
-
 }
