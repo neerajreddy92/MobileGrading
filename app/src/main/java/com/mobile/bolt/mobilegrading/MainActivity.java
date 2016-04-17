@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -41,6 +45,7 @@ import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Student;
 import com.mobile.bolt.support.FilterRecyclerView;
 import com.mobile.bolt.support.PictureValues;
+import com.mobile.bolt.support.SelectedClass;
 import com.mobile.bolt.support.StudentFeeder;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -65,9 +70,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final String FTYPE4 = ".JSON";
     private static final int DIALOG_LOAD_FILE_QR_CODE = 1000;
     private static final int DIALOG_LOAD_FILE_CLASSES = 500;
+    private static final int DIALOG_ENTER_NEW_STUDENT = 750;
+    private SelectedClass selectedClass;
     private RVAdapter adapter;
-    private Integer status=5;
+    private Integer status = 5;
     List<Student> students;
+
     // TODO: 2/25/2016 add interface for file upload and json parsing.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,38 +84,48 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        Button btr;
-        btr = (Button) findViewById(R.id.main_button);
-        btr.setOnClickListener(new View.OnClickListener() {
-            @Override
+        selectedClass = SelectedClass.getInstance();
+//        Button btr;
+//        btr = (Button) findViewById(R.id.main_button);
+//        btr.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, Activity_grade.class);
+//                MainActivity.this.startActivity(intent);
+//            }
+//        });
+//        Button parserbtn = (Button) findViewById(R.id.parse_qrcodes);
+//        parserbtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                loadFileListforQrcodeParsing();
+//                onCreateDialog(1000);
+//            }
+//        });
+//        Button writeOutput = (Button) findViewById(R.id.write_output);
+//        writeOutput.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, saveActivity.class);
+//                MainActivity.this.startActivity(intent);
+//            }
+//        });
+        TextView tx = (TextView) findViewById(R.id.textView6);
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/android_7.ttf");
+        tx.setTypeface(custom_font);
+        FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
+        myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Activity_grade.class);
-                MainActivity.this.startActivity(intent);
+                Log.d(TAG, "onClick: floating action button is clicked");
+                onCreateDialog(750);
             }
         });
-        Button parserbtn = (Button) findViewById(R.id.parse_qrcodes);
-        parserbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadFileListforQrcodeParsing();
-                onCreateDialog(1000);
-            }
-        });
-        Button writeOutput = (Button) findViewById(R.id.write_output);
-        writeOutput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, saveActivity.class);
-                MainActivity.this.startActivity(intent);
-            }
-        });
-
         rv = (RecyclerView) findViewById(R.id.rv);
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         rv.setLayoutManager(llm);
-        students= new StudentDao(getBaseContext()).getAllStudents("newTable");
-        adapter = new RVAdapter(students,getBaseContext(),this);
+        students = new StudentDao(getBaseContext()).getAllStudents("newTable");
+        adapter = new RVAdapter(students, getBaseContext(), this);
         rv.setAdapter(adapter);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
@@ -133,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 dispatchQuery(query);
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String query) {
                 dispatchQuery(query);
@@ -142,9 +161,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return true;
     }
 
-    private void dispatchQuery(String query){
-        adapter.updateList(FilterRecyclerView.filter(students,query,status));
+    private void dispatchQuery(String query) {
+        adapter.updateList(FilterRecyclerView.filter(students, query, status));
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -160,7 +180,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 loadFileListforClassesParsing();
                 onCreateDialog(500);
                 return true;
-
+            case R.id.add_questions:
+                loadFileListforQrcodeParsing();
+                onCreateDialog(1000);
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -228,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 @Override
                 public boolean accept(File dir, String filename) {
                     File sel = new File(dir, filename);
-                    return filename.contains(FTYPE1) || filename.contains(FTYPE2) ||filename.contains(FTYPE3) ||filename.contains(FTYPE4) || sel.isDirectory();
+                    return filename.contains(FTYPE1) || filename.contains(FTYPE2) || filename.contains(FTYPE3) || filename.contains(FTYPE4) || sel.isDirectory();
                 }
             };
             mFileList = mPath.list(filter);
@@ -248,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 @Override
                 public boolean accept(File dir, String filename) {
                     File sel = new File(dir, filename);
-                    return filename.contains(FTYPE3) ||filename.contains(FTYPE4) || sel.isDirectory();
+                    return filename.contains(FTYPE3) || filename.contains(FTYPE4) || sel.isDirectory();
                 }
             };
             mFileList = cPath.list(filter);
@@ -325,20 +348,50 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             }
                         });
                 break;
+            case DIALOG_ENTER_NEW_STUDENT:
+                builder.setTitle("Enter a new Student:");
+                LayoutInflater inflater = this.getLayoutInflater();
+                final View dialogView = inflater.inflate(R.layout.new_student_dialog, null);
+                builder.setView(dialogView);
+                builder.setPositiveButton("create class", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        Student student = new Student();
+                        student.setStudentID(((EditText) dialogView.findViewById(R.id.asuad_dialog)).getText().toString());
+                        student.setFirstName(((EditText) dialogView.findViewById(R.id.firstname_dialog)).getText().toString());
+                        student.setLastName(((EditText) dialogView.findViewById(R.id.lastname_dialog)).getText().toString());
+                        addNewStudent(student);
+                    }
+                })
+                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+                break;
         }
         dialog = builder.show();
         return dialog;
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         new GenQRCode(getBaseContext()).execute(PictureValues.getInstance().getPhotoPath(), PictureValues.getInstance().getASUAD()); //starting async task to genrate qr code.
     }
 
+    public void addNewStudent(Student student) {
+        Log.d(TAG, "addNewStudent: " + student.toString());
+        StudentDao studentDao = new StudentDao(getBaseContext());
+        studentDao.addStudent(selectedClass.getCurrentClass(),student);
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        students=new StudentDao(getBaseContext()).getAllStudents((String) parent.getItemAtPosition(position));
+        students = new StudentDao(getBaseContext()).getAllStudents((String) parent.getItemAtPosition(position));
         adapter.updateList(students);
+        selectedClass.setCurrentClass((String) parent.getItemAtPosition(position));
         Log.d(TAG, "onItemSelected: new class item selected" + (String) parent.getItemAtPosition(position));
- }
+    }
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }

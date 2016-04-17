@@ -16,4 +16,6 @@
     <string name="title_activity_save">saveActivity</string>
     <string name="action_favorite">refresh</string>
     <string name="title_activity_grading_screen">GradingScreen</string>
+    <string name="action_search">SEARCH</string>
+    <string name="search">SEARCH</string>
 </resources>

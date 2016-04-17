@@ -7,11 +7,16 @@
         app:actionViewClass="android.widget.Spinner"
         android:title="select" />
     <item
+        android:id="@+id/search"
+        android:title="@string/search"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+    <item
         android:id="@+id/add_class"
         android:icon="@mipmap/add_icon"
         android:title="@string/action_favorite"
         app:showAsAction="ifRoom"/>
-    <item android:id="@+id/Add_Questions"
+    <item android:id="@+id/add_questions"
         android:title="Add Questions"
         app:showAsAction="never"/>
     <item android:id="@+id/refresh_db"
