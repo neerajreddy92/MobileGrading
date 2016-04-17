@@ -45,10 +45,12 @@ import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Student;
 import com.mobile.bolt.support.FilterRecyclerView;
 import com.mobile.bolt.support.PictureValues;
+import com.mobile.bolt.support.PresortedSearch;
 import com.mobile.bolt.support.SelectedClass;
 import com.mobile.bolt.support.StudentFeeder;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final int DIALOG_ENTER_NEW_STUDENT = 750;
     private SelectedClass selectedClass;
     private RVAdapter adapter;
-    private Integer status = 5;
+    private Integer status = 0;
     List<Student> students;
 
     // TODO: 2/25/2016 add interface for file upload and json parsing.
@@ -142,6 +144,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);// set the adapter to provide layout of rows and content
         spinner.setOnItemSelectedListener(this);
+
+        MenuItem item_select = menu.findItem(R.id.spinner_search);
+        Spinner spinner_select = (Spinner) MenuItemCompat.getActionView(item_select);
+        List<String> items_select = PresortedSearch.generateList();
+        final ArrayAdapter<String> adapter_select = new ArrayAdapter<String>(MainActivity.this,
+                android.R.layout.simple_spinner_dropdown_item, items_select);
+        adapter_select.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_select.setAdapter(adapter_select);// set the adapter to provide layout of rows and content
+        spinner_select.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                status = PresortedSearch.whatType((String) parent.getItemAtPosition(position));
+                dispatchQuery("");
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
         search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
@@ -151,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 dispatchQuery(query);
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String query) {
                 dispatchQuery(query);
@@ -171,12 +192,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //        getMenuInflater().inflate(R.menu.menu_activity_main, item);
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                return true;
 
+                return true;
             case R.id.add_class:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
+
                 loadFileListforClassesParsing();
                 onCreateDialog(500);
                 return true;
@@ -185,19 +204,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 onCreateDialog(1000);
                 return true;
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
 
+                return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
@@ -387,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         students = new StudentDao(getBaseContext()).getAllStudents((String) parent.getItemAtPosition(position));
-        adapter.updateList(students);
+        adapter.updateList(FilterRecyclerView.filter(students, "", status));
         selectedClass.setCurrentClass((String) parent.getItemAtPosition(position));
         Log.d(TAG, "onItemSelected: new class item selected" + (String) parent.getItemAtPosition(position));
     }

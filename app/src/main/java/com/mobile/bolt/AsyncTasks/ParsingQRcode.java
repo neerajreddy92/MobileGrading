@@ -30,14 +30,20 @@ public class ParsingQRcode extends AsyncTask<String,Integer,Boolean>{
 
     @Override
     protected Boolean doInBackground(String... params) {
-        File newFile= new File(params[0]);
+        String path = params[0];
+        File newFile= new File(path);
         Log.d(TAG, "doInBackground: "+params[0]);
         if(newFile.exists()){
-//            XMLParser xmlParser = new XMLParser();
-            JsonParserRead jsonParserRead = new JsonParserRead();
+
             try {
-//                List<QrCode> qrCodes= xmlParser.read(newFile);
-                List<QrCode> qrCodes= jsonParserRead.readQRCode(newFile);
+                List<QrCode> qrCodes;
+                if(path.contains(".xml") || path.contains(".XML")){
+                    XMLParser xmlParser = new XMLParser();
+                    qrCodes= xmlParser.read(newFile);
+                }else{
+                    JsonParserRead jsonParserRead = new JsonParserRead();
+                    qrCodes= jsonParserRead.readQRCode(newFile);
+                }
                 publishProgress(25);
                 int time= 75/qrCodes.size();
                 for(QrCode qrCode: qrCodes){

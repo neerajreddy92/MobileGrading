@@ -37,7 +37,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         TextView LastName;
         ImageButton TakePicture;
         Button StartGrading;
-        Button GenOutput;
+        ImageButton GenOutput;
         ImageView emptyStar;
         ImageView halfStar;
         ImageView fullStar;
@@ -49,7 +49,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             LastName = (TextView)itemView.findViewById(R.id.last_name);
             TakePicture = (ImageButton) itemView.findViewById(R.id.take_picture);
             StartGrading = (Button) itemView.findViewById(R.id.Grade);
-            GenOutput = (Button) itemView.findViewById(R.id.output);
+            GenOutput = (ImageButton) itemView.findViewById(R.id.output);
             emptyStar = (ImageView) itemView.findViewById(R.id.empty_star);
             halfStar = (ImageView) itemView.findViewById(R.id.half_star);
             fullStar = (ImageView) itemView.findViewById(R.id.full_star);
