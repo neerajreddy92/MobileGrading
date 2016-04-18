@@ -56,10 +56,6 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     RecyclerView rv;
     private GoogleApiClient client;
     private String TAG = "MobileGrading";
@@ -79,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Integer status = 0;
     List<Student> students;
     List<String> similarityMeasures;
-    // TODO: 2/25/2016 add interface for file upload and json parsing.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StudentFeeder.feed(getBaseContext());
@@ -88,31 +83,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         selectedClass = SelectedClass.getInstance();
-//        Button btr;
-//        btr = (Button) findViewById(R.id.main_button);
-//        btr.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, Activity_grade.class);
-//                MainActivity.this.startActivity(intent);
-//            }
-//        });
-//        Button parserbtn = (Button) findViewById(R.id.parse_qrcodes);
-//        parserbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                loadFileListforQrcodeParsing();
-//                onCreateDialog(1000);
-//            }
-//        });
-//        Button writeOutput = (Button) findViewById(R.id.write_output);
-//        writeOutput.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, saveActivity.class);
-//                MainActivity.this.startActivity(intent);
-//            }
-//        });
         TextView tx = (TextView) findViewById(R.id.textView6);
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/android_7.ttf");
         tx.setTypeface(custom_font);
@@ -133,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         similarityMeasures= new ArrayList<>();
         similarityMeasures.add("cosine");
+        similarityMeasures.add("jaccard");
     }
 
 
@@ -211,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-//        getMenuInflater().inflate(R.menu.menu_activity_main, item);
         switch (item.getItemId()) {
             case R.id.action_settings:
 
@@ -236,13 +206,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onStart();
         client.connect();
         Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
+                Action.TYPE_VIEW,
+                "Main Page",
                 Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
                 Uri.parse("android-app://com.mobile.bolt.mobilegrading/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
@@ -251,17 +217,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
+                Action.TYPE_VIEW,
+                "Main Page",
                 Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
                 Uri.parse("android-app://com.mobile.bolt.mobilegrading/http/host/path")
         );
         AppIndex.AppIndexApi.end(client, viewAction);

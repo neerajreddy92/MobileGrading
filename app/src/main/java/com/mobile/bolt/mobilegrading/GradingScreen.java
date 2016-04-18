@@ -21,6 +21,7 @@ import com.mobile.bolt.DAO.QRCodeDAO;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.QrCode;
 import com.mobile.bolt.similaritymeasure.GenerateCosineSimilarity;
+import com.mobile.bolt.similaritymeasure.GenerateJaccardSimilarity;
 import com.mobile.bolt.support.SimilarityMethod;
 
 import java.util.ArrayList;
@@ -239,7 +240,7 @@ public class GradingScreen extends AppCompatActivity {
         weightView = new Button[label.size()];
         removeButton = new Button[label.size()];
         qSolution = (TextView)rootView.findViewById(R.id.QuestionSolution);
-        qSolution.setText(Question_Solution+" MAX GRADE : "+GRADE);
+        qSolution.setText(Question_Solution+" MAX GRADE : "+MAXGRADE);
         commentsEnter= (EditText) rootView.findViewById(R.id.commentText);
         layout_horizontal=new ArrayList<>();
         for (int i = 0; i < label.size(); i++) {
@@ -347,18 +348,28 @@ public class GradingScreen extends AppCompatActivity {
     }
 
     private void dispatchGenerateGrade(){
-        double pc;
+        Double pc;
         double saliency=1.0;
         double similarity = 0;
         switch (SimilarityMethod.getInstance().getMethodValue()) {
             case 1:
                 similarity = GenerateCosineSimilarity.generate(WeightsOld, Weights);
                 break;
+            case 2:
+                similarity = GenerateJaccardSimilarity.generate(WeightsOld, Weights);
+                break;
         }
+        double numerator=0,denominator=0;
+        for(int i=0;i < WeightsOld.size();i++){
+            numerator = numerator + (double)Weights.get(i);
+            denominator = denominator + (double)WeightsOld.get(i);
+        }
+        saliency = numerator / denominator;
         pc=saliency*similarity;
-        gradeGenerated.setText(String.valueOf(similarity));
-        GRADE = similarity;
-        if(pc<0) pc = 0;
-
+        Log.d(TAG, "dispatchGenerateGrade: similarity"+similarity);
+        Log.d(TAG, "dispatchGenerateGrade: saliency"+saliency);
+        if(pc<0 || pc.isNaN()) pc = 0.0;
+        GRADE = pc*MAXGRADE;
+        gradeGenerated.setText(String.valueOf(GRADE));
     }
 }
