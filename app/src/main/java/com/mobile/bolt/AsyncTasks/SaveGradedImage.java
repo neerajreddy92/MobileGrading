@@ -46,7 +46,6 @@ public class SaveGradedImage extends AsyncTask {
                 val=val+Weights.get(i)+";";
             }
         }
-        image.setGrade(genGrades(image.getGrade(),label,Weights));
         image.setQrCodeValues(val);
         File file = null;
         try {
@@ -64,13 +63,6 @@ public class SaveGradedImage extends AsyncTask {
         }
         return null;
     }
-
-    private float genGrades(float Max_grade,List<String> label, List<Integer> Weights){
-        // TODO: 4/11/2016 add formula to generate grades.
-        return Max_grade;
-    }
-
-
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);

@@ -10,6 +10,10 @@
         app:showAsAction="always"
         app:actionViewClass="android.widget.Spinner"
         android:title="select" />
+    <item android:id="@+id/spinner_similarity"
+        app:showAsAction="always"
+        app:actionViewClass="android.widget.Spinner"
+        android:title="select" />
     <item
         android:id="@+id/search"
         android:title="@string/search"

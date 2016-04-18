@@ -47,6 +47,7 @@ import com.mobile.bolt.support.FilterRecyclerView;
 import com.mobile.bolt.support.PictureValues;
 import com.mobile.bolt.support.PresortedSearch;
 import com.mobile.bolt.support.SelectedClass;
+import com.mobile.bolt.support.SimilarityMethod;
 import com.mobile.bolt.support.StudentFeeder;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private RVAdapter adapter;
     private Integer status = 0;
     List<Student> students;
-
+    List<String> similarityMeasures;
     // TODO: 2/25/2016 add interface for file upload and json parsing.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter = new RVAdapter(students, getBaseContext(), this);
         rv.setAdapter(adapter);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        similarityMeasures= new ArrayList<>();
+        similarityMeasures.add("cosine");
     }
 
 
@@ -157,6 +160,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 status = PresortedSearch.whatType((String) parent.getItemAtPosition(position));
                 dispatchQuery("");
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        MenuItem item_similarity = menu.findItem(R.id.spinner_similarity);
+        Spinner spinner_similarity = (Spinner) MenuItemCompat.getActionView(item_similarity);
+        List<String> items_similarity = similarityMeasures;
+        final ArrayAdapter<String> adapter_similarity = new ArrayAdapter<String>(MainActivity.this,
+                android.R.layout.simple_spinner_dropdown_item, items_similarity);
+        adapter_similarity.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_similarity.setAdapter(adapter_similarity);// set the adapter to provide layout of rows and content
+        spinner_similarity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SimilarityMethod.getInstance().setMethod((String) parent.getItemAtPosition(position));
+                Log.d(TAG, "onItemSelected: setting similarity method" + (String) parent.getItemAtPosition(position));
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {

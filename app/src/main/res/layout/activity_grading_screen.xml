@@ -136,4 +136,15 @@
                 android:textSize="25dp" />
         </ScrollView>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/grade_show"
+        android:layout_marginBottom="42dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/SolutionBox"
+        android:textColor="#547aed"
+        android:textSize="20dp" />
 </RelativeLayout>

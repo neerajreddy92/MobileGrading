@@ -1,13 +1,9 @@
 package com.mobile.bolt.mobilegrading;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +20,8 @@ import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.DAO.QRCodeDAO;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.QrCode;
+import com.mobile.bolt.similaritymeasure.GenerateCosineSimilarity;
+import com.mobile.bolt.support.SimilarityMethod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +34,7 @@ public class GradingScreen extends AppCompatActivity {
     // TODO: Rename and change types and number of parameters
     List<String> label;
     List<Integer> Weights;
+    List<Integer> WeightsOld;
     private String imageLocation = null;
     private String TAG = "MobileGrading";
     private List<Image> images = null;
@@ -46,11 +45,13 @@ public class GradingScreen extends AppCompatActivity {
     Boolean LABEL_VIEW_TRUE = false;
     String QR_CODE_QUESTION=null;
     private String Question_Solution=null;
-    private float GRADE;
+    private double GRADE;
+    private double MAXGRADE;
     Button[] labelButton = null;
     Button[] weightView = null;
     Button[] removeButton = null;
     EditText commentsEnter = null;
+    TextView gradeGenerated ;
     TextView qSolution = null;
     List<LinearLayout> layout_horizontal=null;
     LinearLayout horizontalLayout = null;
@@ -101,6 +102,7 @@ public class GradingScreen extends AppCompatActivity {
                         layout.setVisibility(View.GONE);
                 }
                 generateQuestionWeights(rootView);
+                dispatchGenerateGrade();
             }
         });
         ImageButton undo = (ImageButton) rootView.findViewById(R.id.process_erase);
@@ -123,7 +125,7 @@ public class GradingScreen extends AppCompatActivity {
                 finish();
             }
         });
-
+        gradeGenerated= (TextView) findViewById(R.id.grade_show);
     }
 
 
@@ -196,6 +198,7 @@ public class GradingScreen extends AppCompatActivity {
         String val = qrCode.getVALUES();
         label = new ArrayList<String>();
         Weights = new ArrayList<Integer>();
+        WeightsOld = new ArrayList<Integer>();
         String current="";
         for(int i=0;i<val.length();i++){
             char curr= val.charAt(i);
@@ -206,13 +209,14 @@ public class GradingScreen extends AppCompatActivity {
             }
             if(curr==';'){
                 Weights.add(Integer.parseInt(current));
+                WeightsOld.add(Integer.parseInt(current));
                 current="";
                 continue;
             }
             current=current+curr;
         }
         Question_Solution=qrCode.getQuestionSolution();
-        GRADE =qrCode.getMaxGrade();
+        MAXGRADE =qrCode.getMaxGrade();
         Log.d(TAG, "QRcodeRetreive: qr code labels" + label.toString());
         Log.d(TAG, "QRcodeRetreive: qr code weights" + Weights.toString());
         return true;
@@ -295,6 +299,7 @@ public class GradingScreen extends AppCompatActivity {
                     weightButton.setText(String.valueOf(Weights.get(i)));
                     layout.setBackgroundColor(Color.RED);
                 }
+                dispatchGenerateGrade();
             }
         };
     }
@@ -307,6 +312,7 @@ public class GradingScreen extends AppCompatActivity {
                 labelButton.setEnabled(false);
                 removeButton.setEnabled(false);
                 layout.setBackgroundColor(Color.GRAY);
+                dispatchGenerateGrade();
             }
         };
     }
@@ -321,7 +327,7 @@ public class GradingScreen extends AppCompatActivity {
             Bitmap bMap = drawView.getDrawingCache(true).copy(Bitmap.Config.RGB_565, false);
             drawView.destroyDrawingCache();
             image.setQuestionComments(commentsEnter.getText().toString());
-            image.setGrade(GRADE);
+            image.setGrade((float) GRADE);
             new SaveGradedImage(getBaseContext()).execute(image,bMap,label,Weights);
             images.remove(0);
             if (!images.isEmpty()) {
@@ -336,6 +342,23 @@ public class GradingScreen extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
                 this.finish();
             }
+            dispatchGenerateGrade();
         }
+    }
+
+    private void dispatchGenerateGrade(){
+        double pc;
+        double saliency=1.0;
+        double similarity = 0;
+        switch (SimilarityMethod.getInstance().getMethodValue()) {
+            case 1:
+                similarity = GenerateCosineSimilarity.generate(WeightsOld, Weights);
+                break;
+        }
+        pc=saliency*similarity;
+        gradeGenerated.setText(String.valueOf(similarity));
+        GRADE = similarity;
+        if(pc<0) pc = 0;
+
     }
 }
