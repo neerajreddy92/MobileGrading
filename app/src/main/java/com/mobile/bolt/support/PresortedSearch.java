@@ -11,16 +11,16 @@ public class PresortedSearch {
     public static List<String> generateList(){
         List<String> list = new ArrayList<>();
         list.add("Show All");
-        list.add("Show Starters");
         list.add("Show Gradable");
         list.add("Show Graded");
+        list.add("Show Ouputted");
         return list;
     }
     public static Integer whatType(String type){
         if(type.matches("Show All")) return 0;
-        if(type.matches("Show Starters")) return 1;
-        if(type.matches("Show Gradable")) return 2;
-        if(type.matches("Show Graded")) return 3;
+        if(type.matches("Show Gradable")) return 1;
+        if(type.matches("Show Graded")) return 2;
+        if(type.matches("Show Ouputted")) return 3;
         return 0;
     }
 

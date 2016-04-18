@@ -13,17 +13,18 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.mobile.bolt.AsyncTasks.SaveGradedImage;
 import com.mobile.bolt.AsyncTasks.ShowNewGradableImage;
 import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.DAO.QRCodeDAO;
+import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.QrCode;
+import com.mobile.bolt.Model.Student;
 import com.mobile.bolt.similaritymeasure.GenerateCosineSimilarity;
 import com.mobile.bolt.similaritymeasure.GenerateJaccardSimilarity;
+import com.mobile.bolt.support.SelectedClass;
 import com.mobile.bolt.support.SimilarityMethod;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,12 +57,13 @@ public class GradingScreen extends AppCompatActivity {
     TextView qSolution = null;
     List<LinearLayout> layout_horizontal=null;
     LinearLayout horizontalLayout = null;
+    String ASUAD;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grading_screen);
         Bundle extras = getIntent().getExtras();
-        String ASUAD = extras.getString("ASUAD");
+        ASUAD = extras.getString("ASUAD");
         Log.d(TAG, "onCreate: entered image fragment " + ASUAD);
         imageDAO = new ImageDAO(getBaseContext());
         images = imageDAO.getAllNonGradedImageLocations(ASUAD);
@@ -275,9 +277,9 @@ public class GradingScreen extends AppCompatActivity {
             horizontalLayout=layout;
             layout.setOrientation(LinearLayout.HORIZONTAL);
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params1.setMargins(0,30,0,0);
+            params1.setMargins(0, 30, 0, 0);
             layout.setLayoutParams(params1);
-            layout.setBackgroundColor(0xFFd88827);
+            layout.setBackgroundColor(0xFF6886e0);
             layout.addView(labelButton[i]);
             layout.addView(weightView[i]);
             layout.addView(removeButton[i]);
@@ -317,7 +319,6 @@ public class GradingScreen extends AppCompatActivity {
             }
         };
     }
-
     private void dispatchDisplayNextImage(View rootview) {
         if (images != null && !images.isEmpty()) {
             Image image = images.get(0);
@@ -340,6 +341,10 @@ public class GradingScreen extends AppCompatActivity {
                 new ShowNewGradableImage(this,drawView).execute(imageLocation);
             } else {
                 imageLocation = null;
+                Student student = new Student();
+                student.setStatus(2);
+                student.setStudentID(ASUAD);
+                new StudentDao(this).updateStatus(SelectedClass.getInstance().getCurrentClass(),student);
                 Toast.makeText(getBaseContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
                 this.finish();
             }

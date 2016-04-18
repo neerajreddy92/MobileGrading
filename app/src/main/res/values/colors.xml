@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="floating_action_button_color">#FF4081</color>
     <color name="transparent_white">#FFFFFF</color>
+    <color name="grading_screen_text">#6886e0</color>
 </resources>

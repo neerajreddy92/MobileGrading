@@ -115,7 +115,7 @@
             android:layout_weight="0.17"
             android:enabled="false"
             android:visibility="gone"
-            android:textColor="#f7eb7c"
+            android:textColor="@color/grading_screen_text"
             android:hint="Comment"
             android:minLines="3"
             android:textSize="25dp" />
@@ -132,7 +132,7 @@
                 android:text=""
                 android:enabled="false"
                 android:visibility="gone"
-                android:textColor="#f7eb7c"
+                android:textColor="@color/grading_screen_text"
                 android:textSize="25dp" />
         </ScrollView>
     </LinearLayout>
@@ -142,9 +142,9 @@
         android:layout_height="wrap_content"
         android:text=""
         android:id="@+id/grade_show"
-        android:layout_marginBottom="42dp"
+        android:layout_marginBottom="76dp"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/SolutionBox"
-        android:textColor="#547aed"
-        android:textSize="20dp" />
+        android:textColor="@color/grading_screen_text"
+        android:textSize="30dp" />
 </RelativeLayout>

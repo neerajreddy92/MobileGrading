@@ -17,9 +17,11 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.DAO.StudentContractHelper;
+import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.Student;
 import com.mobile.bolt.Parser.JsonParserWrite;
+import com.mobile.bolt.support.SelectedClass;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,8 +40,10 @@ import java.util.List;
 public class WriteOutputNow extends AsyncTask<Object, Integer, Boolean> {
     private String TAG= "MobileGrading";
     Context context =null;
-    public WriteOutputNow(Context context){
+    String ASUAD;
+    public WriteOutputNow(Context context,String ASUAD){
         this.context = context;
+        this.ASUAD =ASUAD;
     }
     @Override
     protected void onPreExecute() {
@@ -103,8 +107,13 @@ public class WriteOutputNow extends AsyncTask<Object, Integer, Boolean> {
     }
     @Override
     protected void onPostExecute( Boolean result){
-        if(result)
-            Toast.makeText(context,"Output generated",Toast.LENGTH_SHORT).show();
+        if(result) {
+            Toast.makeText(context, "Output generated", Toast.LENGTH_SHORT).show();
+            Student student = new Student();
+            student.setStatus(3);
+            student.setStudentID(ASUAD);
+            new StudentDao(context).updateStatus(SelectedClass.getInstance().getCurrentClass(), student);
+        }
         else
             Toast.makeText(context,"unable to generate output",Toast.LENGTH_SHORT).show();
     }

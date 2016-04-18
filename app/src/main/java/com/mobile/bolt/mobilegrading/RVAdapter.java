@@ -19,7 +19,9 @@ import android.widget.TextView;
 
 import com.mobile.bolt.AsyncTasks.WriteOutput;
 import com.mobile.bolt.AsyncTasks.WriteOutputNow;
+import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Student;
+import com.mobile.bolt.support.SelectedClass;
 
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         ImageButton TakePicture;
         Button StartGrading;
         ImageButton GenOutput;
+        ImageButton sendEMail;
         ImageView emptyStar;
         ImageView halfStar;
         ImageView fullStar;
@@ -50,6 +53,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             TakePicture = (ImageButton) itemView.findViewById(R.id.take_picture);
             StartGrading = (Button) itemView.findViewById(R.id.Grade);
             GenOutput = (ImageButton) itemView.findViewById(R.id.output);
+            sendEMail = (ImageButton) itemView.findViewById(R.id.mail_output);
             emptyStar = (ImageView) itemView.findViewById(R.id.empty_star);
             halfStar = (ImageView) itemView.findViewById(R.id.half_star);
             fullStar = (ImageView) itemView.findViewById(R.id.full_star);
@@ -80,15 +84,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         String uri = "@drawable/myresource";  // where myresource (without the extension) is the file
         switch (students.get(i).getStatus()){
             case 0:
-                personViewHolder.emptyStar.setVisibility(View.VISIBLE);
+
                 break;
             case 1:
-                personViewHolder.halfStar.setVisibility(View.VISIBLE);
+                personViewHolder.emptyStar.setVisibility(View.VISIBLE);
                 break;
             case 2:
-                personViewHolder.fullStar.setVisibility(View.VISIBLE);
+                personViewHolder.emptyStar.setVisibility(View.VISIBLE);
+                personViewHolder.halfStar.setVisibility(View.VISIBLE);
                 break;
             case 3:
+                personViewHolder.emptyStar.setVisibility(View.VISIBLE);
+                personViewHolder.halfStar.setVisibility(View.VISIBLE);
                 personViewHolder.fullStar.setVisibility(View.VISIBLE);
                 break;
         }
@@ -113,7 +120,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             @Override
             public void onClick(View v) {
                 // TODO: 4/15/2016 add checks to see if any output is available
-                new WriteOutputNow(context).execute(student);
+                if (student.getStatus() == 2) {
+                    new WriteOutputNow(context, student.getStudentID()).execute(student);
+                }
+            }
+        });
+        personViewHolder.sendEMail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (student.getStatus() == 3) {
+                    student.setStatus(0);
+                    new StudentDao(context).updateStudent(SelectedClass.getInstance().getCurrentClass(), student);
+                }
             }
         });
     }

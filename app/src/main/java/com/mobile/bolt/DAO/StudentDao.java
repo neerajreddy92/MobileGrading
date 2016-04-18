@@ -156,4 +156,39 @@ public class StudentDao extends SQLiteOpenHelper{
         }
         return false;
     }
+    public boolean updateStudent(String tabelName,Student student ){
+        Log.d(TAG, "update Student: " + student.toString());
+        if (tabelName!=null){
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_ASU_ID, student.getStudentID());
+            values.put(KEY_FIRST_NAME, student.getFirstName());
+            values.put(KEY_LAST_NAME, student.getLastName());
+            values.put(KEY_STATUS, student.getStatus());
+            int i = db.update(tabelName, //table
+                    values, // column/value
+                    KEY_ASU_ID + " = ?", // selections
+                    new String[]{student.getStudentID()}); //selection args
+            db.close();
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean updateStatus(String tabelName,Student student ){
+        Log.d(TAG, "update status: " + student.toString());
+        if (tabelName!=null){
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_ASU_ID, student.getStudentID());
+            values.put(KEY_STATUS, student.getStatus());
+            int i = db.update(tabelName, //table
+                    values, // column/value
+                    KEY_ASU_ID + " = ?", // selections
+                    new String[]{student.getStudentID()}); //selection args
+            db.close();
+            return true;
+        }
+        return false;
+    }
 }

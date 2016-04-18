@@ -83,26 +83,35 @@
                 android:layout_marginRight="16dp"
                 />
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:id="@+id/empty_star"
-                android:src="@mipmap/star_empty"
+                android:src="@mipmap/star_loaded"
                 android:layout_toRightOf="@+id/mail_output"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:layout_marginRight="2dp"
+                android:layout_centerVertical="true"
+                 />
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:id="@+id/half_star"
-                android:src="@mipmap/star_half_full"
-                android:layout_toRightOf="@+id/mail_output"
-                android:visibility="gone"/>
+                android:src="@mipmap/star_loaded"
+                android:layout_toRightOf="@+id/empty_star"
+                android:visibility="gone"
+                android:layout_marginRight="2dp"
+                android:layout_centerVertical="true"
+                />
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:id="@+id/full_star"
-                android:src="@mipmap/star_full"
-                android:layout_toRightOf="@+id/mail_output"
-                android:visibility="gone"/>
+                android:src="@mipmap/star_loaded"
+                android:layout_toRightOf="@+id/half_star"
+                android:visibility="gone"
+                android:layout_marginRight="2dp"
+                android:layout_centerVertical="true"
+                />
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

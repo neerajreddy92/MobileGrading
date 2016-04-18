@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     List<String> similarityMeasures;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        StudentFeeder.feed(getBaseContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -97,7 +96,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         rv.setLayoutManager(llm);
-        students = new StudentDao(getBaseContext()).getAllStudents("newTable");
+//        students = new StudentDao(getBaseContext()).getAllStudents("newTable");
+        students = new ArrayList<>();
         adapter = new RVAdapter(students, getBaseContext(), this);
         rv.setAdapter(adapter);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -184,10 +184,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         int id = item.getItemId();
         switch (item.getItemId()) {
             case R.id.action_settings:
-
                 return true;
             case R.id.add_class:
-
                 loadFileListforClassesParsing();
                 onCreateDialog(500);
                 return true;
@@ -195,8 +193,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 loadFileListforQrcodeParsing();
                 onCreateDialog(1000);
                 return true;
+            case R.id.refresh_page:
+                recreate();
+                return true;
             default:
-
                 return super.onOptionsItemSelected(item);
         }
     }
@@ -370,7 +370,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        new GenQRCode(getBaseContext()).execute(PictureValues.getInstance().getPhotoPath(), PictureValues.getInstance().getASUAD()); //starting async task to genrate qr code.
+        new GenQRCode(getBaseContext(),PictureValues.getInstance().getASUAD()).execute(PictureValues.getInstance().getPhotoPath(), PictureValues.getInstance().getASUAD()); //starting async task to genrate qr code.
     }
 
     public void addNewStudent(Student student) {
