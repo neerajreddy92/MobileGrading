@@ -48,7 +48,7 @@ public class ParseNewClasses extends AsyncTask<String,Integer,Boolean>{
             File file = new File(filePath);
             return new StudentDao(context).createTable(className,jsonParserRead.readStudents(file));
         }else{
-            return new StudentDao(context).createJustTable(className);
+            return new StudentDao(context).createTable(className,null);
         }
     }
 }

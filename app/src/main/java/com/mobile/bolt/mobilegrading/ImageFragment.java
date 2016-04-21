@@ -51,7 +51,6 @@ public class ImageFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private DrawingView drawView;
     // TODO: Rename and change types of parameters
-
     // TODO: Rename and change types and number of parameters
     List<String> label;
     List<Integer> Weights;
@@ -340,7 +339,7 @@ public class ImageFragment extends Fragment {
             drawView.destroyDrawingCache();
             image.setQuestionComments(commentsEnter.getText().toString());
             image.setGrade(GRADE);
-            new SaveGradedImage(getContext()).execute(image,bMap,label,Weights);
+            new SaveGradedImage(getContext(),null).execute(image,bMap,label,Weights);
             images.remove(0);
             if (!images.isEmpty()) {
                 imageLocation = images.get(0).getLocation();

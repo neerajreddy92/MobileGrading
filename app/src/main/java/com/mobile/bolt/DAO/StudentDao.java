@@ -8,35 +8,44 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.util.Log;
+
 import com.mobile.bolt.Model.Student;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Neeraj on 4/10/2016.
  */
-public class StudentDao extends SQLiteOpenHelper{
+public class StudentDao extends SQLiteOpenHelper {
     private static final String TAG = "MobileGrading";
     private static int DATABASE_VERSION = 1;
     private static final String KEY_ASU_ID = "asuad";
     private static final String KEY_FIRST_NAME = "firstname";
     private static final String KEY_LAST_NAME = "lastname";
     private static final String KEY_STATUS = "status";
+    private static final String KEY_IMAGES_TAKEN = "taken";
+    private static final String KEY_IMAGES_GRADED = "graded";
     private static final String TABEL_NAME = "tabelName";
-    private static StudentDao pointsDAO=null;
+    private static StudentDao pointsDAO = null;
     private static final String DATABASE_NAME = "MobileGradingStudent";
+    private static final String[] COLUMNS = {KEY_ASU_ID, KEY_FIRST_NAME, KEY_LAST_NAME, KEY_STATUS, KEY_IMAGES_TAKEN, KEY_IMAGES_GRADED};
+
     // TODO: 4/10/2016 change this to work with versions below jellybean.
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public static StudentDao getInstance(Context context){
-        if(pointsDAO==null){
-            pointsDAO=new StudentDao(context);
+    public static StudentDao getInstance(Context context) {
+        if (pointsDAO == null) {
+            pointsDAO = new StudentDao(context);
             pointsDAO.setWriteAheadLoggingEnabled(true);
         }
         return pointsDAO;
     }
+
     public StudentDao(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         //some table so as the on upgrade works fine.
@@ -50,9 +59,10 @@ public class StudentDao extends SQLiteOpenHelper{
         db.execSQL("DROP TABLE IF EXISTS classes");
         this.onCreate(db);
     }
-    public List<String> getTabels(){
+
+    public List<String> getTabels() {
         List<String> clases = new LinkedList<String>();
-        String query = "SELECT  * FROM classes" ;
+        String query = "SELECT  * FROM classes";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {
@@ -60,19 +70,21 @@ public class StudentDao extends SQLiteOpenHelper{
                 clases.add(cursor.getString(0));
             } while (cursor.moveToNext());
         }
-        Log.d(TAG, "getTabels:retreived tabel  names "+clases.toString());
+        Log.d(TAG, "getTabels:retreived tabel  names " + clases.toString());
         cursor.close();
         db.close();
         return clases;
     }
 
-    public  Boolean createTable(String tabelName,List<Student> students){
-        if(tabelName!=null) {
+    public Boolean createTable(String tabelName, List<Student> students) {
+        if (tabelName != null) {
             String CREATE_STUDENT_TABLE = "CREATE TABLE IF NOT EXISTS " + tabelName + " ( " +
                     "asuad TEXT PRIMARY KEY, " +
                     "firstname TEXT, " +
                     "lastname TEXT, " +
-                    "status INTEGER )";
+                    "status INTEGER, " +
+                    "taken INTEGER, " +
+                    "graded INTEGER )";
             SQLiteDatabase db = this.getReadableDatabase();
             db.execSQL(CREATE_STUDENT_TABLE);
             ContentValues values = new ContentValues();
@@ -81,17 +93,19 @@ public class StudentDao extends SQLiteOpenHelper{
                     null, //nullColumnHack
                     values); // key/value -> keys = column names/ values = column values
             Log.d(TAG, "createTable: creating table" + tabelName);
-            if(students!=null || !students.isEmpty()){
-                for(Student student : students){
+            if (students != null && !students.isEmpty()) {
+                for (Student student : students) {
                     values = new ContentValues();
                     values.put(KEY_ASU_ID, student.getStudentID());
                     values.put(KEY_FIRST_NAME, student.getFirstName());
                     values.put(KEY_LAST_NAME, student.getLastName());
                     values.put(KEY_STATUS, student.getStatus());
+                    values.put(KEY_IMAGES_TAKEN, student.getImagesTaken());
+                    values.put(KEY_IMAGES_GRADED, student.getImagesGraded());
                     db.insert(tabelName, // table
                             null, //nullColumnHack
                             values); // key/value -> keys = column names/ values = column values
-                    Log.d(TAG, "createTable: adding student "+student.toString());
+                    Log.d(TAG, "createTable: adding student " + student.toString());
                 }
             }
             db.close();
@@ -100,8 +114,8 @@ public class StudentDao extends SQLiteOpenHelper{
         return false;
     }
 
-    public Boolean createJustTable(String tabelName){
-        if(tabelName!=null) {
+    public Boolean createJustTable(String tabelName) {
+        if (tabelName != null) {
             SQLiteDatabase db = this.getReadableDatabase();
             ContentValues values = new ContentValues();
             values.put(TABEL_NAME, tabelName);
@@ -114,6 +128,7 @@ public class StudentDao extends SQLiteOpenHelper{
         }
         return false;
     }
+
     public List<Student> getAllStudents(String tabelName) {
         if (tabelName != null) {
             List<Student> students = new LinkedList<Student>();
@@ -121,6 +136,12 @@ public class StudentDao extends SQLiteOpenHelper{
             SQLiteDatabase db = this.getWritableDatabase();
             Cursor cursor = db.rawQuery(query, null);
             Student student = null;
+            if (cursor == null || cursor.getCount() <= 0) {
+                db.close();
+                cursor.close();
+                Log.d(TAG, "getAllStudents: no students present");
+                return new ArrayList<>();
+            }
             if (cursor.moveToFirst()) {
                 do {
                     student = new Student();
@@ -128,10 +149,12 @@ public class StudentDao extends SQLiteOpenHelper{
                     student.setFirstName(cursor.getString(1));
                     student.setLastName(cursor.getString(2));
                     student.setStatus(Integer.valueOf(cursor.getString(3)));
+                    student.setImagesTaken(Integer.valueOf(cursor.getString(4)));
+                    student.setImagesGraded(Integer.valueOf(cursor.getString(5)));
                     students.add(student);
+                    Log.d(TAG, "getAllStudents" + student.toString());
                 } while (cursor.moveToNext());
             }
-            Log.d(TAG, "getAllStudents" + student.toString());
             cursor.close();
             db.close();
             return students;
@@ -139,32 +162,37 @@ public class StudentDao extends SQLiteOpenHelper{
         return null;
     }
 
-    public boolean addStudent(String tabelName,Student student ){
-        Log.d(TAG, "add Student: " + student.toString());
-        if (tabelName!=null){
+    public boolean addStudent(String tabelName, Student student) {
+        if (tabelName != null) {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(KEY_ASU_ID, student.getStudentID());
             values.put(KEY_FIRST_NAME, student.getFirstName());
             values.put(KEY_LAST_NAME, student.getLastName());
             values.put(KEY_STATUS, student.getStatus());
+            values.put(KEY_IMAGES_TAKEN, student.getImagesTaken());
+            values.put(KEY_IMAGES_GRADED, student.getImagesGraded());
             db.insert(tabelName, // table
                     null, //nullColumnHack
                     values); // key/value -> keys = column names/ values = column values
             db.close();
+            Log.d(TAG, "add Student: " + student.toString());
             return true;
         }
         return false;
     }
-    public boolean updateStudent(String tabelName,Student student ){
+
+    public boolean updateStudent(String tabelName, Student student) {
         Log.d(TAG, "update Student: " + student.toString());
-        if (tabelName!=null){
+        if (tabelName != null) {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(KEY_ASU_ID, student.getStudentID());
             values.put(KEY_FIRST_NAME, student.getFirstName());
             values.put(KEY_LAST_NAME, student.getLastName());
             values.put(KEY_STATUS, student.getStatus());
+            values.put(KEY_IMAGES_TAKEN, student.getImagesTaken());
+            values.put(KEY_IMAGES_GRADED, student.getImagesGraded());
             int i = db.update(tabelName, //table
                     values, // column/value
                     KEY_ASU_ID + " = ?", // selections
@@ -174,10 +202,10 @@ public class StudentDao extends SQLiteOpenHelper{
         }
         return false;
     }
-    
-    public boolean updateStatus(String tabelName,Student student ){
+
+    public boolean updateStatus(String tabelName, Student student) {
         Log.d(TAG, "update status: " + student.toString());
-        if (tabelName!=null){
+        if (tabelName != null) {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(KEY_ASU_ID, student.getStudentID());
@@ -187,6 +215,132 @@ public class StudentDao extends SQLiteOpenHelper{
                     KEY_ASU_ID + " = ?", // selections
                     new String[]{student.getStudentID()}); //selection args
             db.close();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setImagesGraded(String tabelName, Student student) {
+        Log.d(TAG, "setImagesGraded: " + student.toString());
+        if (tabelName != null) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_ASU_ID, student.getStudentID());
+            values.put(KEY_IMAGES_GRADED, student.getImagesGraded());
+            int i = db.update(tabelName, //table
+                    values, // column/value
+                    KEY_ASU_ID + " = ?", // selections
+                    new String[]{student.getStudentID()}); //selection args
+            db.close();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setImagesTaken(String tabelName, Student student) {
+        Log.d(TAG, "setImagesTaken: " + student.toString());
+        if (tabelName != null) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_ASU_ID, student.getStudentID());
+            values.put(KEY_IMAGES_TAKEN, student.getImagesTaken());
+            int i = db.update(tabelName, //table
+                    values, // column/value
+                    KEY_ASU_ID + " = ?", // selections
+                    new String[]{student.getStudentID()}); //selection args
+            db.close();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setImagesTakenAndGraded(String tabelName, Student student) {
+        Log.d(TAG, "setImagesTaken: " + student.toString());
+        if (tabelName != null) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(KEY_ASU_ID, student.getStudentID());
+            values.put(KEY_IMAGES_GRADED, student.getImagesGraded());
+            values.put(KEY_IMAGES_TAKEN, student.getImagesTaken());
+            int i = db.update(tabelName, //table
+                    values, // column/value
+                    KEY_ASU_ID + " = ?", // selections
+                    new String[]{student.getStudentID()}); //selection args
+            db.close();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean incrementImagesGraded(String tabelName, Student student) {
+        Log.d(TAG, "incrementImagesGraded: " + student.toString());
+        if (tabelName != null) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            Cursor cursor =
+                    db.query(tabelName, // a. table
+                            COLUMNS, // b. column names
+                            KEY_ASU_ID + " = ?", // c. selections
+                            new String[]{student.getStudentID()}, // d. selections args
+                            null, // e. group by
+                            null, // f. having
+                            null, // g. order by
+                            null); // h. limit
+
+            if (cursor == null || cursor.getCount() <= 0) {
+                db.close();
+                cursor.close();
+                return false;
+            }
+            if (cursor.moveToFirst()) {
+                Integer val = Integer.parseInt(cursor.getString(5));
+                Log.d(TAG, "incrementImagesTaken: from" + val + " to: " + (val + 1));
+                ContentValues values = new ContentValues();
+                values.put(KEY_ASU_ID, student.getStudentID());
+                values.put(KEY_IMAGES_GRADED, val + 1);
+                int i = db.update(tabelName, //table
+                        values, // column/value
+                        KEY_ASU_ID + " = ?", // selections
+                        new String[]{student.getStudentID()}); //selection args
+            }
+            db.close();
+            cursor.close();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean incrementImagesTaken(String tabelName, Student student) {
+        Log.d(TAG, "incrementImagesTaken: " + student.toString());
+        if (tabelName != null) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            Cursor cursor =
+                    db.query(tabelName, // a. table
+                            COLUMNS, // b. column names
+                            KEY_ASU_ID + " = ?", // c. selections
+                            new String[]{student.getStudentID()}, // d. selections args
+                            null, // e. group by
+                            null, // f. having
+                            null, // g. order by
+                            null); // h. limit
+
+            if (cursor == null || cursor.getCount() <= 0) {
+                db.close();
+                cursor.close();
+                return false;
+            }
+            if (cursor.moveToFirst()) {
+                Integer val = Integer.parseInt(cursor.getString(4));
+                Log.d(TAG, "incrementImagesTaken: from" + val + " to: " + (val + 1));
+                ContentValues values = new ContentValues();
+                values.put(KEY_ASU_ID, student.getStudentID());
+                values.put(KEY_IMAGES_TAKEN, val + 1);
+                int i = db.update(tabelName, //table
+                        values, // column/value
+                        KEY_ASU_ID + " = ?", // selections
+                        new String[]{student.getStudentID()}); //selection args
+            }
+            db.close();
+            cursor.close();
             return true;
         }
         return false;

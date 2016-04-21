@@ -7,7 +7,10 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.mobile.bolt.DAO.ImageDAO;
+import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Image;
+import com.mobile.bolt.Model.Student;
+import com.mobile.bolt.support.SelectedClass;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,10 +26,10 @@ import java.util.List;
 public class SaveGradedImage extends AsyncTask {
     String TAG = "MobileGrading";
     Context context;
-    public SaveGradedImage(Context context){
-        this.context = context;
+    public SaveGradedImage(Context context,Student student){
+        this.context = context;this.student =student;
     }
-
+    Student student =null;
 
     @Override
     protected void onPreExecute() {
@@ -88,6 +91,7 @@ public class SaveGradedImage extends AsyncTask {
                 return false;
             }
             Log.d(TAG, "dispatchSaveImage: Retured true");
+            new StudentDao(context).incrementImagesGraded(SelectedClass.getInstance().getCurrentClass(), student);
             return true;
         }
         return false;

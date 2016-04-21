@@ -56,9 +56,12 @@ public class WriteOutputNow extends AsyncTask<Object, Integer, Boolean> {
         ImageDAO imageDAO = new ImageDAO(context);
         List<Image> images=imageDAO.getAllNonUploadedImageLocations(student.getStudentID());
         if(images==null || images.isEmpty()) return false;
+        File file = null;
+        File textFile=null;
         try {
-            File file = createNewPdfFile(images.get(0).getASU_ID());
-            File textFile = createNewTextFile(images.get(0).getASU_ID());
+            file = createNewPdfFile(images.get(0).getASU_ID());
+            Log.d(TAG, "createNewPdfFile: file path" +file.getAbsolutePath());
+            textFile = createNewTextFile(images.get(0).getASU_ID());
             int indentation = 1;
             com.itextpdf.text.Image img;
             Document document = new Document(PageSize.LETTER);
@@ -87,6 +90,8 @@ public class WriteOutputNow extends AsyncTask<Object, Integer, Boolean> {
             return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            file.mkdirs();
+            textFile.mkdirs();
             Log.d(TAG, "doInBackground:Writing to pdf file not found exception");
         } catch (DocumentException e) {
             e.printStackTrace();
@@ -113,6 +118,9 @@ public class WriteOutputNow extends AsyncTask<Object, Integer, Boolean> {
             student.setStatus(3);
             student.setStudentID(ASUAD);
             new StudentDao(context).updateStatus(SelectedClass.getInstance().getCurrentClass(), student);
+            student.setImagesGraded(0);
+            student.setImagesTaken(0);
+            new StudentDao(context).setImagesTakenAndGraded(SelectedClass.getInstance().getCurrentClass(), student);
         }
         else
             Toast.makeText(context,"unable to generate output",Toast.LENGTH_SHORT).show();

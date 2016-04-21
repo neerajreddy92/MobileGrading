@@ -23,6 +23,7 @@ import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Student;
 import com.mobile.bolt.support.SelectedClass;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,12 +42,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         Button StartGrading;
         ImageButton GenOutput;
         ImageButton sendEMail;
-        ImageView emptyStar;
-        ImageView halfStar;
-        ImageView fullStar;
+        List<ImageView> color;
+        List<ImageView> nocolor;
         PersonViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
+            color = new ArrayList<>();
+            nocolor = new ArrayList<>();
             FirstName = (TextView)itemView.findViewById(R.id.First_name);
             ASUID = (TextView)itemView.findViewById(R.id.ASU_id);
             LastName = (TextView)itemView.findViewById(R.id.last_name);
@@ -54,9 +56,16 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             StartGrading = (Button) itemView.findViewById(R.id.Grade);
             GenOutput = (ImageButton) itemView.findViewById(R.id.output);
             sendEMail = (ImageButton) itemView.findViewById(R.id.mail_output);
-            emptyStar = (ImageView) itemView.findViewById(R.id.empty_star);
-            halfStar = (ImageView) itemView.findViewById(R.id.half_star);
-            fullStar = (ImageView) itemView.findViewById(R.id.full_star);
+            color.add((ImageView) itemView.findViewById(R.id.color_one));
+            color.add((ImageView) itemView.findViewById(R.id.color_two));
+            color.add((ImageView) itemView.findViewById(R.id.color_three));
+            color.add((ImageView) itemView.findViewById(R.id.color_four));
+            color.add((ImageView) itemView.findViewById(R.id.color_five));
+            nocolor.add((ImageView) itemView.findViewById(R.id.nocolor_one));
+            nocolor.add((ImageView) itemView.findViewById(R.id.nocolor_two));
+            nocolor.add((ImageView) itemView.findViewById(R.id.nocolor_three));
+            nocolor.add((ImageView) itemView.findViewById(R.id.nocolor_four));
+            nocolor.add((ImageView) itemView.findViewById(R.id.nocolor_five));
         }
     }
     private List<Student> students ;
@@ -87,16 +96,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
 
                 break;
             case 1:
-                personViewHolder.emptyStar.setVisibility(View.VISIBLE);
+                Integer finished = ((Double)(((double)students.get(i).getImagesGraded()/(double)students.get(i).getImagesTaken())*5)).intValue();
+                for(int z = 0;z<finished;z++)
+                    personViewHolder.color.get(z).setVisibility(View.VISIBLE);
+                for(int z = 0;z<5-finished;z++)
+                    personViewHolder.nocolor.get(z).setVisibility(View.VISIBLE);
                 break;
             case 2:
-                personViewHolder.emptyStar.setVisibility(View.VISIBLE);
-                personViewHolder.halfStar.setVisibility(View.VISIBLE);
+                for(int z = 0;z<5;z++)
+                    personViewHolder.color.get(z).setVisibility(View.VISIBLE);
                 break;
             case 3:
-                personViewHolder.emptyStar.setVisibility(View.VISIBLE);
-                personViewHolder.halfStar.setVisibility(View.VISIBLE);
-                personViewHolder.fullStar.setVisibility(View.VISIBLE);
+
                 break;
         }
         personViewHolder.TakePicture.setOnClickListener(new View.OnClickListener() {

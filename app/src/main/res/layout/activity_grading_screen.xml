@@ -71,23 +71,72 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/process_show_labels"
-        android:layout_toLeftOf="@+id/label_box"
-        android:layout_toStartOf="@+id/label_box"
+        android:layout_toLeftOf="@+id/scroll_label_box"
+        android:layout_toStartOf="@+id/scroll_label_box"
         android:background="@android:color/transparent"
         android:src="@mipmap/refresh_button"
         android:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/label_box"
+    <ScrollView
+        android:id="@+id/scroll_label_box"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/drawing"
+        android:layout_above="@+id/grade_show"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/process_next"
-        android:layout_toEndOf="@+id/textView5"
-        android:layout_toRightOf="@+id/textView5"
-        android:orientation="vertical"></LinearLayout>
+        android:layout_alignTop="@+id/process_next"
+        android:layout_toEndOf="@+id/textView7"
+        android:layout_toRightOf="@+id/textView7"
+        android:layout_alignLeft="@+id/textView7"
+        android:layout_alignStart="@+id/textView7">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/label_box"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/grade_show"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/process_next"
+                android:layout_toEndOf="@+id/textView5"
+                android:layout_toRightOf="@+id/textView5"
+                android:orientation="vertical"></LinearLayout>
+
+            <EditText
+                android:id="@+id/commentText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.17"
+                android:enabled="false"
+                android:hint="Comment"
+                android:minLines="3"
+                android:textColor="@color/grading_screen_text"
+                android:textSize="25dp"
+                android:visibility="gone" />
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/QuestionSolution"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:nestedScrollingEnabled="true"
+                    android:text=""
+                    android:textColor="@color/grading_screen_text"
+                    android:textSize="25dp"
+                    android:visibility="gone" />
+            </HorizontalScrollView>
+        </LinearLayout>
+
+    </ScrollView>
 
     <TextView
         android:id="@+id/textView5"
@@ -96,55 +145,25 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
 
-    <LinearLayout
-        android:id="@+id/SolutionBox"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignTop="@+id/label_box"
-        android:layout_toEndOf="@+id/process_done"
-        android:layout_toLeftOf="@+id/label_box"
-        android:layout_toRightOf="@+id/process_erase"
-        android:layout_toStartOf="@+id/label_box"
-        android:orientation="vertical"
-        android:weightSum="1">
-
-        <EditText
-            android:id="@+id/commentText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.17"
-            android:enabled="false"
-            android:visibility="gone"
-            android:textColor="@color/grading_screen_text"
-            android:hint="Comment"
-            android:minLines="3"
-            android:textSize="25dp" />
-
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/QuestionSolution"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="true"
-                android:text=""
-                android:enabled="false"
-                android:visibility="gone"
-                android:textColor="@color/grading_screen_text"
-                android:textSize="25dp" />
-        </ScrollView>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/grade_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="76dp"
+        android:layout_marginLeft="76dp"
+        android:text=""
+        android:textColor="@color/grading_screen_text"
+        android:textSize="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/grade_show"
-        android:layout_marginBottom="76dp"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/SolutionBox"
-        android:textColor="@color/grading_screen_text"
-        android:textSize="30dp" />
+        android:id="@+id/textView7"
+        android:layout_below="@+id/scroll_label_box"
+        android:layout_toLeftOf="@+id/process_show_labels"
+        android:layout_toStartOf="@+id/process_show_labels"
+        android:layout_marginRight="183dp"
+        android:layout_marginEnd="183dp" />
+
 </RelativeLayout>

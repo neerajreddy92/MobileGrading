@@ -143,7 +143,8 @@ public class GenQRCode extends AsyncTask <String,Integer,Image>{
             Student student = new Student();
             student.setStudentID(ASUAD);
             student.setStatus(1);
-            new StudentDao(context).updateStatus(SelectedClass.getInstance().getCurrentClass(),student);
+            new StudentDao(context).updateStatus(SelectedClass.getInstance().getCurrentClass(), student);
+            new StudentDao(context).incrementImagesTaken(SelectedClass.getInstance().getCurrentClass(),student);
             Toast.makeText(context,image.getQrCodeSolution(), LENGTH_LONG).show();
         }else
             Toast.makeText(context, "QR Code not found", LENGTH_LONG).show();

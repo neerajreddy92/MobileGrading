@@ -1,119 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:padding="16dp"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/cv"
-        >
-
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            >
+            android:padding="16dp">
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/ASU_id"
-                android:textSize="20sp"
-                android:layout_marginRight="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_marginRight="16dp"
                 android:maxWidth="100dp"
-                android:minWidth="100dp" />
+                android:minWidth="100dp"
+                android:textSize="20sp" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/First_name"
-                android:layout_toRightOf="@+id/ASU_id"
-                android:textSize="20sp"
-                android:layout_marginRight="16dp"
-                android:maxWidth="100dp"
-                android:minWidth="100dp"
-                />
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/last_name"
-                android:layout_toRightOf="@+id/First_name"
-                android:textSize="20sp"
                 android:layout_marginRight="16dp"
+                android:layout_toRightOf="@+id/ASU_id"
                 android:maxWidth="100dp"
                 android:minWidth="100dp"
-                />
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/last_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_toRightOf="@+id/First_name"
+                android:maxWidth="100dp"
+                android:minWidth="100dp"
+                android:textSize="20sp" />
 
             <Button
+                android:id="@+id/Grade"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/Grade"
-                android:layout_toRightOf="@+id/last_name"
                 android:layout_marginRight="16dp"
+                android:layout_toRightOf="@+id/last_name"
                 android:text="Grade" />
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:src="@mipmap/camera_icon"
-                android:layout_toRightOf="@+id/Grade"
                 android:id="@+id/take_picture"
-                android:layout_marginRight="16dp"
-                />
-            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:src="@mipmap/printer_icon"
-                android:layout_toRightOf="@+id/take_picture"
-                android:id="@+id/output"
                 android:layout_marginRight="16dp"
-                />
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/Grade"
                 android:background="@android:color/transparent"
-                android:src="@mipmap/email_icon"
-                android:layout_toRightOf="@+id/output"
-                android:id="@+id/mail_output"
-                android:layout_marginRight="16dp"
-                />
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:id="@+id/empty_star"
-                android:src="@mipmap/star_loaded"
-                android:layout_toRightOf="@+id/mail_output"
-                android:visibility="gone"
-                android:layout_marginRight="2dp"
-                android:layout_centerVertical="true"
-                 />
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:id="@+id/half_star"
-                android:src="@mipmap/star_loaded"
-                android:layout_toRightOf="@+id/empty_star"
-                android:visibility="gone"
-                android:layout_marginRight="2dp"
-                android:layout_centerVertical="true"
-                />
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:id="@+id/full_star"
-                android:src="@mipmap/star_loaded"
-                android:layout_toRightOf="@+id/half_star"
-                android:visibility="gone"
-                android:layout_marginRight="2dp"
-                android:layout_centerVertical="true"
-                />
-        </RelativeLayout>
+                android:src="@mipmap/camera_icon" />
 
+            <ImageButton
+                android:id="@+id/output"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_toRightOf="@+id/take_picture"
+                android:background="@android:color/transparent"
+                android:src="@mipmap/printer_icon" />
+
+            <ImageButton
+                android:id="@+id/mail_output"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_toRightOf="@+id/output"
+                android:background="@android:color/transparent"
+                android:src="@mipmap/email_icon" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/mail_output"
+                android:id="@+id/color_stars">
+
+                <ImageView
+                    android:id="@+id/color_one"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:src="@mipmap/star_loaded"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/color_two"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:layout_toRightOf="@+id/color_one"
+                    android:src="@mipmap/star_loaded"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/color_three"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:layout_toRightOf="@+id/color_two"
+                    android:src="@mipmap/star_loaded"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/color_four"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:layout_toRightOf="@+id/color_three"
+                    android:src="@mipmap/star_loaded"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/color_five"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:layout_toRightOf="@+id/color_four"
+                    android:src="@mipmap/star_loaded"
+                    android:visibility="gone" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/nocolor_stars"
+                android:layout_toRightOf="@+id/color_stars">
+                <ImageView
+                    android:id="@+id/nocolor_one"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:src="@mipmap/grey_star"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/nocolor_two"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:layout_toRightOf="@+id/nocolor_one"
+                    android:src="@mipmap/grey_star"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/nocolor_three"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:layout_toRightOf="@+id/nocolor_two"
+                    android:src="@mipmap/grey_star"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/nocolor_four"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:layout_toRightOf="@+id/nocolor_three"
+                    android:src="@mipmap/grey_star"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/nocolor_five"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="2dp"
+                    android:layout_toRightOf="@+id/nocolor_four"
+                    android:src="@mipmap/grey_star"
+                    android:visibility="gone" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </HorizontalScrollView>
     </android.support.v7.widget.CardView>
 
 </LinearLayout>

@@ -1,5 +1,7 @@
 package com.mobile.bolt.Model;
 
+import com.itextpdf.text.*;
+
 /**
  * Created by Neeraj on 2/23/2016.
  */
@@ -8,6 +10,24 @@ public class Student {
     private String FirstName;
     private String LastName;
     private Integer Status;
+    private Integer ImagesTaken;
+    private Integer ImagesGraded;
+
+    public Integer getImagesGraded() {
+        return ImagesGraded;
+    }
+
+    public void setImagesGraded(Integer imagesGraded) {
+        ImagesGraded = imagesGraded;
+    }
+
+    public Integer getImagesTaken() {
+        return ImagesTaken;
+    }
+
+    public void setImagesTaken(Integer imagesTaken) {
+        ImagesTaken = imagesTaken;
+    }
 
     public Integer getStatus() {
         return Status;
@@ -22,12 +42,16 @@ public class Student {
         FirstName ="";
         LastName = "";
         Status=0;
+        ImagesTaken=0;
+        ImagesGraded=0;
     }
-    public Student(String id,String firstName,String lastName,Integer Status){
+    public Student(String id,String firstName,String lastName,Integer Status,Integer ImagesTaken,Integer ImagesGraded){
         this.StudentID =id;
         this.FirstName =firstName;
         this.LastName = lastName;
         this.Status = Status;
+        this.ImagesTaken=ImagesTaken;
+        this.ImagesGraded=ImagesGraded;
     }
     public String getFirstName() {
         return FirstName;
@@ -49,6 +73,6 @@ public class Student {
     }
     @Override
     public String toString(){
-        return StudentID+" "+FirstName+" "+ LastName+" status "+Status;
+        return StudentID+" "+FirstName+" "+ LastName+" status "+Status+" Images Taken "+ImagesTaken+ " Images Graded "+ ImagesGraded;
     }
 }

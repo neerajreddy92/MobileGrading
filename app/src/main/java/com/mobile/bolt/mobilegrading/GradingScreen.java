@@ -330,7 +330,10 @@ public class GradingScreen extends AppCompatActivity {
             drawView.destroyDrawingCache();
             image.setQuestionComments(commentsEnter.getText().toString());
             image.setGrade((float) GRADE);
-            new SaveGradedImage(getBaseContext()).execute(image,bMap,label,Weights);
+            Student student = new Student();
+            student.setStatus(2);
+            student.setStudentID(ASUAD);
+            new SaveGradedImage(getBaseContext(),student).execute(image,bMap,label,Weights);
             images.remove(0);
             if (!images.isEmpty()) {
                 imageLocation = images.get(0).getLocation();
@@ -341,9 +344,6 @@ public class GradingScreen extends AppCompatActivity {
                 new ShowNewGradableImage(this,drawView).execute(imageLocation);
             } else {
                 imageLocation = null;
-                Student student = new Student();
-                student.setStatus(2);
-                student.setStudentID(ASUAD);
                 new StudentDao(this).updateStatus(SelectedClass.getInstance().getCurrentClass(),student);
                 Toast.makeText(getBaseContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
                 this.finish();
@@ -375,6 +375,7 @@ public class GradingScreen extends AppCompatActivity {
         Log.d(TAG, "dispatchGenerateGrade: saliency"+saliency);
         if(pc<0 || pc.isNaN()) pc = 0.0;
         GRADE = pc*MAXGRADE;
+        GRADE = (double)Math.round(GRADE * 100d) / 100d;
         gradeGenerated.setText(String.valueOf(GRADE));
     }
 }
