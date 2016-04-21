@@ -8,9 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.util.Log;
-
 import com.mobile.bolt.Model.Student;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

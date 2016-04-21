@@ -35,6 +35,12 @@
     <item android:id="@+id/add_questions"
         android:title="Add Questions"
         app:showAsAction="never"/>
+    <item android:id="@+id/gen_output"
+        android:title="Gen Output"
+        app:showAsAction="never"/>
+    <item android:id="@+id/send_email"
+        android:title="Send Email"
+        app:showAsAction="never"/>
     <item android:id="@+id/refresh_db"
         android:title="Refresh Database"
         app:showAsAction="never"/>

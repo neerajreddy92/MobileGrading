@@ -41,6 +41,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.mobile.bolt.AsyncTasks.GenQRCode;
 import com.mobile.bolt.AsyncTasks.ParseNewClasses;
 import com.mobile.bolt.AsyncTasks.ParsingQRcode;
+import com.mobile.bolt.AsyncTasks.SendEmail;
+import com.mobile.bolt.AsyncTasks.WriteOutput;
 import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Student;
 import com.mobile.bolt.support.FilterRecyclerView;
@@ -97,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         rv.setLayoutManager(llm);
-//        students = new StudentDao(getBaseContext()).getAllStudents("newTable");
         students = new ArrayList<>();
         adapter = new RVAdapter(students, getBaseContext(), this);
         rv.setAdapter(adapter);
@@ -196,6 +197,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 return true;
             case R.id.refresh_page:
                 recreate();
+                return true;
+            case R.id.gen_output:
+                new WriteOutput(getBaseContext(),students).execute("");
+                return true;
+            case R.id.send_email:
+                new SendEmail(getBaseContext(),students).execute("");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

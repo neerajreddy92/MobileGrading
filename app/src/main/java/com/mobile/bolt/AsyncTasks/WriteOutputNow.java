@@ -90,8 +90,12 @@ public class WriteOutputNow extends AsyncTask<Object, Integer, Boolean> {
             return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            file.mkdirs();
-            textFile.mkdirs();
+            try {
+                file.createNewFile();
+                textFile.createNewFile();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             Log.d(TAG, "doInBackground:Writing to pdf file not found exception");
         } catch (DocumentException e) {
             e.printStackTrace();

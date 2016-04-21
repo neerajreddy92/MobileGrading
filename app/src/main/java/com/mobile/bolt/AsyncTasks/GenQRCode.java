@@ -96,6 +96,18 @@ public class GenQRCode extends AsyncTask <String,Integer,Image>{
                         }catch (Exception e3){
                             Log.e(TAG, "getQRCode: Not found exception: try3");
                             e3.printStackTrace();
+                            options.inSampleSize = count++;
+                            bMap = BitmapFactory.decodeFile(photoPath, options);
+                            intArray = new int[bMap.getWidth()*bMap.getHeight()];
+                            bMap.getPixels(intArray, 0, bMap.getWidth(), 0, 0, bMap.getWidth(), bMap.getHeight());
+                            source = new RGBLuminanceSource(bMap.getWidth(), bMap.getHeight(), intArray);
+                            bitmap = new BinaryBitmap(new HybridBinarizer(source));
+                            try{
+                                result = reader.decode(bitmap);
+                            }catch (Exception e4){
+                                Log.e(TAG, "getQRCode: Not found exception: try4");
+                                e3.printStackTrace();
+                            }
                         }
                     }
                 }
