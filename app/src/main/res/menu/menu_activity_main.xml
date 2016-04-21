@@ -41,6 +41,9 @@
     <item android:id="@+id/send_email"
         android:title="Send Email"
         app:showAsAction="never"/>
+    <item android:id="@+id/add_email"
+        android:title="Add Email"
+        app:showAsAction="never"/>
     <item android:id="@+id/refresh_db"
         android:title="Refresh Database"
         app:showAsAction="never"/>

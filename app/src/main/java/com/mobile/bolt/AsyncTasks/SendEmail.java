@@ -41,6 +41,7 @@ public class SendEmail extends AsyncTask<Object, Integer, Boolean> {
     protected Boolean doInBackground(Object... params) {
         boolean ret=true;
         String email = "reddy.neeraj007@gmail.com";
+        if(students.size()==0) return false;
         for (Student student : students) {
             String[] pdfFileNames = loadPDFFileList();
             String[] textFileNames = loadTextFileList();
@@ -163,5 +164,4 @@ public class SendEmail extends AsyncTask<Object, Integer, Boolean> {
         }
         return mFileList;
     }
-
 }

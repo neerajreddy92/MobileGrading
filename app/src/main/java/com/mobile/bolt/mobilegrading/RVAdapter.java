@@ -41,7 +41,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         ImageButton TakePicture;
         Button StartGrading;
         ImageButton GenOutput;
-        ImageButton sendEMail;
         List<ImageView> color;
         List<ImageView> nocolor;
         PersonViewHolder(View itemView) {
@@ -55,7 +54,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             TakePicture = (ImageButton) itemView.findViewById(R.id.take_picture);
             StartGrading = (Button) itemView.findViewById(R.id.Grade);
             GenOutput = (ImageButton) itemView.findViewById(R.id.output);
-            sendEMail = (ImageButton) itemView.findViewById(R.id.mail_output);
             color.add((ImageView) itemView.findViewById(R.id.color_one));
             color.add((ImageView) itemView.findViewById(R.id.color_two));
             color.add((ImageView) itemView.findViewById(R.id.color_three));
@@ -133,15 +131,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
                 // TODO: 4/15/2016 add checks to see if any output is available
                 if (student.getStatus() == 2) {
                     new WriteOutputNow(context, student.getStudentID()).execute(student);
-                }
-            }
-        });
-        personViewHolder.sendEMail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (student.getStatus() == 3) {
-                    student.setStatus(0);
-                    new StudentDao(context).updateStudent(SelectedClass.getInstance().getCurrentClass(), student);
                 }
             }
         });

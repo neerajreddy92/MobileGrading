@@ -49,12 +49,16 @@ public class StudentDao extends SQLiteOpenHelper {
         //some table so as the on upgrade works fine.
         String CREATE_STUDENT_TABLE_Names = "CREATE TABLE classes ( " +
                 "tabelName TEXT PRIMARY KEY )";
+        String CREATE_EMAIL_ADDRESSES = "CREATE TABLE emails ( " +
+                "names TEXT PRIMARY KEY )";
         db.execSQL(CREATE_STUDENT_TABLE_Names);
+        db.execSQL(CREATE_EMAIL_ADDRESSES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS classes");
+        db.execSQL("DROP TABLE IF EXISTS emails");
         this.onCreate(db);
     }
 
@@ -72,6 +76,37 @@ public class StudentDao extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return clases;
+    }
+    public String[] getEmails() {
+        List<String> emails = new LinkedList<String>();
+        String query = "SELECT  * FROM emails";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                emails.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        Log.d(TAG, "getEmails:retreived emails " + emails.toString());
+        cursor.close();
+        db.close();
+        String[] emai = new String[emails.size()];
+        for(int i=0;i<emails.size();i++) emai[i] = emails.get(i);
+        return emai;
+    }
+    public Boolean addEmail(String email) {
+        if (email != null) {
+            SQLiteDatabase db = this.getReadableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("names", email);
+            db.insert("emails", // table
+                    null, //nullColumnHack
+                    values); // key/value -> keys = column names/ values = column values
+            Log.d(TAG, "addEmail: adding email " + email);
+            db.close();
+            return true;
+        }
+        return false;
     }
 
     public Boolean createTable(String tabelName, List<Student> students) {

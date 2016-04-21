@@ -19,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,6 +36,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -51,6 +53,7 @@ import com.mobile.bolt.support.PresortedSearch;
 import com.mobile.bolt.support.SelectedClass;
 import com.mobile.bolt.support.SimilarityMethod;
 import com.mobile.bolt.support.StudentFeeder;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -72,11 +75,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final int DIALOG_LOAD_FILE_QR_CODE = 1000;
     private static final int DIALOG_LOAD_FILE_CLASSES = 500;
     private static final int DIALOG_ENTER_NEW_STUDENT = 750;
+    private static final int DIALOG_ADD_NEW_EMAIL = 800;
+    private static final int DIALOG_SEND_EMAILS = 850;
     private SelectedClass selectedClass;
     private RVAdapter adapter;
     private Integer status = 0;
     List<Student> students;
     List<String> similarityMeasures;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter = new RVAdapter(students, getBaseContext(), this);
         rv.setAdapter(adapter);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        similarityMeasures= new ArrayList<>();
+        similarityMeasures = new ArrayList<>();
         similarityMeasures.add("cosine");
         similarityMeasures.add("jaccard");
     }
@@ -134,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 status = PresortedSearch.whatType((String) parent.getItemAtPosition(position));
                 dispatchQuery("");
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -153,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 SimilarityMethod.getInstance().setMethod((String) parent.getItemAtPosition(position));
                 Log.d(TAG, "onItemSelected: setting similarity method" + (String) parent.getItemAtPosition(position));
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -168,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 dispatchQuery(query);
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String query) {
                 dispatchQuery(query);
@@ -199,10 +208,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 recreate();
                 return true;
             case R.id.gen_output:
-                new WriteOutput(getBaseContext(),students).execute("");
+                new WriteOutput(getBaseContext(), students).execute("");
                 return true;
             case R.id.send_email:
-                new SendEmail(getBaseContext(),students).execute("");
+                onCreateDialog(850);
+                return true;
+            case R.id.add_email:
+                onCreateDialog(800);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -356,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 LayoutInflater inflater = this.getLayoutInflater();
                 final View dialogView = inflater.inflate(R.layout.new_student_dialog, null);
                 builder.setView(dialogView);
-                builder.setPositiveButton("create class", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Add student", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         Student student = new Student();
@@ -372,19 +384,60 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             }
                         });
                 break;
+            case DIALOG_ADD_NEW_EMAIL:
+                builder.setTitle("Enter a new Email:");
+                final EditText text = new EditText(getBaseContext());
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                text.setLayoutParams(params);
+                text.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                builder.setView(text);
+                builder.setPositiveButton("Add Student", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (text.getText().toString().matches(""))
+                            return;
+                        if(text.getText().toString().contains(".") && text.getText().toString().contains("@")) {
+                            new StudentDao(getBaseContext()).addEmail(text.getText().toString());
+                            Toast.makeText(getBaseContext(),"email added to the database",Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                            Toast.makeText(getBaseContext(),"wrong email format",Toast.LENGTH_SHORT).show();
+                    }
+                })
+                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+                break;
+            case DIALOG_SEND_EMAILS:
+                builder.setTitle("Choose your email");
+                final String[] list = new StudentDao(getBaseContext()).getEmails();
+                if (list == null || list.length == 0) {
+                    Log.e(TAG, "Showing file picker before loading the file list");
+                    dialog = builder.create();
+                    return dialog;
+                }
+                builder.setItems(list, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String email = list[which];
+                        new SendEmail(getBaseContext(),students).execute(email);
+                    }
+                });
+                break;
         }
         dialog = builder.show();
         return dialog;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        new GenQRCode(getBaseContext(),PictureValues.getInstance().getASUAD()).execute(PictureValues.getInstance().getPhotoPath(), PictureValues.getInstance().getASUAD()); //starting async task to genrate qr code.
+        new GenQRCode(getBaseContext(), PictureValues.getInstance().getASUAD()).execute(PictureValues.getInstance().getPhotoPath(), PictureValues.getInstance().getASUAD()); //starting async task to genrate qr code.
     }
 
     public void addNewStudent(Student student) {
         Log.d(TAG, "addNewStudent: " + student.toString());
         StudentDao studentDao = new StudentDao(getBaseContext());
-        studentDao.addStudent(selectedClass.getCurrentClass(),student);
+        studentDao.addStudent(selectedClass.getCurrentClass(), student);
     }
 
     @Override
