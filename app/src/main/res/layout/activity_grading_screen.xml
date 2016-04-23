@@ -154,7 +154,7 @@
         android:layout_marginLeft="76dp"
         android:text=""
         android:textColor="@color/grading_screen_text"
-        android:textSize="30dp" />
+        android:textSize="40dp" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -1,5 +1,6 @@
 package com.mobile.bolt.AsyncTasks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,8 @@ import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.Student;
+import com.mobile.bolt.mobilegrading.Activity_grade;
+import com.mobile.bolt.mobilegrading.MainActivity;
 import com.mobile.bolt.support.LoadImage;
 import com.mobile.bolt.support.SelectedClass;
 
@@ -32,6 +35,7 @@ public class GenQRCode extends AsyncTask <String,Integer,Image>{
     Context context;
     String TAG = "MobileGrading";
     String ASUAD;
+    MainActivity MainActivity;
     // TODO: 4/6/2016 check to see if the application needs to be stopped while this occurs.
     @Override
     protected Image doInBackground(String... params) {
@@ -137,9 +141,10 @@ public class GenQRCode extends AsyncTask <String,Integer,Image>{
         return image;
     }
 
-    public GenQRCode(Context context,String ASUAD) {
+    public GenQRCode(Context context,String ASUAD,MainActivity MainActivity) {
         this.context = context;
         this.ASUAD =ASUAD;
+        this.MainActivity = MainActivity;
     }
 
     @Override
@@ -156,8 +161,9 @@ public class GenQRCode extends AsyncTask <String,Integer,Image>{
             student.setStudentID(ASUAD);
             student.setStatus(1);
             new StudentDao(context).updateStatus(SelectedClass.getInstance().getCurrentClass(), student);
-            new StudentDao(context).incrementImagesTaken(SelectedClass.getInstance().getCurrentClass(),student);
+            new StudentDao(context).incrementImagesTaken(SelectedClass.getInstance().getCurrentClass(), student);
             Toast.makeText(context,image.getQrCodeSolution(), LENGTH_LONG).show();
+            MainActivity.mainActivityRecyclerViewRefresh();
         }else
             Toast.makeText(context, "QR Code not found", LENGTH_LONG).show();
     }

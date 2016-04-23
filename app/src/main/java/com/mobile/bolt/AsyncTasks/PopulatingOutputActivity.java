@@ -138,7 +138,7 @@ public class PopulatingOutputActivity extends AsyncTask<String,Integer, Map<Stri
     private View.OnClickListener handleOnClick(final LinearLayout linearLayout, final List<Image> images) {
         return new View.OnClickListener() {
             public void onClick(View v) {
-                new WriteOutput(context,null).execute(images);
+                new WriteOutput(context,null,null).execute(images);
                 new SetAllUploadedTrue(context).execute(images);
                 linearLayout.setVisibility(View.INVISIBLE);
             }

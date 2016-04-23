@@ -19,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,9 +51,9 @@ import com.mobile.bolt.Model.Student;
 import com.mobile.bolt.support.FilterRecyclerView;
 import com.mobile.bolt.support.PictureValues;
 import com.mobile.bolt.support.PresortedSearch;
+import com.mobile.bolt.support.SearchFilterVal;
 import com.mobile.bolt.support.SelectedClass;
 import com.mobile.bolt.support.SimilarityMethod;
-import com.mobile.bolt.support.StudentFeeder;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -77,6 +78,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final int DIALOG_ENTER_NEW_STUDENT = 750;
     private static final int DIALOG_ADD_NEW_EMAIL = 800;
     private static final int DIALOG_SEND_EMAILS = 850;
+    private static final int DIALOG_CONIFIRM_DELETE = 900;
+    private static final int DIALOG_CLASS_DELETE = 950;
+    private final int UNDO_DELAY = 5000;
+    private int position;
     private SelectedClass selectedClass;
     private RVAdapter adapter;
     private Integer status = 0;
@@ -86,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StudentFeeder.feed(getBaseContext());
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -112,6 +116,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         similarityMeasures = new ArrayList<>();
         similarityMeasures.add("cosine");
         similarityMeasures.add("jaccard");
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                onCreateDialog(900);
+                position=viewHolder.getAdapterPosition();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(rv);
     }
 
 
@@ -188,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void dispatchQuery(String query) {
         adapter.updateList(FilterRecyclerView.filter(students, query, status));
+        SearchFilterVal.getInstance().setSearchVal(query);
     }
 
     @Override
@@ -208,13 +227,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 recreate();
                 return true;
             case R.id.gen_output:
-                new WriteOutput(getBaseContext(), students).execute("");
+                new WriteOutput(getBaseContext(), students,this).execute("");
                 return true;
             case R.id.send_email:
                 onCreateDialog(850);
                 return true;
             case R.id.add_email:
                 onCreateDialog(800);
+                return true;
+            case R.id.delete_class:
+                onCreateDialog(950);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -372,10 +394,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         Student student = new Student();
+                        if(((EditText) dialogView.findViewById(R.id.asuad_dialog)).getText().toString().matches("")) return;
                         student.setStudentID(((EditText) dialogView.findViewById(R.id.asuad_dialog)).getText().toString());
                         student.setFirstName(((EditText) dialogView.findViewById(R.id.firstname_dialog)).getText().toString());
                         student.setLastName(((EditText) dialogView.findViewById(R.id.lastname_dialog)).getText().toString());
                         addNewStudent(student);
+                        mainActivityRecyclerViewRefresh();
                     }
                 })
                         .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -391,7 +415,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 text.setLayoutParams(params);
                 text.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                 builder.setView(text);
-                builder.setPositiveButton("Add Student", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Add Email", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         if (text.getText().toString().matches(""))
@@ -416,22 +440,62 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (list == null || list.length == 0) {
                     Log.e(TAG, "Showing file picker before loading the file list");
                     dialog = builder.create();
+                    Toast.makeText(getBaseContext(),"No saved Emails",Toast.LENGTH_SHORT).show();
                     return dialog;
                 }
                 builder.setItems(list, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String email = list[which];
-                        new SendEmail(getBaseContext(),students).execute(email);
+                        new SendEmail(getBaseContext(), students).execute(email);
                     }
                 });
                 break;
+            case DIALOG_CONIFIRM_DELETE:
+                builder.setTitle("Confirm Delete?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        new StudentDao(getBaseContext()).deleteStudent(SelectedClass.getInstance().getCurrentClass(),adapter.removeItem(position));
+                    }
+                })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                break;
+            case DIALOG_CLASS_DELETE:
+                builder.setTitle("Select class to be deleted");
+                final String[] classList = new StudentDao(getBaseContext()).getTabelsString();
+                if (classList == null || classList.length == 0) {
+                    Log.e(TAG, "Showing file picker before loading the file list");
+                    dialog = builder.create();
+                    return dialog;
+                }
+                builder.setItems(classList, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String table = classList[which];
+                        new StudentDao(getBaseContext()).deleteStudentTable(table);
+                        recreate();
+                    }
+                });
         }
         dialog = builder.show();
         return dialog;
     }
 
+    public void mainActivityRecyclerViewRefresh(){
+        students = new StudentDao(getBaseContext()).getAllStudents(selectedClass.getCurrentClass());
+        adapter.updateList(FilterRecyclerView.filter(students, SearchFilterVal.getInstance().getSearchVal(), status));
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        new GenQRCode(getBaseContext(), PictureValues.getInstance().getASUAD()).execute(PictureValues.getInstance().getPhotoPath(), PictureValues.getInstance().getASUAD()); //starting async task to genrate qr code.
+        if(requestCode == 1)
+            new GenQRCode(getBaseContext(), PictureValues.getInstance().getASUAD(),this).execute(PictureValues.getInstance().getPhotoPath(), PictureValues.getInstance().getASUAD()); //starting async task to genrate qr code.
+        if(requestCode == 20) {
+            mainActivityRecyclerViewRefresh();
+            Log.d(TAG, "onActivityResult: refresh");
+        }
     }
 
     public void addNewStudent(Student student) {
@@ -447,8 +511,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         selectedClass.setCurrentClass((String) parent.getItemAtPosition(position));
         Log.d(TAG, "onItemSelected: new class item selected" + (String) parent.getItemAtPosition(position));
     }
-
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }
+
+
 }

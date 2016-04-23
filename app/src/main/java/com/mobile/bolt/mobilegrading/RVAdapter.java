@@ -3,25 +3,20 @@ package com.mobile.bolt.mobilegrading;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.mobile.bolt.AsyncTasks.WriteOutput;
 import com.mobile.bolt.AsyncTasks.WriteOutputNow;
-import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Student;
-import com.mobile.bolt.support.SelectedClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +28,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
     private Context context;
     private String TAG = "MobileGrading";
     private Activity activity;
+    private RecyclerView rv;
+    private  MainActivity mainActivity;
     public static class PersonViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
+//        CardView cv;
         TextView ASUID;
         TextView FirstName;
         TextView LastName;
@@ -43,9 +40,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         ImageButton GenOutput;
         List<ImageView> color;
         List<ImageView> nocolor;
+        TextView outputstatusshow;
         PersonViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.cv);
+//            cv = (CardView)itemView.findViewById(R.id.cv);
             color = new ArrayList<>();
             nocolor = new ArrayList<>();
             FirstName = (TextView)itemView.findViewById(R.id.First_name);
@@ -64,6 +62,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             nocolor.add((ImageView) itemView.findViewById(R.id.nocolor_three));
             nocolor.add((ImageView) itemView.findViewById(R.id.nocolor_four));
             nocolor.add((ImageView) itemView.findViewById(R.id.nocolor_five));
+            outputstatusshow = (TextView) itemView.findViewById(R.id.output_status);
         }
     }
     private List<Student> students ;
@@ -71,6 +70,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         this.students = students;
         this.context =context;
         this.activity = activity;
+        this.mainActivity = (MainActivity) activity;
     }
     @Override
     public int getItemCount() {
@@ -91,21 +91,38 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         String uri = "@drawable/myresource";  // where myresource (without the extension) is the file
         switch (students.get(i).getStatus()){
             case 0:
-
+                for(int z = 0;z<5;z++)
+                    personViewHolder.color.get(z).setVisibility(View.GONE);
+                for(int z = 0;z<5;z++)
+                    personViewHolder.nocolor.get(z).setVisibility(View.GONE);
+                personViewHolder.outputstatusshow.setVisibility(View.GONE);
                 break;
             case 1:
                 Integer finished = ((Double)(((double)students.get(i).getImagesGraded()/(double)students.get(i).getImagesTaken())*5)).intValue();
-                for(int z = 0;z<finished;z++)
+                int z=0;
+                for(z = 0;z<finished;z++)
                     personViewHolder.color.get(z).setVisibility(View.VISIBLE);
-                for(int z = 0;z<5-finished;z++)
+                for(;z<5;z++)
+                    personViewHolder.color.get(z).setVisibility(View.GONE);
+                for(z = 0;z<5-finished;z++)
                     personViewHolder.nocolor.get(z).setVisibility(View.VISIBLE);
-                break;
+                for(;z<5;z++)
+                    personViewHolder.nocolor.get(z).setVisibility(View.GONE);
+                personViewHolder.outputstatusshow.setVisibility(View.GONE);
+                    break;
             case 2:
-                for(int z = 0;z<5;z++)
-                    personViewHolder.color.get(z).setVisibility(View.VISIBLE);
+                for(int k = 0;k<5;k++)
+                    personViewHolder.color.get(k).setVisibility(View.VISIBLE);
+                for(int k = 0;k<5;k++)
+                    personViewHolder.nocolor.get(k).setVisibility(View.GONE);
+                personViewHolder.outputstatusshow.setVisibility(View.GONE);
                 break;
             case 3:
-
+                for(int k = 0;k<5;k++)
+                    personViewHolder.color.get(k).setVisibility(View.GONE);
+                for(int k = 0;k<5;k++)
+                    personViewHolder.nocolor.get(k).setVisibility(View.GONE);
+                personViewHolder.outputstatusshow.setVisibility(View.VISIBLE);
                 break;
         }
         personViewHolder.TakePicture.setOnClickListener(new View.OnClickListener() {
@@ -121,8 +138,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
                 Intent intent = new Intent(context, GradingScreen.class);
                 intent.putExtra("ASUAD", student.getStudentID());
                 Log.d(TAG, "onClick: "+student.toString());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mainActivity.startActivityForResult(intent,20);
             }
         });
         personViewHolder.GenOutput.setOnClickListener(new View.OnClickListener() {
@@ -130,7 +147,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             public void onClick(View v) {
                 // TODO: 4/15/2016 add checks to see if any output is available
                 if (student.getStatus() == 2) {
-                    new WriteOutputNow(context, student.getStudentID()).execute(student);
+                    new WriteOutputNow(context, student.getStudentID(),mainActivity).execute(student);
                 }
             }
         });
@@ -143,6 +160,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+        rv = recyclerView;
     }
     public Student removeItem(int position) {
         final Student model = students.remove(position);
@@ -180,6 +198,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
                 addItem(i, model);
             }
         }
+    }
+    public void onDismiss(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int position) {
+        //TODO delete the actual item in your data source
+        notifyItemRemoved(position);
     }
     private void applyAndAnimateMovedItems(List<Student> newStudents) {
         for (int toPosition = newStudents.size() - 1; toPosition >= 0; toPosition--) {

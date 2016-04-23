@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.util.Log;
+
 import com.mobile.bolt.Model.Student;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,6 +79,38 @@ public class StudentDao extends SQLiteOpenHelper {
         db.close();
         return clases;
     }
+
+    public String[] getTabelsString() {
+        List<String> clases = new LinkedList<String>();
+        String query = "SELECT  * FROM classes";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                clases.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        Log.d(TAG, "getTabels:retreived tabel  names " + clases.toString());
+        cursor.close();
+        db.close();
+        String[] emai = new String[clases.size()];
+        for (int i = 0; i < clases.size(); i++) emai[i] = clases.get(i);
+        return emai;
+    }
+
+    public void deleteStudentTable(String tabelName) {
+        if (tabelName != null) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.delete("classes",
+                    "tabelName" + " = ?",
+                    new String[]{tabelName});
+            Log.d(TAG, "delete table" + tabelName);
+            String drop = "DROP TABLE "+tabelName;
+            db.execSQL(drop);
+            db.close();
+        }
+    }
+
     public String[] getEmails() {
         List<String> emails = new LinkedList<String>();
         String query = "SELECT  * FROM emails";
@@ -91,9 +125,10 @@ public class StudentDao extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         String[] emai = new String[emails.size()];
-        for(int i=0;i<emails.size();i++) emai[i] = emails.get(i);
+        for (int i = 0; i < emails.size(); i++) emai[i] = emails.get(i);
         return emai;
     }
+
     public Boolean addEmail(String email) {
         if (email != null) {
             SQLiteDatabase db = this.getReadableDatabase();
@@ -340,6 +375,17 @@ public class StudentDao extends SQLiteOpenHelper {
             return true;
         }
         return false;
+    }
+
+    public void deleteStudent(String tabelName, Student student) {
+        if (tabelName != null) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.delete(tabelName,
+                    KEY_ASU_ID + " = ?",
+                    new String[]{student.getStudentID()});
+            db.close();
+            Log.d(TAG, "deleteStudent" + student.toString());
+        }
     }
 
     public boolean incrementImagesTaken(String tabelName, Student student) {

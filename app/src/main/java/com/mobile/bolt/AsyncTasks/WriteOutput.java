@@ -21,6 +21,7 @@ import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.Student;
 import com.mobile.bolt.Parser.JsonParserWrite;
+import com.mobile.bolt.mobilegrading.MainActivity;
 import com.mobile.bolt.support.FilterRecyclerView;
 import com.mobile.bolt.support.SelectedClass;
 
@@ -42,10 +43,11 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
     private String TAG= "MobileGrading";
     Context context =null;
     List<Student> students;
-
-    public WriteOutput(Context context,List<Student> students){
+    private MainActivity mainActivity;
+    public WriteOutput(Context context,List<Student> students,MainActivity mainActivity){
         this.context = context;
         this.students = students;
+        this.mainActivity = mainActivity;
     }
     @Override
     protected void onPreExecute() {
@@ -128,6 +130,7 @@ public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
                 student.setImagesTaken(0);
                 new StudentDao(context).setImagesTakenAndGraded(SelectedClass.getInstance().getCurrentClass(), student);
             }
+            mainActivity.mainActivityRecyclerViewRefresh();
             }
         else
             Toast.makeText(context,"unable to generate output",Toast.LENGTH_SHORT).show();

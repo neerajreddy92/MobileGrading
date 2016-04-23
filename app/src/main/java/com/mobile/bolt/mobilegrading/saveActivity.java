@@ -69,7 +69,7 @@ public class saveActivity extends AppCompatActivity implements PopulatingOutputA
     private View.OnClickListener handleOnClick(final LinearLayout linearLayout, final List<Image> images) {
         return new View.OnClickListener() {
             public void onClick(View v) {
-                new WriteOutput(getBaseContext(),null).execute(images);
+                new WriteOutput(getBaseContext(),null,null).execute(images);
                 new SetAllUploadedTrue(getBaseContext()).execute(images);
                 linearLayout.setEnabled(false);
             }

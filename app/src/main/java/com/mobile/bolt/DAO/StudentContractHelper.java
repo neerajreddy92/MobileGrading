@@ -193,12 +193,12 @@ public class StudentContractHelper extends SQLiteOpenHelper {
     }
 
     // Deleting single Student
-    public void deleteBook(Student student) {
+    public void deleteStudent(Student student) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME,
                 KEY_ASU_ID + " = ?",
                 new String[]{student.getStudentID()});
         db.close();
-        Log.d(TAG, "deleteBook" + student.toString());
+        Log.d(TAG, "deleteStudent" + student.toString());
     }
 }

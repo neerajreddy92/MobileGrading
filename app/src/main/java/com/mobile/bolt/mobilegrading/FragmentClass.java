@@ -143,7 +143,7 @@ public class FragmentClass extends Fragment {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        new GenQRCode(getContext(),ASUAD).execute(anotherPhotoPath,ASUAD); //starting async task to genrate qr code.
+        new GenQRCode(getContext(),ASUAD,new MainActivity()).execute(anotherPhotoPath,ASUAD); //starting async task to genrate qr code.
     }
 
 

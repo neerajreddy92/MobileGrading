@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.mobile.bolt.AsyncTasks.SaveGradedImage;
 import com.mobile.bolt.AsyncTasks.ShowNewGradableImage;
 import com.mobile.bolt.DAO.ImageDAO;
@@ -25,6 +26,7 @@ import com.mobile.bolt.similaritymeasure.GenerateCosineSimilarity;
 import com.mobile.bolt.similaritymeasure.GenerateJaccardSimilarity;
 import com.mobile.bolt.support.SelectedClass;
 import com.mobile.bolt.support.SimilarityMethod;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,23 +43,24 @@ public class GradingScreen extends AppCompatActivity {
     private String TAG = "MobileGrading";
     private List<Image> images = null;
     private ImageDAO imageDAO = null;
-    QRCodeDAO qrCodeDAO=null;
+    QRCodeDAO qrCodeDAO = null;
     String mCurrentPhotoPath;
     private final String test1 = "MobileGrading";
     Boolean LABEL_VIEW_TRUE = false;
-    String QR_CODE_QUESTION=null;
-    private String Question_Solution=null;
+    String QR_CODE_QUESTION = null;
+    private String Question_Solution = null;
     private double GRADE;
     private double MAXGRADE;
     Button[] labelButton = null;
     Button[] weightView = null;
     Button[] removeButton = null;
     EditText commentsEnter = null;
-    TextView gradeGenerated ;
+    TextView gradeGenerated;
     TextView qSolution = null;
-    List<LinearLayout> layout_horizontal=null;
+    List<LinearLayout> layout_horizontal = null;
     LinearLayout horizontalLayout = null;
     String ASUAD;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +72,8 @@ public class GradingScreen extends AppCompatActivity {
         images = imageDAO.getAllNonGradedImageLocations(ASUAD);
         if (images != null && !images.isEmpty()) {
             imageLocation = images.get(0).getLocation();
-            QR_CODE_QUESTION=images.get(0).getQrCodeSolution();
-        }else {
+            QR_CODE_QUESTION = images.get(0).getQrCodeSolution();
+        } else {
             Log.e(TAG, "onCreate: images is empty or null");
             Toast.makeText(getBaseContext(), "No images available to grade", Toast.LENGTH_SHORT).show();
             finish();
@@ -80,7 +83,7 @@ public class GradingScreen extends AppCompatActivity {
         ImageButton save = (ImageButton) rootView.findViewById(R.id.process_next);
         ImageButton showLabels = (ImageButton) rootView.findViewById(R.id.process_show_labels);
         if (imageLocation != null) {
-            new ShowNewGradableImage(this,drawView).execute(imageLocation);
+            new ShowNewGradableImage(this, drawView).execute(imageLocation);
             showLabels.setEnabled(true);
             generateQuestionWeights(rootView);
         } else {
@@ -100,8 +103,8 @@ public class GradingScreen extends AppCompatActivity {
         rootView.findViewById(R.id.process_refresh_labels).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(layout_horizontal!=null){
-                    for(LinearLayout layout : layout_horizontal)
+                if (layout_horizontal != null) {
+                    for (LinearLayout layout : layout_horizontal)
                         layout.setVisibility(View.GONE);
                 }
                 generateQuestionWeights(rootView);
@@ -128,14 +131,16 @@ public class GradingScreen extends AppCompatActivity {
                 finish();
             }
         });
-        gradeGenerated= (TextView) findViewById(R.id.grade_show);
+        gradeGenerated = (TextView) findViewById(R.id.grade_show);
     }
 
 
-    private void generateQuestionWeights(View rootView){
-        if(!QRcodeRetreive()){
+    private void generateQuestionWeights(View rootView) {
+        if (!QRcodeRetreive()) {
             Log.d(TAG, "onCreateView: seeing show labels as false");
             rootView.findViewById(R.id.process_show_labels).setEnabled(false);
+            Toast.makeText(this, "Warning: Question doesn't have respective labels in the database", Toast.LENGTH_SHORT).show();
+            this.finish();
         }
         createLabelButtons(rootView);
     }
@@ -158,7 +163,7 @@ public class GradingScreen extends AppCompatActivity {
             rootView.findViewById(R.id.process_refresh_labels).setVisibility(drawView.GONE);
             Log.d(TAG, "toggleLableView: disabling label view");
             LABEL_VIEW_TRUE = false;
-            Log.d(TAG, "dispatchDisplayNextImage: chanigng label view to "+false);
+            Log.d(TAG, "dispatchDisplayNextImage: chanigng label view to " + false);
         } else {
             for (int i = 0; i < label.size(); i++) {
                 if (Weights.get(i) == 0) {
@@ -185,41 +190,40 @@ public class GradingScreen extends AppCompatActivity {
             rootView.findViewById(R.id.process_refresh_labels).setEnabled(true);
             rootView.findViewById(R.id.process_refresh_labels).setVisibility(View.VISIBLE);
             LABEL_VIEW_TRUE = true;
-            Log.d(TAG, "dispatchDisplayNextImage: chanigng label view to "+true);
+            Log.d(TAG, "dispatchDisplayNextImage: chanigng label view to " + true);
         }
     }
 
 
-
-    private Boolean QRcodeRetreive(){
-        if(QR_CODE_QUESTION==null) return false;
+    private Boolean QRcodeRetreive() {
+        if (QR_CODE_QUESTION == null) return false;
         qrCodeDAO = new QRCodeDAO(getBaseContext());
         QrCode qrCode = qrCodeDAO.getSingleQRcodeLocationOnQuestion(QR_CODE_QUESTION);
-        if(qrCode==null){
+        if (qrCode == null) {
             return false;
         }
         String val = qrCode.getVALUES();
         label = new ArrayList<String>();
         Weights = new ArrayList<Integer>();
         WeightsOld = new ArrayList<Integer>();
-        String current="";
-        for(int i=0;i<val.length();i++){
-            char curr= val.charAt(i);
-            if(curr==':'){
+        String current = "";
+        for (int i = 0; i < val.length(); i++) {
+            char curr = val.charAt(i);
+            if (curr == ':') {
                 label.add(current);
-                current="";
+                current = "";
                 continue;
             }
-            if(curr==';'){
+            if (curr == ';') {
                 Weights.add(Integer.parseInt(current));
                 WeightsOld.add(Integer.parseInt(current));
-                current="";
+                current = "";
                 continue;
             }
-            current=current+curr;
+            current = current + curr;
         }
-        Question_Solution=qrCode.getQuestionSolution();
-        MAXGRADE =qrCode.getMaxGrade();
+        Question_Solution = qrCode.getQuestionSolution();
+        MAXGRADE = qrCode.getMaxGrade();
         Log.d(TAG, "QRcodeRetreive: qr code labels" + label.toString());
         Log.d(TAG, "QRcodeRetreive: qr code weights" + Weights.toString());
         return true;
@@ -230,8 +234,8 @@ public class GradingScreen extends AppCompatActivity {
             return;
         }
         LinearLayout labelBox = (LinearLayout) rootView.findViewById(R.id.label_box);
-        if(labelButton!=null){
-            for(int i=0;i<labelButton.length;i++){
+        if (labelButton != null) {
+            for (int i = 0; i < labelButton.length; i++) {
                 labelButton[i].setVisibility(View.GONE);
                 weightView[i].setVisibility(View.GONE);
                 removeButton[i].setVisibility(View.GONE);
@@ -241,10 +245,10 @@ public class GradingScreen extends AppCompatActivity {
         labelButton = new Button[label.size()];
         weightView = new Button[label.size()];
         removeButton = new Button[label.size()];
-        qSolution = (TextView)rootView.findViewById(R.id.QuestionSolution);
-        qSolution.setText(Question_Solution+" MAX GRADE : "+MAXGRADE);
-        commentsEnter= (EditText) rootView.findViewById(R.id.commentText);
-        layout_horizontal=new ArrayList<>();
+        qSolution = (TextView) rootView.findViewById(R.id.QuestionSolution);
+        qSolution.setText(Question_Solution + " MAX GRADE : " + MAXGRADE);
+        commentsEnter = (EditText) rootView.findViewById(R.id.commentText);
+        layout_horizontal = new ArrayList<>();
         for (int i = 0; i < label.size(); i++) {
             labelButton[i] = new Button(getBaseContext());
             labelButton[i].setText(label.get(i));
@@ -263,7 +267,7 @@ public class GradingScreen extends AppCompatActivity {
             removeButton[i].setLayoutParams(lp);
             labelButton[i].setBackgroundColor(Color.TRANSPARENT);
             weightView[i].setBackgroundColor(Color.TRANSPARENT);
-            if(!LABEL_VIEW_TRUE){
+            if (!LABEL_VIEW_TRUE) {
                 removeButton[i].setVisibility(drawView.GONE);
                 labelButton[i].setVisibility(drawView.GONE);
                 weightView[i].setVisibility(drawView.GONE);
@@ -274,7 +278,7 @@ public class GradingScreen extends AppCompatActivity {
             removeButton[i].setBackgroundColor(Color.TRANSPARENT);
             LinearLayout layout = new LinearLayout(getBaseContext());
             layout_horizontal.add(layout);
-            horizontalLayout=layout;
+            horizontalLayout = layout;
             layout.setOrientation(LinearLayout.HORIZONTAL);
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params1.setMargins(0, 30, 0, 0);
@@ -284,12 +288,12 @@ public class GradingScreen extends AppCompatActivity {
             layout.addView(weightView[i]);
             layout.addView(removeButton[i]);
             labelBox.addView(layout);
-            labelButton[i].setOnClickListener(handleOnClickforLabel(labelButton[i], weightView[i], removeButton[i], i,layout));
-            removeButton[i].setOnClickListener(handleOnClickforRemove(removeButton[i], weightView[i], labelButton[i], i,layout));
+            labelButton[i].setOnClickListener(handleOnClickforLabel(labelButton[i], weightView[i], removeButton[i], i, layout));
+            removeButton[i].setOnClickListener(handleOnClickforRemove(removeButton[i], weightView[i], labelButton[i], i, layout));
         }
     }
 
-    View.OnClickListener handleOnClickforLabel(final Button labelButton, final Button weightButton, final Button removeButton, final int i,final LinearLayout layout) {
+    View.OnClickListener handleOnClickforLabel(final Button labelButton, final Button weightButton, final Button removeButton, final int i, final LinearLayout layout) {
         return new View.OnClickListener() {
             public void onClick(View v) {
                 Weights.set(i, Weights.get(i) - 1);
@@ -307,7 +311,7 @@ public class GradingScreen extends AppCompatActivity {
         };
     }
 
-    View.OnClickListener handleOnClickforRemove(final Button removeButton, final Button weightButton, final Button labelButton, final int i,final LinearLayout layout) {
+    View.OnClickListener handleOnClickforRemove(final Button removeButton, final Button weightButton, final Button labelButton, final int i, final LinearLayout layout) {
         return new View.OnClickListener() {
             public void onClick(View v) {
                 Weights.set(i, 0);
@@ -319,10 +323,11 @@ public class GradingScreen extends AppCompatActivity {
             }
         };
     }
+
     private void dispatchDisplayNextImage(View rootview) {
         if (images != null && !images.isEmpty()) {
             Image image = images.get(0);
-            if(LABEL_VIEW_TRUE){
+            if (LABEL_VIEW_TRUE) {
                 toggleLableView(rootview);
             }
             drawView.setDrawingCacheEnabled(true);
@@ -333,18 +338,18 @@ public class GradingScreen extends AppCompatActivity {
             Student student = new Student();
             student.setStatus(2);
             student.setStudentID(ASUAD);
-            new SaveGradedImage(getBaseContext(),student).execute(image,bMap,label,Weights);
+            new SaveGradedImage(getBaseContext(), student).execute(image, bMap, label, Weights);
             images.remove(0);
             if (!images.isEmpty()) {
                 imageLocation = images.get(0).getLocation();
-                QR_CODE_QUESTION= images.get(0).getQrCodeSolution();
-                LABEL_VIEW_TRUE=false;
-                Log.d(TAG, "dispatchDisplayNextImage: changing label view to "+false);
+                QR_CODE_QUESTION = images.get(0).getQrCodeSolution();
+                LABEL_VIEW_TRUE = false;
+                Log.d(TAG, "dispatchDisplayNextImage: changing label view to " + false);
                 generateQuestionWeights(rootview);
-                new ShowNewGradableImage(this,drawView).execute(imageLocation);
+                new ShowNewGradableImage(this, drawView).execute(imageLocation);
             } else {
                 imageLocation = null;
-                new StudentDao(this).updateStatus(SelectedClass.getInstance().getCurrentClass(),student);
+                new StudentDao(this).updateStatus(SelectedClass.getInstance().getCurrentClass(), student);
                 Toast.makeText(getBaseContext(), "Image Saved. No more gradable images available", Toast.LENGTH_SHORT).show();
                 this.finish();
             }
@@ -352,9 +357,9 @@ public class GradingScreen extends AppCompatActivity {
         }
     }
 
-    private void dispatchGenerateGrade(){
+    private void dispatchGenerateGrade() {
         Double pc;
-        double saliency=1.0;
+        double saliency = 1.0;
         double similarity = 0;
         switch (SimilarityMethod.getInstance().getMethodValue()) {
             case 1:
@@ -364,18 +369,18 @@ public class GradingScreen extends AppCompatActivity {
                 similarity = GenerateJaccardSimilarity.generate(WeightsOld, Weights);
                 break;
         }
-        double numerator=0,denominator=0;
-        for(int i=0;i < WeightsOld.size();i++){
-            numerator = numerator + (double)Weights.get(i);
-            denominator = denominator + (double)WeightsOld.get(i);
+        double numerator = 0, denominator = 0;
+        for (int i = 0; i < WeightsOld.size(); i++) {
+            numerator = numerator + (double) Weights.get(i);
+            denominator = denominator + (double) WeightsOld.get(i);
         }
         saliency = numerator / denominator;
-        pc=saliency*similarity;
-        Log.d(TAG, "dispatchGenerateGrade: similarity"+similarity);
-        Log.d(TAG, "dispatchGenerateGrade: saliency"+saliency);
-        if(pc<0 || pc.isNaN()) pc = 0.0;
-        GRADE = pc*MAXGRADE;
-        GRADE = (double)Math.round(GRADE * 100d) / 100d;
+        pc = saliency * similarity;
+        Log.d(TAG, "dispatchGenerateGrade: similarity" + similarity);
+        Log.d(TAG, "dispatchGenerateGrade: saliency" + saliency);
+        if (pc < 0 || pc.isNaN()) pc = 0.0;
+        GRADE = pc * MAXGRADE;
+        GRADE = (double) Math.round(GRADE * 100d) / 100d;
         gradeGenerated.setText(String.valueOf(GRADE));
     }
 }

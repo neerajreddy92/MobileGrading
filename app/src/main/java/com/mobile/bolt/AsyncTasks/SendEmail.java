@@ -89,9 +89,9 @@ public class SendEmail extends AsyncTask<Object, Integer, Boolean> {
                 GmailSender sender = new GmailSender("asucidse@gmail.com", "brickyard");
                 DataSource source1 = new FileDataSource(pdfFileLocation);
                 DataSource source2 = new FileDataSource(textFileLocation);
-                sender.addAttachment(source1,source2,pdfFinalFile,textFinalFile,"Outputs for"+student.getStudentID() + " " + student.getFirstName() + " " + student.getLastName() );
-                sender.sendMail("Outputs for" + student.getStudentID() + " " + student.getFirstName() + " " + student.getLastName(),
-                        "This mail is sent by Mobile Grading APP. All information in this mail is strictly confidential",
+                sender.addAttachment(source1,source2,pdfFinalFile,textFinalFile,"Graded files for "+student.getStudentID() + " " + student.getFirstName() + " " + student.getLastName() );
+                sender.sendMail("Graded files for " + student.getStudentID() + " " + student.getFirstName() + " " + student.getLastName(),
+                        "This mail is sent by Mobile Grading Android Application. All information in this mail is strictly confidential",
                         "asucidse@gmail.com",
                         email);
                 Log.d(TAG, "doInBackground: email sent");
