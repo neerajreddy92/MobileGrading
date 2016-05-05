@@ -47,30 +47,30 @@
                 android:maxWidth="100dp"
                 android:minWidth="100dp"
                 android:textSize="20sp" />
+            <ImageButton
+                android:id="@+id/take_picture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_toRightOf="@+id/last_name"
+                android:background="@android:color/transparent"
+                android:src="@mipmap/camera_icon" />
 
             <Button
                 android:id="@+id/Grade"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="16dp"
-                android:layout_toRightOf="@+id/last_name"
+                android:layout_toRightOf="@+id/take_picture"
                 android:text="Grade" />
 
-            <ImageButton
-                android:id="@+id/take_picture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
-                android:layout_toRightOf="@+id/Grade"
-                android:background="@android:color/transparent"
-                android:src="@mipmap/camera_icon" />
 
             <ImageButton
                 android:id="@+id/output"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="16dp"
-                android:layout_toRightOf="@+id/take_picture"
+                android:layout_toRightOf="@+id/Grade"
                 android:background="@android:color/transparent"
                 android:src="@mipmap/printer_icon" />
 
@@ -193,7 +193,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/nocolor_stars"
-                android:text="OG"
+                android:text="Output Generated"
                 android:textSize="20sp"
                 android:visibility="gone" />
         </RelativeLayout>

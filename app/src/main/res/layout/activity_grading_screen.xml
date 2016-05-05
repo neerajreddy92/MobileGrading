@@ -153,8 +153,31 @@
         android:layout_marginBottom="76dp"
         android:layout_marginLeft="76dp"
         android:text=""
-        android:textColor="@color/grading_screen_text"
+        android:textColor="#ed473e"
         android:textSize="40dp" />
+
+    <ImageButton
+        android:id="@+id/grade_increase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/arrow_up"
+        android:visibility="invisible"
+        android:background="@android:color/transparent"
+        android:layout_above="@+id/grade_show"
+        android:layout_alignLeft="@+id/grade_show"
+        android:layout_alignStart="@+id/grade_show" />
+
+    <ImageButton
+        android:id="@+id/grade_decrease"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/arrow_down"
+        android:visibility="invisible"
+        android:background="@android:color/transparent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/grade_show"
+        android:layout_alignStart="@+id/grade_show"
+        android:layout_marginBottom="30dp"/>
 
     <TextView
         android:layout_width="wrap_content"

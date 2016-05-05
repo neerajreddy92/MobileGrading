@@ -79,7 +79,7 @@ public class WriteOutputNow extends AsyncTask<Object, Integer, Boolean> {
                         - document.rightMargin() - indentation) / img.getWidth()) * 100;
                 img.scalePercent(scaler);
                 document.add(img);
-                document.add(new Paragraph("" + image.getQrCodeSolution() + " " + image.getQrCodeValues()+" comments: "+image.getQuestionComments()+" grade:"+image.getGrade()));
+                document.add(new Paragraph("" + image.getQrCodeSolution() + " " + image.getQrCodeValues() + " comments: " + image.getQuestionComments() + " grade:" + image.getGrade()+" GradeActual "+image.getGradeActual()));
                 i++;
             }
             document.close();

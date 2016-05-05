@@ -50,7 +50,10 @@ public class GradingScreen extends AppCompatActivity {
     String QR_CODE_QUESTION = null;
     private String Question_Solution = null;
     private double GRADE;
-    private double MAXGRADE;
+    private double MAXGRADE = 0.0;
+    private double GRADEACTUAL;
+    ImageButton grade_increase;
+    ImageButton grade_decrease;
     Button[] labelButton = null;
     Button[] weightView = null;
     Button[] removeButton = null;
@@ -68,6 +71,7 @@ public class GradingScreen extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         ASUAD = extras.getString("ASUAD");
         Log.d(TAG, "onCreate: entered image fragment " + ASUAD);
+        gradeGenerated = (TextView) findViewById(R.id.grade_show);
         imageDAO = new ImageDAO(getBaseContext());
         images = imageDAO.getAllNonGradedImageLocations(ASUAD);
         if (images != null && !images.isEmpty()) {
@@ -83,9 +87,10 @@ public class GradingScreen extends AppCompatActivity {
         ImageButton save = (ImageButton) rootView.findViewById(R.id.process_next);
         ImageButton showLabels = (ImageButton) rootView.findViewById(R.id.process_show_labels);
         if (imageLocation != null) {
-            new ShowNewGradableImage(this, drawView).execute(imageLocation);
-            showLabels.setEnabled(true);
-            generateQuestionWeights(rootView);
+            if (generateQuestionWeights(rootView)) {
+                new ShowNewGradableImage(this, drawView).execute(imageLocation);
+                showLabels.setEnabled(true);
+            } else finish();
         } else {
             showLabels.setEnabled(false);
             Toast.makeText(getBaseContext(), "No images available to grade", Toast.LENGTH_SHORT).show();
@@ -131,18 +136,19 @@ public class GradingScreen extends AppCompatActivity {
                 finish();
             }
         });
-        gradeGenerated = (TextView) findViewById(R.id.grade_show);
     }
 
 
-    private void generateQuestionWeights(View rootView) {
+    private boolean generateQuestionWeights(View rootView) {
         if (!QRcodeRetreive()) {
             Log.d(TAG, "onCreateView: seeing show labels as false");
             rootView.findViewById(R.id.process_show_labels).setEnabled(false);
             Toast.makeText(this, "Warning: Question doesn't have respective labels in the database", Toast.LENGTH_SHORT).show();
             this.finish();
+            return false;
         }
         createLabelButtons(rootView);
+        return true;
     }
 
     private void toggleLableView(View rootView) {
@@ -156,6 +162,8 @@ public class GradingScreen extends AppCompatActivity {
                 removeButton[i].setVisibility(drawView.GONE);
             }
             qSolution.setEnabled(false);
+            grade_increase.setVisibility(View.INVISIBLE);
+            grade_decrease.setVisibility(View.INVISIBLE);
             qSolution.setVisibility(drawView.GONE);
             commentsEnter.setEnabled(false);
             commentsEnter.setVisibility(drawView.GONE);
@@ -175,6 +183,8 @@ public class GradingScreen extends AppCompatActivity {
                     removeButton[i].setVisibility(View.VISIBLE);
                     continue;
                 }
+                grade_increase.setVisibility(View.VISIBLE);
+                grade_decrease.setVisibility(View.VISIBLE);
                 weightView[i].setEnabled(true);
                 weightView[i].setVisibility(View.VISIBLE);
                 labelButton[i].setEnabled(true);
@@ -224,6 +234,8 @@ public class GradingScreen extends AppCompatActivity {
         }
         Question_Solution = qrCode.getQuestionSolution();
         MAXGRADE = qrCode.getMaxGrade();
+        GRADE = MAXGRADE;
+        GRADEACTUAL = MAXGRADE;
         Log.d(TAG, "QRcodeRetreive: qr code labels" + label.toString());
         Log.d(TAG, "QRcodeRetreive: qr code weights" + Weights.toString());
         return true;
@@ -242,16 +254,22 @@ public class GradingScreen extends AppCompatActivity {
             }
             horizontalLayout.setVisibility(drawView.GONE);
         }
+        grade_increase = (ImageButton) findViewById(R.id.grade_increase);
+        grade_decrease = (ImageButton) findViewById(R.id.grade_decrease);
+        grade_increase.setOnClickListener(onClickForGradeIncrease());
+        grade_decrease.setOnClickListener(onClickForGradeDecrease());
         labelButton = new Button[label.size()];
         weightView = new Button[label.size()];
         removeButton = new Button[label.size()];
         qSolution = (TextView) rootView.findViewById(R.id.QuestionSolution);
         qSolution.setText(Question_Solution + " MAX GRADE : " + MAXGRADE);
+        gradeGenerated.setText(String.valueOf(MAXGRADE));
         commentsEnter = (EditText) rootView.findViewById(R.id.commentText);
         layout_horizontal = new ArrayList<>();
         for (int i = 0; i < label.size(); i++) {
             labelButton[i] = new Button(getBaseContext());
             labelButton[i].setText(label.get(i));
+            labelButton[i].setTransformationMethod(null);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -335,6 +353,7 @@ public class GradingScreen extends AppCompatActivity {
             drawView.destroyDrawingCache();
             image.setQuestionComments(commentsEnter.getText().toString());
             image.setGrade((float) GRADE);
+            image.setGradeActual((float) GRADEACTUAL);
             Student student = new Student();
             student.setStatus(2);
             student.setStudentID(ASUAD);
@@ -345,8 +364,9 @@ public class GradingScreen extends AppCompatActivity {
                 QR_CODE_QUESTION = images.get(0).getQrCodeSolution();
                 LABEL_VIEW_TRUE = false;
                 Log.d(TAG, "dispatchDisplayNextImage: changing label view to " + false);
-                generateQuestionWeights(rootview);
-                new ShowNewGradableImage(this, drawView).execute(imageLocation);
+                if (generateQuestionWeights(rootview)) {
+                    new ShowNewGradableImage(this, drawView).execute(imageLocation);
+                } else finish();
             } else {
                 imageLocation = null;
                 new StudentDao(this).updateStatus(SelectedClass.getInstance().getCurrentClass(), student);
@@ -355,6 +375,32 @@ public class GradingScreen extends AppCompatActivity {
             }
             dispatchGenerateGrade();
         }
+    }
+
+    View.OnClickListener onClickForGradeIncrease() {
+        return new View.OnClickListener() {
+            public void onClick(View v) {
+                if (GRADE < MAXGRADE) {
+                    GRADE = GRADE + 0.1;
+                    GRADE = (double) Math.round(GRADE * 100d) / 100d;
+                    gradeGenerated.setText(String.valueOf(GRADE));
+                } else {
+                    Toast.makeText(getBaseContext(), "Cannot Increase: MaximumGrade = " + MAXGRADE, Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+    }
+
+    View.OnClickListener onClickForGradeDecrease() {
+        return new View.OnClickListener() {
+            public void onClick(View v) {
+                if (GRADE > 0) {
+                    GRADE = GRADE - 0.1;
+                    GRADE = (double) Math.round(GRADE * 100d) / 100d;
+                    gradeGenerated.setText(String.valueOf(GRADE));
+                }
+            }
+        };
     }
 
     private void dispatchGenerateGrade() {
@@ -379,8 +425,9 @@ public class GradingScreen extends AppCompatActivity {
         Log.d(TAG, "dispatchGenerateGrade: similarity" + similarity);
         Log.d(TAG, "dispatchGenerateGrade: saliency" + saliency);
         if (pc < 0 || pc.isNaN()) pc = 0.0;
-        GRADE = pc * MAXGRADE;
-        GRADE = (double) Math.round(GRADE * 100d) / 100d;
-        gradeGenerated.setText(String.valueOf(GRADE));
+        GRADEACTUAL = pc * MAXGRADE;
+        GRADEACTUAL = (double) Math.round(GRADEACTUAL * 100d) / 100d;
+        GRADE = GRADEACTUAL;
+        gradeGenerated.setText(String.valueOf(GRADEACTUAL));
     }
 }

@@ -18,7 +18,6 @@ import java.util.List;
  */
 
 public class ImageDAO {
-
     private StudentContractHelper sHelper;
     private String TAG="MobileGrading";
     private static final String TABLE_NAME_IMAGE="imageStorage";
@@ -31,7 +30,8 @@ public class ImageDAO {
     private static final String KEY_IMAGE_QRCODE_VALUES="qrcodevalues";
     private static final String KEY_IMAGE_Comments="comments";
     private static final String KEY_IMAGE_GRADE="Grade";
-    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED,KEY_IMAGE_QRCODESOLUTION,KEY_IMAGE_QRCODE_VALUES,KEY_IMAGE_Comments,KEY_IMAGE_GRADE};
+    private static final String KEY_IMAGE_GRADEACTUAL="GradeActual";
+    private static final String[] COLUMNS_IMAGE = {KEY_ID, KEY_ASU_ID_IMAGE, KEY_LOCATION,KEY_GRADED,KEY_UPLOADED,KEY_IMAGE_QRCODESOLUTION,KEY_IMAGE_QRCODE_VALUES,KEY_IMAGE_Comments,KEY_IMAGE_GRADE,KEY_IMAGE_GRADEACTUAL};
 
     public ImageDAO(Context context){
         sHelper=new StudentContractHelper(context);
@@ -62,6 +62,7 @@ public class ImageDAO {
         values.put(KEY_IMAGE_QRCODE_VALUES,image.getQrCodeValues());
         values.put(KEY_IMAGE_Comments,image.getQuestionComments());
         values.put(KEY_IMAGE_GRADE,image.getGrade());
+        values.put(KEY_IMAGE_GRADEACTUAL,image.getGradeActual());
         int i = db.update(TABLE_NAME_IMAGE, //table
                 values, // column/value
                 KEY_ID + " = ?", // selections
@@ -218,6 +219,7 @@ public class ImageDAO {
                     image.setQrCodeValues(cursor.getString(6));
                     image.setQuestionComments(cursor.getString(7));
                     image.setGrade(Float.parseFloat(cursor.getString(8)));
+                    image.setGradeActual(Float.parseFloat(cursor.getString(9)));
                     if(image.getGraded()==1 && image.getUploaded()==0) {
                         images.add(image);
                     }
@@ -260,6 +262,7 @@ public class ImageDAO {
                 image.setQrCodeValues(cursor.getString(6));
                 image.setQuestionComments(cursor.getString(7));
                 image.setGrade(Float.parseFloat(cursor.getString(8)));
+                image.setGradeActual(Float.parseFloat(cursor.getString(9)));
                 images.add(image);
                 Log.d(TAG, "getAllNonUploadedImageLocations: Getting image location : "+image.toString());
             } while (cursor.moveToNext());
@@ -281,7 +284,4 @@ public class ImageDAO {
         db.close();
         return i;
     }
-
-
-
 }

@@ -98,8 +98,6 @@ public class SaveGradedImage extends AsyncTask {
     }
 
     private File createImageFile() throws IOException {
-        // Create an image file name
-        //Do not make function public.
         Log.i(TAG, "createImageFile: new image file name created");
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";

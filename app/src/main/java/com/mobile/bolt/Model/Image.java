@@ -5,8 +5,6 @@ package com.mobile.bolt.Model;
  */
 
 public class Image {
-    // TODO: 2/24/2016 create a system where all the uploaded items will be automatically deleated.
-    // TODO: 2/25/2016 add a coloumn to save retreived qr code and change the dao to reflect that
     private int id;
     private String ASU_ID;
     private int graded;
@@ -14,6 +12,15 @@ public class Image {
     private String QrCodeSolution;
     private String QuestionComments;
     private float Grade;
+    private float GradeActual;
+
+    public float getGradeActual() {
+        return GradeActual;
+    }
+
+    public void setGradeActual(float gradeActual) {
+        GradeActual = gradeActual;
+    }
 
     public float getGrade() {
         return Grade;
@@ -32,8 +39,6 @@ public class Image {
     }
 
     private String QrCodeValues; //shameless hack
-
-    // TODO: 3/7/2016 update qr code values
 
     public String getQrCodeValues() {
         return QrCodeValues;
@@ -98,6 +103,6 @@ public class Image {
 
     @Override
     public String toString(){
-        return id+" "+ASU_ID+" "+Location+" "+graded+" "+uploaded+" "+QrCodeSolution+" "+QrCodeValues+" "+QuestionComments+" "+String.valueOf(Grade);
+        return id+" "+ASU_ID+" "+Location+" "+graded+" "+uploaded+" "+QrCodeSolution+" "+QrCodeValues+" "+QuestionComments+" "+String.valueOf(Grade)+" "+String.valueOf(GradeActual);
     }
 }

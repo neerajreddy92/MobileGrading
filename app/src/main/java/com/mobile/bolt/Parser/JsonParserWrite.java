@@ -29,6 +29,7 @@ public class JsonParserWrite {
                 question.put("Question",image.getQrCodeSolution());
                 question.put("Comments",image.getQuestionComments());
                 question.put("Grade",image.getGrade());
+                question.put("GradeActual",image.getGradeActual());
                 JSONArray tags =splitTags(image.getQrCodeValues());
                 question.put("tags",tags);
                 solutions.add(question);
