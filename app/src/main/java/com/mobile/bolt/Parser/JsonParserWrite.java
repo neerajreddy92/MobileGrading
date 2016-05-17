@@ -23,18 +23,18 @@ public class JsonParserWrite {
             report.put("FirstName",student.getFirstName());
             report.put("LastName",student.getLastName());
             report.put("TotalGrade","");
+            JSONArray solutions = new JSONArray();
             for(Image image : images){
-                JSONArray solutions = new JSONArray();
                 JSONObject question = new JSONObject();
                 question.put("Question",image.getQrCodeSolution());
                 question.put("Comments",image.getQuestionComments());
                 question.put("Grade",image.getGrade());
                 question.put("GradeActual",image.getGradeActual());
                 JSONArray tags =splitTags(image.getQrCodeValues());
-                question.put("tags",tags);
+                question.put("tags", tags);
                 solutions.add(question);
-                report.put("Solutions", solutions);
             }
+            report.put("Solutions", solutions);
             FileWriter wr = new FileWriter(file);
             wr.write(report.toJSONString());
             wr.flush();

@@ -265,6 +265,7 @@ public class GradingScreen extends AppCompatActivity {
         qSolution.setText(Question_Solution + " MAX GRADE : " + MAXGRADE);
         gradeGenerated.setText(String.valueOf(MAXGRADE));
         commentsEnter = (EditText) rootView.findViewById(R.id.commentText);
+        commentsEnter.setText("");
         layout_horizontal = new ArrayList<>();
         for (int i = 0; i < label.size(); i++) {
             labelButton[i] = new Button(getBaseContext());
