@@ -1,0 +1,13 @@
+-Project built using android studio. uses build gradle. 
+-src present in MobileGrading/app/src/main/java/com/mobile/bolt/
+--Containts the following folders. 
+---Async tasks: tasks that run on a seperate thread. 
+---DAO: Data access object for class, Image and qr code tables. 
+----Please check model for database desc.
+---Model: Model for the datbase.
+---Parser: parser for xml and json
+---MobileGrading: Activities and adapters corresponding to the app
+----Main Activity and grading screen are the two major activities. 
+----Layout for the activity can be found in MobileGrading/app/src/main/res/layout/
+---Similarity measure : cosine and jaccard similarity implementation. 
+---Support:Other supporting classes.  
