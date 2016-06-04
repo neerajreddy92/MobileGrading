@@ -2,6 +2,8 @@ package com.mobile.bolt.support;
 
 /**
  * Created by Neeraj on 4/23/2016.
+ * Singleton class to store the current filter value.
+ * Prevents the search form *refreshing* when the page is refreshed or the state is restored.
  */
 public class SearchFilterVal {
     private static SearchFilterVal ourInstance = new SearchFilterVal();

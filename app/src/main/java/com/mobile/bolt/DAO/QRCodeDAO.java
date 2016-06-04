@@ -13,6 +13,8 @@ import com.mobile.bolt.Model.Student;
 
 /**
  * Created by Neeraj on 3/3/2016.
+ * Qrcode table access functions.
+ * For table description please check the tables respective model in com.mobile.bolt/Model
  */
 public class QRCodeDAO {
     private StudentContractHelper sHelper;

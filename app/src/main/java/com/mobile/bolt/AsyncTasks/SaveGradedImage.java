@@ -22,6 +22,8 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 4/6/2016.
+ * Saves the captured image on to the database.
+ * Changes graded status to '1'.
  */
 public class SaveGradedImage extends AsyncTask {
     String TAG = "MobileGrading";

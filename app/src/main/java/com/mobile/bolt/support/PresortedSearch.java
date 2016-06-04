@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 4/16/2016.
+ * presorted search class to assist what type constitutes said filter.
  */
 public class PresortedSearch {
 

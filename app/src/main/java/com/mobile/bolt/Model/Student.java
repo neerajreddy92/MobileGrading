@@ -4,6 +4,9 @@ import com.itextpdf.text.*;
 
 /**
  * Created by Neeraj on 2/23/2016.
+ * Model for student table.
+ * Images taken: Number of images taken for this particular student.
+ * Images graded: Number of images graded for this particular student.
  */
 public class Student {
     private String StudentID;

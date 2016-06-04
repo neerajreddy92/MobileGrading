@@ -17,6 +17,7 @@ import java.util.Date;
 
 /**
  * Created by Neeraj on 4/15/2016.
+ * calls take picture intent for activity result. main activity onActivityReslut is executed after the picture is taken.
  */
 public class TakePicture{
     Context context;
@@ -63,11 +64,6 @@ public class TakePicture{
             Log.e(TAG, "dispatchTakePictureIntent: getActivity() doesent work");
         }
     }
-
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        new GenQRCode(context).execute(anotherPhotoPath, ASUAD); //starting async task to genrate qr code.
-//    }
-
 
     private File createImageFile() throws IOException {
         // Create an image file name

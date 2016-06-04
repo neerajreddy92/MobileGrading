@@ -4,6 +4,7 @@ import android.util.Log;
 
 /**
  * Created by Neeraj on 4/17/2016.
+ * Singleton class to keep track of the current selected similarity method.
  */
 public class SimilarityMethod {
     private static String TAG = "MobileGrading";

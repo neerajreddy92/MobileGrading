@@ -21,7 +21,6 @@ import com.mobile.bolt.DAO.ImageDAO;
 import com.mobile.bolt.DAO.StudentDao;
 import com.mobile.bolt.Model.Image;
 import com.mobile.bolt.Model.Student;
-import com.mobile.bolt.mobilegrading.Activity_grade;
 import com.mobile.bolt.mobilegrading.MainActivity;
 import com.mobile.bolt.support.LoadImage;
 import com.mobile.bolt.support.SelectedClass;
@@ -30,13 +29,14 @@ import static android.widget.Toast.LENGTH_LONG;
 
 /**
  * Created by Neeraj on 4/6/2016.
+ * detects the qr code present in the image taken and then stores it into the database.
+ * uses zxing library.
  */
 public class GenQRCode extends AsyncTask <String,Integer,Image>{
     Context context;
     String TAG = "MobileGrading";
     String ASUAD;
     MainActivity MainActivity;
-    // TODO: 4/6/2016 check to see if the application needs to be stopped while this occurs.
     @Override
     protected Image doInBackground(String... params) {
         Image image=null;

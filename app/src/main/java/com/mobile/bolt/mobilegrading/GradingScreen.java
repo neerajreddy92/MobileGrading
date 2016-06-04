@@ -30,12 +30,12 @@ import com.mobile.bolt.support.SimilarityMethod;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Grading screen loads a bitmap and then uses drawing view to then add a canvas over the bitmap.
+ * After the grading screen is finished Asynctask to save the bitmap is called and new bitmap is loaded if exists.
+ */
 public class GradingScreen extends AppCompatActivity {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private DrawingView drawView;
-    // TODO: Rename and change types of parameters
-    // TODO: Rename and change types and number of parameters
     List<String> label;
     List<Integer> Weights;
     List<Integer> WeightsOld;
@@ -64,6 +64,11 @@ public class GradingScreen extends AppCompatActivity {
     LinearLayout horizontalLayout = null;
     String ASUAD;
 
+    /**
+     * Loads the first gradable image for the student. Verifies if the label data for the image exists.
+     * Inflates the layout activity_grading_screen.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +143,11 @@ public class GradingScreen extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Generates the labels and add's check for weather the current image has its respective data in the database.
+     * @param rootView
+     * @return
+     */
     private boolean generateQuestionWeights(View rootView) {
         if (!QRcodeRetreive()) {
             Log.d(TAG, "onCreateView: seeing show labels as false");
@@ -151,6 +160,10 @@ public class GradingScreen extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Toggles label buttons from visble to invisible when the button is pressed.
+     * @param rootView
+     */
     private void toggleLableView(View rootView) {
         if (LABEL_VIEW_TRUE) {
             for (int i = 0; i < label.size(); i++) {
@@ -204,7 +217,10 @@ public class GradingScreen extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Retreives qr code data and the lable's and their respective weights.
+     * @return
+     */
     private Boolean QRcodeRetreive() {
         if (QR_CODE_QUESTION == null) return false;
         qrCodeDAO = new QRCodeDAO(getBaseContext());
@@ -241,6 +257,10 @@ public class GradingScreen extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Creats label buttons as required. These label buttons are set to invisible by default.
+     * @param rootView
+     */
     private void createLabelButtons(View rootView) {
         if (label == null || Weights == null) {
             return;
@@ -312,6 +332,16 @@ public class GradingScreen extends AppCompatActivity {
         }
     }
 
+    /**
+     * Onclick listner for label button.
+     * when weight>0 reduces the weight by  1
+     * @param labelButton
+     * @param weightButton
+     * @param removeButton
+     * @param i
+     * @param layout
+     * @return
+     */
     View.OnClickListener handleOnClickforLabel(final Button labelButton, final Button weightButton, final Button removeButton, final int i, final LinearLayout layout) {
         return new View.OnClickListener() {
             public void onClick(View v) {
@@ -330,6 +360,16 @@ public class GradingScreen extends AppCompatActivity {
         };
     }
 
+    /**
+     * On clicke for label remove.
+     * when weight is >0 makes weight =0.
+     * @param removeButton
+     * @param weightButton
+     * @param labelButton
+     * @param i
+     * @param layout
+     * @return
+     */
     View.OnClickListener handleOnClickforRemove(final Button removeButton, final Button weightButton, final Button labelButton, final int i, final LinearLayout layout) {
         return new View.OnClickListener() {
             public void onClick(View v) {
@@ -343,6 +383,11 @@ public class GradingScreen extends AppCompatActivity {
         };
     }
 
+    /**
+     * captures the current bitmap.
+     * Calls the save Async task and then loads the new bitmap.
+     * @param rootview
+     */
     private void dispatchDisplayNextImage(View rootview) {
         if (images != null && !images.isEmpty()) {
             Image image = images.get(0);
@@ -378,6 +423,10 @@ public class GradingScreen extends AppCompatActivity {
         }
     }
 
+    /**
+     * Grade manual increase function.
+     * @return
+     */
     View.OnClickListener onClickForGradeIncrease() {
         return new View.OnClickListener() {
             public void onClick(View v) {
@@ -392,6 +441,10 @@ public class GradingScreen extends AppCompatActivity {
         };
     }
 
+    /**
+     * Grade manual decrease function.
+     * @return
+     */
     View.OnClickListener onClickForGradeDecrease() {
         return new View.OnClickListener() {
             public void onClick(View v) {
@@ -404,6 +457,9 @@ public class GradingScreen extends AppCompatActivity {
         };
     }
 
+    /**
+     * Function calls similarity and generates grade.
+     */
     private void dispatchGenerateGrade() {
         Double pc;
         double saliency = 1.0;

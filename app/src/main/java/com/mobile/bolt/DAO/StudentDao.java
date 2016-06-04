@@ -17,6 +17,13 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 4/10/2016.
+ * Helper class for student table , emails table and list of class table.
+ * Each class has a separate table with respective students in it.
+ * Model for all the class tables can be found at Model/student
+ * For table description please check the tables respective model in com.mobile.bolt/Model
+ * All the listed classes are stored in "classes" table.
+ * saved email addresses are stored in "emails" table.
+ *
  */
 public class StudentDao extends SQLiteOpenHelper {
     private static final String TAG = "MobileGrading";
@@ -48,7 +55,6 @@ public class StudentDao extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //some table so as the on upgrade works fine.
         String CREATE_STUDENT_TABLE_Names = "CREATE TABLE classes ( " +
                 "tabelName TEXT PRIMARY KEY )";
         String CREATE_EMAIL_ADDRESSES = "CREATE TABLE emails ( " +
@@ -63,7 +69,7 @@ public class StudentDao extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS emails");
         this.onCreate(db);
     }
-
+    //Function to return all classes names.
     public List<String> getTabels() {
         List<String> clases = new LinkedList<String>();
         String query = "SELECT  * FROM classes";
@@ -79,7 +85,7 @@ public class StudentDao extends SQLiteOpenHelper {
         db.close();
         return clases;
     }
-
+    //Function to return all classes names in a string array.
     public String[] getTabelsString() {
         List<String> clases = new LinkedList<String>();
         String query = "SELECT  * FROM classes";
@@ -97,7 +103,7 @@ public class StudentDao extends SQLiteOpenHelper {
         for (int i = 0; i < clases.size(); i++) emai[i] = clases.get(i);
         return emai;
     }
-
+    //Delete a single class.
     public void deleteStudentTable(String tabelName) {
         if (tabelName != null) {
             SQLiteDatabase db = this.getWritableDatabase();

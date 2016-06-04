@@ -15,6 +15,8 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 2/24/2016.
+ * Image table access functions.
+ * For table description please check the tables respective model in com.mobile.bolt/Model
  */
 
 public class ImageDAO {

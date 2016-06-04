@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 4/6/2016.
+ * Json parser for qrcode files and class files.
  */
 
 public class JsonParserRead {

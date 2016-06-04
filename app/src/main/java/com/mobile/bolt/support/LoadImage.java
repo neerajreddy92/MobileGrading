@@ -7,12 +7,13 @@ import android.widget.Toast;
 
 /**
  * Created by Neeraj on 3/6/2016.
+ * Class prevents out of memory exception while loading bitmap onto the screen.
  */
 public class LoadImage {
     private static String TAG= "MobileGrading";
     public static Bitmap load(String imageLocation){
         Bitmap bMap = null;
-        int count = 0;
+        int count = 0;          // Increasing count changes the way the bitmap is loaded. 
         BitmapFactory.Options options = new BitmapFactory.Options();
         Log.i(TAG, "LoadImage: Loading Image from path: ... " + imageLocation);
         options.inSampleSize = count++;

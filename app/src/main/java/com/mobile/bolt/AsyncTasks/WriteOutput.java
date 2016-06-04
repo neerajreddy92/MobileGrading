@@ -38,6 +38,7 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 3/6/2016.
+ * Writes output in both pdf and json format. For the entire class.
  */
 public class WriteOutput extends AsyncTask<Object, Integer, Boolean> {
     private String TAG= "MobileGrading";

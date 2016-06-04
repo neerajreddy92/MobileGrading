@@ -1,10 +1,7 @@
 package com.mobile.bolt.support;
 
-import android.util.Log;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Multipart;
@@ -15,7 +12,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.xml.transform.Source;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,6 +20,9 @@ import java.io.OutputStream;
 import java.security.Security;
 import java.util.Properties;
 
+/**
+ * mail authenticator with gmail class.
+ */
 public class GmailSender extends javax.mail.Authenticator {
     private String mailhost = "smtp.gmail.com";
     private String TAG = "MobileGrading";

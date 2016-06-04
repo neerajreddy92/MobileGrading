@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 3/4/2016.
+ * Parses a new qr code file (questions file) and adds it to the database.
  */
 public class ParsingQRcode extends AsyncTask<String,Integer,Boolean>{
     private String TAG= "MobileGrading";

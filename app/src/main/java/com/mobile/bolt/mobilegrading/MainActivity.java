@@ -60,7 +60,13 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Main activity for the application. This activity uses a recycler view to populate all the students in the selected class.
+ * This activity inflates the layout activity_main and the menu_activity_main.
+ * It then loads a students from the top class and displays it, if it exists.
+ * check res/menu/activity_main_menu for further details regarding main menu.
+ * check MobileGrading/RVadapter for recycler view adapter , grade and take picture buttons implementation.
+ */
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     RecyclerView rv;
     private GoogleApiClient client;
@@ -87,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Integer status = 0;
     List<Student> students;
     List<String> similarityMeasures;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +137,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         itemTouchHelper.attachToRecyclerView(rv);
     }
 
-
+    /**
+     *inflating the options menu and populating it.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
@@ -144,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);// set the adapter to provide layout of rows and content
         spinner.setOnItemSelectedListener(this);
-
+        //Spinner for presorted search.
         MenuItem item_select = menu.findItem(R.id.spinner_search);
         Spinner spinner_select = (Spinner) MenuItemCompat.getActionView(item_select);
         List<String> items_select = PresortedSearch.generateList();
@@ -164,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }
         });
-
+        //Spinner for selecting similarity.
         MenuItem item_similarity = menu.findItem(R.id.spinner_similarity);
         Spinner spinner_similarity = (Spinner) MenuItemCompat.getActionView(item_similarity);
         List<String> items_similarity = similarityMeasures;
@@ -184,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }
         });
-
+        //Search menu item.
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
         search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
@@ -203,12 +210,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
         return true;
     }
-
+    //Dispatch query for filtering the student lists.
     private void dispatchQuery(String query) {
         adapter.updateList(FilterRecyclerView.filter(students, query, status));
         SearchFilterVal.getInstance().setSearchVal(query);
     }
-
+    // Dispatching when item is selected.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -317,6 +324,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    /**
+     * Function to generate dialogs.
+     * note that new student dialog inflates the layout new_student_dialog.
+     */
     @Override
     protected Dialog onCreateDialog(int id) {
         Dialog dialog = null;
@@ -489,6 +500,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter.updateList(FilterRecyclerView.filter(students, SearchFilterVal.getInstance().getSearchVal(), status));
     }
 
+    /**
+     * On activity result is called when an activity is called requesting result.
+     * request code 1 is generated when a new picture is taken. QR code generation follows.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1)
             new GenQRCode(getBaseContext(), PictureValues.getInstance().getASUAD(),this).execute(PictureValues.getInstance().getPhotoPath(), PictureValues.getInstance().getASUAD()); //starting async task to genrate qr code.
@@ -504,6 +522,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         studentDao.addStudent(selectedClass.getCurrentClass(), student);
     }
 
+    /**
+     * Switch for when a new class is selected.
+     * note that the the singleton class for the selected class is updated.
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         students = new StudentDao(getBaseContext()).getAllStudents((String) parent.getItemAtPosition(position));

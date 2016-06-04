@@ -4,6 +4,8 @@ import com.mobile.bolt.mobilegrading.TakePicture;
 
 /**
  * Created by Neeraj on 4/15/2016.
+ * Singleton class to generate qr code values post picture taking activity.
+ * This class stores the data of the picture taken.
  */
 public class PictureValues {
     private static PictureValues ourInstance = new PictureValues();

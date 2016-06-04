@@ -17,6 +17,7 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 2/24/2016.
+ * Drawing canvas on which a grader can grade the image.
  */
 public class DrawingView extends View {
     

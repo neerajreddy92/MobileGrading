@@ -8,6 +8,7 @@ import Jama.Matrix;
 
 /**
  * Created by Neeraj on 4/17/2016.
+ * Generates the cosine similarity.
  */
 public class GenerateCosineSimilarity {
     private static String TAG = "MobileGrading";

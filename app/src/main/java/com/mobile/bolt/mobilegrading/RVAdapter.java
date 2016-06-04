@@ -23,6 +23,9 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 4/10/2016.
+ * Adapter class to populate the recycler view on mainActivity.
+ * Also provides functionality to the buttons on card view (take picture, grade etc,.)
+ * check res/layout/card_view for card view layout.
  */
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
     private Context context;
@@ -52,6 +55,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
             TakePicture = (ImageButton) itemView.findViewById(R.id.take_picture);
             StartGrading = (Button) itemView.findViewById(R.id.Grade);
             GenOutput = (ImageButton) itemView.findViewById(R.id.output);
+            //color and no color have 5 stars each on the layout which are made visible and visible as required.
             color.add((ImageView) itemView.findViewById(R.id.color_one));
             color.add((ImageView) itemView.findViewById(R.id.color_two));
             color.add((ImageView) itemView.findViewById(R.id.color_three));
@@ -88,7 +92,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         personViewHolder.FirstName.setText(students.get(i).getFirstName());
         personViewHolder.LastName.setText(students.get(i).getLastName());
         final Student student = students.get(i);
-        String uri = "@drawable/myresource";  // where myresource (without the extension) is the file
+        //The number of stars are displayed based on the status.
         switch (students.get(i).getStatus()){
             case 0:
                 for(int z = 0;z<5;z++)
@@ -145,7 +149,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
         personViewHolder.GenOutput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 4/15/2016 add checks to see if any output is available
                 if (student.getStatus() == 2) {
                     new WriteOutputNow(context, student.getStudentID(),mainActivity).execute(student);
                 }
@@ -198,10 +201,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
                 addItem(i, model);
             }
         }
-    }
-    public void onDismiss(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int position) {
-        //TODO delete the actual item in your data source
-        notifyItemRemoved(position);
     }
     private void applyAndAnimateMovedItems(List<Student> newStudents) {
         for (int toPosition = newStudents.size() - 1; toPosition >= 0; toPosition--) {

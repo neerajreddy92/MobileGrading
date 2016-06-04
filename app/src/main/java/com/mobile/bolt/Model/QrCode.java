@@ -2,6 +2,9 @@ package com.mobile.bolt.Model;
 
 /**
  * Created by Neeraj on 3/3/2016.
+ * Model for quesiton qr code values.
+ * values are the question tags and their weights.
+ * The values are stored as Forloop:8;Whileloop:6 in the database.
  */
 public class QrCode {
     private int ID;

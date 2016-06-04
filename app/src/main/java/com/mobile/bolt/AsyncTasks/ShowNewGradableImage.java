@@ -13,6 +13,7 @@ import com.mobile.bolt.support.LoadImage;
 
 /**
  * Created by Neeraj on 4/6/2016.
+ * Loads a new non graded images for grading.
  */
 public class ShowNewGradableImage extends AsyncTask<Object, Integer, Bitmap> {
     String TAG = "MobileGrading";

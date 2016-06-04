@@ -21,6 +21,7 @@ import javax.activation.FileDataSource;
 
 /**
  * Created by Neeraj on 4/20/2016.
+ * Emails the graded and outputted files.
  */
 public class SendEmail extends AsyncTask<Object, Integer, Boolean> {
     private String TAG = "MobileGrading";

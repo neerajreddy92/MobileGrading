@@ -11,6 +11,7 @@ import java.io.File;
 
 /**
  * Created by Neeraj on 4/10/2016.
+ * A new class file is parsed and added into the database.
  */
 public class ParseNewClasses extends AsyncTask<String,Integer,Boolean>{
     String TAG = "MobileGrading";

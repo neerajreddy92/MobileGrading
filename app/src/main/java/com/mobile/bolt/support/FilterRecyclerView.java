@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Created by Neeraj on 4/16/2016.
+ * Recycler view filter support class.
  */
 public class FilterRecyclerView {
     private static final String TAG = "MobileGrading";
